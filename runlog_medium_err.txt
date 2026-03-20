@@ -1,0 +1,914 @@
+2026-03-03 13:59:56,857 INFO CONNECTED (probe) label=token-in-query kwargs=['origin']
+2026-03-03 13:59:56,892 INFO Connection probe succeeded with query token and origin=https://game.ainm.no
+2026-03-03 13:59:57,030 INFO CONNECTED LIVE kwargs=['origin']
+2026-03-03 13:59:57,035 INFO Round 0 bots=3 lead_pos=[14, 10] lead_inv=[] score=0
+2026-03-03 13:59:57,068 INFO Round 1 bots=3 lead_pos=[14, 9] lead_inv=[] score=0
+2026-03-03 13:59:57,107 INFO Round 2 bots=3 lead_pos=[13, 9] lead_inv=[] score=0
+2026-03-03 13:59:57,144 INFO Round 3 bots=3 lead_pos=[12, 9] lead_inv=[] score=0
+2026-03-03 13:59:57,180 INFO Round 4 bots=3 lead_pos=[11, 9] lead_inv=[] score=0
+2026-03-03 13:59:57,214 INFO Round 5 bots=3 lead_pos=[10, 9] lead_inv=[] score=0
+2026-03-03 13:59:57,247 INFO Round 6 bots=3 lead_pos=[9, 9] lead_inv=[] score=0
+2026-03-03 13:59:57,280 INFO Round 7 bots=3 lead_pos=[8, 9] lead_inv=[] score=0
+2026-03-03 13:59:57,314 INFO Round 8 bots=3 lead_pos=[7, 9] lead_inv=[] score=0
+2026-03-03 13:59:57,351 INFO Round 9 bots=3 lead_pos=[6, 9] lead_inv=[] score=0
+2026-03-03 13:59:57,386 INFO Round 10 bots=3 lead_pos=[5, 9] lead_inv=[] score=0
+2026-03-03 13:59:57,423 INFO Round 11 bots=3 lead_pos=[5, 9] lead_inv=['eggs'] score=0
+2026-03-03 13:59:57,459 INFO Round 12 bots=3 lead_pos=[5, 10] lead_inv=['eggs'] score=0
+2026-03-03 13:59:57,493 INFO Round 13 bots=3 lead_pos=[4, 10] lead_inv=['eggs'] score=0
+2026-03-03 13:59:57,528 INFO Round 14 bots=3 lead_pos=[3, 10] lead_inv=['eggs'] score=0
+2026-03-03 13:59:57,561 INFO Round 15 bots=3 lead_pos=[2, 10] lead_inv=['eggs'] score=0
+2026-03-03 13:59:57,597 INFO Round 16 bots=3 lead_pos=[1, 10] lead_inv=['eggs'] score=0
+2026-03-03 13:59:57,632 INFO Round 17 bots=3 lead_pos=[1, 10] lead_inv=[] score=1
+2026-03-03 13:59:57,668 INFO Round 18 bots=3 lead_pos=[1, 9] lead_inv=[] score=1
+2026-03-03 13:59:57,705 INFO Round 19 bots=3 lead_pos=[2, 9] lead_inv=[] score=1
+2026-03-03 13:59:57,740 INFO Round 20 bots=3 lead_pos=[3, 9] lead_inv=[] score=1
+2026-03-03 13:59:57,780 INFO Round 21 bots=3 lead_pos=[3, 9] lead_inv=['cream'] score=1
+2026-03-03 13:59:57,815 INFO Round 22 bots=3 lead_pos=[4, 9] lead_inv=['cream'] score=1
+2026-03-03 13:59:57,854 INFO Round 23 bots=3 lead_pos=[4, 8] lead_inv=['cream'] score=1
+2026-03-03 13:59:57,890 INFO Round 24 bots=3 lead_pos=[4, 7] lead_inv=['cream'] score=2
+2026-03-03 13:59:57,924 INFO Round 25 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 13:59:57,958 INFO Round 26 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 13:59:57,992 INFO Round 27 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 13:59:58,028 INFO Round 28 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 13:59:58,067 INFO Round 29 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 13:59:58,100 INFO Round 30 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 13:59:58,133 INFO Round 31 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 13:59:58,172 INFO Round 32 bots=3 lead_pos=[1, 10] lead_inv=['cream'] score=8
+2026-03-03 13:59:58,203 INFO Round 33 bots=3 lead_pos=[2, 10] lead_inv=['cream'] score=8
+2026-03-03 13:59:58,239 INFO Round 34 bots=3 lead_pos=[2, 9] lead_inv=['cream'] score=9
+2026-03-03 13:59:58,281 INFO Round 35 bots=3 lead_pos=[3, 9] lead_inv=['cream'] score=9
+2026-03-03 13:59:58,316 INFO Round 36 bots=3 lead_pos=[4, 9] lead_inv=['cream'] score=9
+2026-03-03 13:59:58,355 INFO Round 37 bots=3 lead_pos=[4, 8] lead_inv=['cream'] score=9
+2026-03-03 13:59:58,393 INFO Round 38 bots=3 lead_pos=[4, 7] lead_inv=['cream'] score=9
+2026-03-03 13:59:58,430 INFO Round 39 bots=3 lead_pos=[4, 6] lead_inv=['cream'] score=9
+2026-03-03 13:59:58,464 INFO Round 40 bots=3 lead_pos=[4, 5] lead_inv=['cream'] score=9
+2026-03-03 13:59:58,498 INFO Round 41 bots=3 lead_pos=[4, 4] lead_inv=['cream'] score=9
+2026-03-03 13:59:58,533 INFO Round 42 bots=3 lead_pos=[4, 3] lead_inv=['cream'] score=9
+2026-03-03 13:59:58,567 INFO Round 43 bots=3 lead_pos=[4, 2] lead_inv=['cream'] score=9
+2026-03-03 13:59:58,600 INFO Round 44 bots=3 lead_pos=[4, 2] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:58,633 INFO Round 45 bots=3 lead_pos=[4, 3] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:58,672 INFO Round 46 bots=3 lead_pos=[4, 4] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:58,709 INFO Round 47 bots=3 lead_pos=[4, 5] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:58,745 INFO Round 48 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:58,780 INFO Round 49 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:58,817 INFO Round 50 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:58,855 INFO Round 51 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:58,890 INFO Round 52 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:58,960 INFO Round 53 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:58,996 INFO Round 54 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:59,033 INFO Round 55 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 13:59:59,070 INFO Round 56 bots=3 lead_pos=[1, 10] lead_inv=['cream'] score=10
+2026-03-03 13:59:59,107 INFO Round 57 bots=3 lead_pos=[1, 9] lead_inv=['cream'] score=10
+2026-03-03 13:59:59,148 INFO Round 58 bots=3 lead_pos=[1, 8] lead_inv=['cream'] score=10
+2026-03-03 13:59:59,183 INFO Round 59 bots=3 lead_pos=[1, 7] lead_inv=['cream'] score=10
+2026-03-03 13:59:59,222 INFO Round 60 bots=3 lead_pos=[1, 6] lead_inv=['cream'] score=10
+2026-03-03 13:59:59,258 INFO Round 61 bots=3 lead_pos=[1, 5] lead_inv=['cream'] score=10
+2026-03-03 13:59:59,309 INFO Round 62 bots=3 lead_pos=[1, 4] lead_inv=['cream'] score=10
+2026-03-03 13:59:59,347 INFO Round 63 bots=3 lead_pos=[1, 3] lead_inv=['cream'] score=10
+2026-03-03 13:59:59,386 INFO Round 64 bots=3 lead_pos=[1, 2] lead_inv=['cream'] score=10
+2026-03-03 13:59:59,425 INFO Round 65 bots=3 lead_pos=[1, 1] lead_inv=['cream'] score=17
+2026-03-03 13:59:59,465 INFO Round 66 bots=3 lead_pos=[2, 1] lead_inv=['cream'] score=17
+2026-03-03 13:59:59,501 INFO Round 67 bots=3 lead_pos=[3, 1] lead_inv=['cream'] score=17
+2026-03-03 13:59:59,535 INFO Round 68 bots=3 lead_pos=[4, 1] lead_inv=['cream'] score=17
+2026-03-03 13:59:59,570 INFO Round 69 bots=3 lead_pos=[4, 2] lead_inv=['cream'] score=17
+2026-03-03 13:59:59,604 INFO Round 70 bots=3 lead_pos=[4, 3] lead_inv=['cream'] score=17
+2026-03-03 13:59:59,640 INFO Round 71 bots=3 lead_pos=[4, 4] lead_inv=['cream'] score=17
+2026-03-03 13:59:59,674 INFO Round 72 bots=3 lead_pos=[4, 5] lead_inv=['cream'] score=17
+2026-03-03 13:59:59,707 INFO Round 73 bots=3 lead_pos=[4, 6] lead_inv=['cream'] score=17
+2026-03-03 13:59:59,747 INFO Round 74 bots=3 lead_pos=[5, 6] lead_inv=['cream'] score=17
+2026-03-03 13:59:59,781 INFO Round 75 bots=3 lead_pos=[5, 6] lead_inv=['cream', 'yogurt'] score=17
+2026-03-03 13:59:59,817 INFO Round 76 bots=3 lead_pos=[5, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=17
+2026-03-03 13:59:59,851 INFO Round 77 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=17
+2026-03-03 13:59:59,886 INFO Round 78 bots=3 lead_pos=[4, 5] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 13:59:59,925 INFO Round 79 bots=3 lead_pos=[4, 4] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 13:59:59,959 INFO Round 80 bots=3 lead_pos=[4, 5] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 13:59:59,995 INFO Round 81 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:00,031 INFO Round 82 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:00,064 INFO Round 83 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:00,102 INFO Round 84 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:00,143 INFO Round 85 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:00,184 INFO Round 86 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:00,217 INFO Round 87 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:00,250 INFO Round 88 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:00,289 INFO Round 89 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:00,325 INFO Round 90 bots=3 lead_pos=[1, 9] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:00,364 INFO Round 91 bots=3 lead_pos=[1, 8] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:00,400 INFO Round 92 bots=3 lead_pos=[1, 7] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:00,443 INFO Round 93 bots=3 lead_pos=[1, 6] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:00,478 INFO Round 94 bots=3 lead_pos=[2, 6] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:00,517 INFO Round 95 bots=3 lead_pos=[3, 6] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:00,553 INFO Round 96 bots=3 lead_pos=[3, 6] lead_inv=['cream', 'yogurt', 'pasta'] score=20
+2026-03-03 14:00:00,589 INFO Round 97 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'yogurt', 'pasta'] score=20
+2026-03-03 14:00:00,628 INFO Round 98 bots=3 lead_pos=[4, 5] lead_inv=['cream', 'yogurt', 'pasta'] score=20
+2026-03-03 14:00:00,663 INFO Round 99 bots=3 lead_pos=[4, 4] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:00,698 INFO Round 100 bots=3 lead_pos=[4, 3] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:00,735 INFO Round 101 bots=3 lead_pos=[4, 2] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:00,771 INFO Round 102 bots=3 lead_pos=[4, 1] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:00,807 INFO Round 103 bots=3 lead_pos=[5, 1] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:00,904 INFO Round 104 bots=3 lead_pos=[4, 1] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:00,943 INFO Round 105 bots=3 lead_pos=[4, 2] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:00,977 INFO Round 106 bots=3 lead_pos=[4, 3] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,012 INFO Round 107 bots=3 lead_pos=[4, 4] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,048 INFO Round 108 bots=3 lead_pos=[4, 5] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,084 INFO Round 109 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,120 INFO Round 110 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,156 INFO Round 111 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,190 INFO Round 112 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,226 INFO Round 113 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,265 INFO Round 114 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,303 INFO Round 115 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,339 INFO Round 116 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt', 'pasta'] score=27
+2026-03-03 14:00:01,388 INFO Round 117 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,424 INFO Round 118 bots=3 lead_pos=[1, 9] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,571 INFO Round 119 bots=3 lead_pos=[1, 8] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,613 INFO Round 120 bots=3 lead_pos=[1, 7] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,654 INFO Round 121 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,692 INFO Round 122 bots=3 lead_pos=[1, 5] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,731 INFO Round 123 bots=3 lead_pos=[1, 4] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,766 INFO Round 124 bots=3 lead_pos=[1, 3] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,801 INFO Round 125 bots=3 lead_pos=[1, 2] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,841 INFO Round 126 bots=3 lead_pos=[1, 1] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,902 INFO Round 127 bots=3 lead_pos=[2, 1] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,966 INFO Round 128 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:01,998 INFO Round 129 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:02,038 INFO Round 130 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'pasta'] score=28
+2026-03-03 14:00:02,110 INFO Round 131 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'pasta', 'bread'] score=28
+2026-03-03 14:00:02,147 INFO Round 132 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,183 INFO Round 133 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,218 INFO Round 134 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,253 INFO Round 135 bots=3 lead_pos=[4, 2] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,288 INFO Round 136 bots=3 lead_pos=[4, 3] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,323 INFO Round 137 bots=3 lead_pos=[4, 4] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,360 INFO Round 138 bots=3 lead_pos=[4, 5] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,397 INFO Round 139 bots=3 lead_pos=[4, 6] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,437 INFO Round 140 bots=3 lead_pos=[4, 7] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,478 INFO Round 141 bots=3 lead_pos=[4, 8] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,517 INFO Round 142 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,567 INFO Round 143 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,607 INFO Round 144 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,647 INFO Round 145 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,684 INFO Round 146 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'pasta', 'bread'] score=30
+2026-03-03 14:00:02,721 INFO Round 147 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:02,755 INFO Round 148 bots=3 lead_pos=[1, 9] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:02,793 INFO Round 149 bots=3 lead_pos=[1, 8] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:02,828 INFO Round 150 bots=3 lead_pos=[1, 7] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:02,868 INFO Round 151 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:02,905 INFO Round 152 bots=3 lead_pos=[2, 6] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:02,941 INFO Round 153 bots=3 lead_pos=[3, 6] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:02,977 INFO Round 154 bots=3 lead_pos=[2, 6] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:03,015 INFO Round 155 bots=3 lead_pos=[3, 6] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:03,049 INFO Round 156 bots=3 lead_pos=[4, 6] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:03,085 INFO Round 157 bots=3 lead_pos=[4, 5] lead_inv=['yogurt', 'pasta'] score=36
+2026-03-03 14:00:03,120 INFO Round 158 bots=3 lead_pos=[4, 5] lead_inv=['yogurt', 'pasta', 'milk'] score=36
+2026-03-03 14:00:03,159 INFO Round 159 bots=3 lead_pos=[4, 6] lead_inv=['yogurt', 'pasta', 'milk'] score=36
+2026-03-03 14:00:03,201 INFO Round 160 bots=3 lead_pos=[4, 7] lead_inv=['yogurt', 'pasta', 'milk'] score=36
+2026-03-03 14:00:03,238 INFO Round 161 bots=3 lead_pos=[4, 8] lead_inv=['yogurt', 'pasta', 'milk'] score=38
+2026-03-03 14:00:03,273 INFO Round 162 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'pasta', 'milk'] score=38
+2026-03-03 14:00:03,308 INFO Round 163 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'pasta', 'milk'] score=38
+2026-03-03 14:00:03,345 INFO Round 164 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'pasta', 'milk'] score=38
+2026-03-03 14:00:03,380 INFO Round 165 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'pasta', 'milk'] score=38
+2026-03-03 14:00:03,415 INFO Round 166 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'pasta', 'milk'] score=38
+2026-03-03 14:00:03,456 INFO Round 167 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'pasta'] score=39
+2026-03-03 14:00:03,491 INFO Round 168 bots=3 lead_pos=[1, 9] lead_inv=['yogurt', 'pasta'] score=39
+2026-03-03 14:00:03,527 INFO Round 169 bots=3 lead_pos=[2, 9] lead_inv=['yogurt', 'pasta'] score=39
+2026-03-03 14:00:03,567 INFO Round 170 bots=3 lead_pos=[3, 9] lead_inv=['yogurt', 'pasta'] score=39
+2026-03-03 14:00:03,605 INFO Round 171 bots=3 lead_pos=[3, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=39
+2026-03-03 14:00:03,643 INFO Round 172 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:03,680 INFO Round 173 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:03,719 INFO Round 174 bots=3 lead_pos=[5, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:03,756 INFO Round 175 bots=3 lead_pos=[5, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:03,792 INFO Round 176 bots=3 lead_pos=[6, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:03,829 INFO Round 177 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:03,866 INFO Round 178 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:03,905 INFO Round 179 bots=3 lead_pos=[8, 8] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:03,940 INFO Round 180 bots=3 lead_pos=[8, 7] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:03,976 INFO Round 181 bots=3 lead_pos=[8, 6] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:04,011 INFO Round 182 bots=3 lead_pos=[8, 5] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:04,047 INFO Round 183 bots=3 lead_pos=[8, 4] lead_inv=['yogurt', 'pasta', 'cream'] score=46
+2026-03-03 14:00:04,086 INFO Round 184 bots=3 lead_pos=[8, 3] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,121 INFO Round 185 bots=3 lead_pos=[8, 2] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,378 INFO Round 186 bots=3 lead_pos=[8, 1] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,413 INFO Round 187 bots=3 lead_pos=[9, 1] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,447 INFO Round 188 bots=3 lead_pos=[10, 1] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,482 INFO Round 189 bots=3 lead_pos=[11, 1] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,518 INFO Round 190 bots=3 lead_pos=[12, 1] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,555 INFO Round 191 bots=3 lead_pos=[13, 1] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,595 INFO Round 192 bots=3 lead_pos=[14, 1] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,630 INFO Round 193 bots=3 lead_pos=[13, 1] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,666 INFO Round 194 bots=3 lead_pos=[12, 1] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,701 INFO Round 195 bots=3 lead_pos=[12, 2] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,747 INFO Round 196 bots=3 lead_pos=[12, 3] lead_inv=['yogurt', 'pasta', 'cream'] score=47
+2026-03-03 14:00:04,793 INFO Round 197 bots=3 lead_pos=[12, 4] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:04,848 INFO Round 198 bots=3 lead_pos=[12, 5] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:04,885 INFO Round 199 bots=3 lead_pos=[12, 6] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:04,923 INFO Round 200 bots=3 lead_pos=[13, 6] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:04,959 INFO Round 201 bots=3 lead_pos=[14, 6] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:04,994 INFO Round 202 bots=3 lead_pos=[13, 6] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:05,031 INFO Round 203 bots=3 lead_pos=[12, 6] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:05,066 INFO Round 204 bots=3 lead_pos=[12, 7] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:05,102 INFO Round 205 bots=3 lead_pos=[12, 8] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:05,139 INFO Round 206 bots=3 lead_pos=[12, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:05,177 INFO Round 207 bots=3 lead_pos=[13, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=49
+2026-03-03 14:00:05,215 INFO Round 208 bots=3 lead_pos=[14, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,251 INFO Round 209 bots=3 lead_pos=[14, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,286 INFO Round 210 bots=3 lead_pos=[13, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,320 INFO Round 211 bots=3 lead_pos=[12, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,358 INFO Round 212 bots=3 lead_pos=[11, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,392 INFO Round 213 bots=3 lead_pos=[11, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,426 INFO Round 214 bots=3 lead_pos=[10, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,461 INFO Round 215 bots=3 lead_pos=[10, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,493 INFO Round 216 bots=3 lead_pos=[9, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,527 INFO Round 217 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,563 INFO Round 218 bots=3 lead_pos=[10, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,596 INFO Round 219 bots=3 lead_pos=[11, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,629 INFO Round 220 bots=3 lead_pos=[12, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=50
+2026-03-03 14:00:05,661 INFO Round 221 bots=3 lead_pos=[12, 8] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:05,694 INFO Round 222 bots=3 lead_pos=[12, 7] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:05,727 INFO Round 223 bots=3 lead_pos=[12, 8] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:05,765 INFO Round 224 bots=3 lead_pos=[12, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:05,798 INFO Round 225 bots=3 lead_pos=[12, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:05,831 INFO Round 226 bots=3 lead_pos=[11, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:05,866 INFO Round 227 bots=3 lead_pos=[10, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:05,903 INFO Round 228 bots=3 lead_pos=[9, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:05,936 INFO Round 229 bots=3 lead_pos=[8, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:05,974 INFO Round 230 bots=3 lead_pos=[7, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:06,010 INFO Round 231 bots=3 lead_pos=[6, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:06,045 INFO Round 232 bots=3 lead_pos=[5, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:06,079 INFO Round 233 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:06,119 INFO Round 234 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:06,154 INFO Round 235 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=56
+2026-03-03 14:00:06,186 INFO Round 236 bots=3 lead_pos=[2, 9] lead_inv=['yogurt', 'pasta', 'cream'] score=57
+2026-03-03 14:00:06,219 INFO Round 237 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=57
+2026-03-03 14:00:06,253 INFO Round 238 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'pasta', 'cream'] score=57
+2026-03-03 14:00:06,285 INFO Round 239 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'pasta'] score=58
+2026-03-03 14:00:06,319 INFO Round 240 bots=3 lead_pos=[1, 9] lead_inv=['yogurt', 'pasta'] score=58
+2026-03-03 14:00:06,355 INFO Round 241 bots=3 lead_pos=[2, 9] lead_inv=['yogurt', 'pasta'] score=58
+2026-03-03 14:00:06,389 INFO Round 242 bots=3 lead_pos=[3, 9] lead_inv=['yogurt', 'pasta'] score=58
+2026-03-03 14:00:06,423 INFO Round 243 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'pasta'] score=58
+2026-03-03 14:00:06,458 INFO Round 244 bots=3 lead_pos=[4, 8] lead_inv=['yogurt', 'pasta'] score=58
+2026-03-03 14:00:06,492 INFO Round 245 bots=3 lead_pos=[4, 8] lead_inv=['yogurt', 'pasta', 'eggs'] score=58
+2026-03-03 14:00:06,525 INFO Round 246 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'pasta', 'eggs'] score=58
+2026-03-03 14:00:06,560 INFO Round 247 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'pasta', 'eggs'] score=58
+2026-03-03 14:00:06,600 INFO Round 248 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'pasta', 'eggs'] score=58
+2026-03-03 14:00:06,636 INFO Round 249 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'pasta', 'eggs'] score=58
+2026-03-03 14:00:06,669 INFO Round 250 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'pasta', 'eggs'] score=58
+2026-03-03 14:00:06,703 INFO Round 251 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'pasta'] score=59
+2026-03-03 14:00:06,737 INFO Round 252 bots=3 lead_pos=[1, 9] lead_inv=['yogurt', 'pasta'] score=59
+2026-03-03 14:00:06,770 INFO Round 253 bots=3 lead_pos=[1, 8] lead_inv=['yogurt', 'pasta'] score=59
+2026-03-03 14:00:06,805 INFO Round 254 bots=3 lead_pos=[1, 7] lead_inv=['yogurt', 'pasta'] score=59
+2026-03-03 14:00:06,841 INFO Round 255 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'pasta'] score=59
+2026-03-03 14:00:06,877 INFO Round 256 bots=3 lead_pos=[2, 6] lead_inv=['yogurt', 'pasta'] score=60
+2026-03-03 14:00:06,911 INFO Round 257 bots=3 lead_pos=[3, 6] lead_inv=['yogurt', 'pasta'] score=60
+2026-03-03 14:00:06,946 INFO Round 258 bots=3 lead_pos=[4, 6] lead_inv=['yogurt', 'pasta'] score=60
+2026-03-03 14:00:06,986 INFO Round 259 bots=3 lead_pos=[4, 5] lead_inv=['yogurt', 'pasta'] score=60
+2026-03-03 14:00:07,021 INFO Round 260 bots=3 lead_pos=[4, 5] lead_inv=['yogurt', 'pasta', 'milk'] score=60
+2026-03-03 14:00:07,057 INFO Round 261 bots=3 lead_pos=[4, 6] lead_inv=['yogurt', 'pasta', 'milk'] score=60
+2026-03-03 14:00:07,093 INFO Round 262 bots=3 lead_pos=[4, 7] lead_inv=['yogurt', 'pasta', 'milk'] score=60
+2026-03-03 14:00:07,127 INFO Round 263 bots=3 lead_pos=[4, 8] lead_inv=['yogurt', 'pasta', 'milk'] score=60
+2026-03-03 14:00:07,161 INFO Round 264 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'pasta', 'milk'] score=60
+2026-03-03 14:00:07,195 INFO Round 265 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'pasta', 'milk'] score=60
+2026-03-03 14:00:07,227 INFO Round 266 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'pasta', 'milk'] score=60
+2026-03-03 14:00:07,260 INFO Round 267 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'pasta', 'milk'] score=60
+2026-03-03 14:00:07,295 INFO Round 268 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'pasta', 'milk'] score=60
+2026-03-03 14:00:07,331 INFO Round 269 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=67
+2026-03-03 14:00:07,365 INFO Round 270 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=67
+2026-03-03 14:00:07,401 INFO Round 271 bots=3 lead_pos=[2, 9] lead_inv=['yogurt'] score=67
+2026-03-03 14:00:07,435 INFO Round 272 bots=3 lead_pos=[3, 9] lead_inv=['yogurt'] score=67
+2026-03-03 14:00:07,468 INFO Round 273 bots=3 lead_pos=[3, 9] lead_inv=['yogurt', 'cream'] score=67
+2026-03-03 14:00:07,502 INFO Round 274 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'cream'] score=68
+2026-03-03 14:00:07,535 INFO Round 275 bots=3 lead_pos=[4, 8] lead_inv=['yogurt', 'cream'] score=68
+2026-03-03 14:00:07,571 INFO Round 276 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'cream'] score=68
+2026-03-03 14:00:07,607 INFO Round 277 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'cream'] score=68
+2026-03-03 14:00:07,644 INFO Round 278 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'cream'] score=68
+2026-03-03 14:00:07,679 INFO Round 279 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'cream'] score=68
+2026-03-03 14:00:07,713 INFO Round 280 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'cream'] score=68
+2026-03-03 14:00:07,748 INFO Round 281 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=69
+2026-03-03 14:00:07,782 INFO Round 282 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=69
+2026-03-03 14:00:07,816 INFO Round 283 bots=3 lead_pos=[1, 8] lead_inv=['yogurt'] score=69
+2026-03-03 14:00:07,852 INFO Round 284 bots=3 lead_pos=[1, 7] lead_inv=['yogurt'] score=69
+2026-03-03 14:00:07,887 INFO Round 285 bots=3 lead_pos=[1, 6] lead_inv=['yogurt'] score=69
+2026-03-03 14:00:07,921 INFO Round 286 bots=3 lead_pos=[2, 6] lead_inv=['yogurt'] score=69
+2026-03-03 14:00:07,956 INFO Round 287 bots=3 lead_pos=[3, 6] lead_inv=['yogurt'] score=69
+2026-03-03 14:00:07,991 INFO Round 288 bots=3 lead_pos=[4, 6] lead_inv=['yogurt'] score=69
+2026-03-03 14:00:08,031 INFO Round 289 bots=3 lead_pos=[4, 5] lead_inv=['yogurt'] score=69
+2026-03-03 14:00:08,067 INFO Round 290 bots=3 lead_pos=[4, 5] lead_inv=['yogurt', 'milk'] score=70
+2026-03-03 14:00:08,102 INFO Round 291 bots=3 lead_pos=[4, 4] lead_inv=['yogurt', 'milk'] score=70
+2026-03-03 14:00:08,137 INFO Round 292 bots=3 lead_pos=[4, 3] lead_inv=['yogurt', 'milk'] score=70
+2026-03-03 14:00:08,172 INFO Round 293 bots=3 lead_pos=[4, 2] lead_inv=['yogurt', 'milk'] score=70
+2026-03-03 14:00:08,208 INFO Round 294 bots=3 lead_pos=[4, 2] lead_inv=['yogurt', 'milk', 'cheese'] score=70
+2026-03-03 14:00:08,245 INFO Round 295 bots=3 lead_pos=[4, 3] lead_inv=['yogurt', 'milk', 'cheese'] score=70
+2026-03-03 14:00:08,280 INFO Round 296 bots=3 lead_pos=[4, 4] lead_inv=['yogurt', 'milk', 'cheese'] score=70
+2026-03-03 14:00:08,316 INFO Round 297 bots=3 lead_pos=[4, 3] lead_inv=['yogurt', 'milk', 'cheese'] score=70
+2026-03-03 14:00:08,352 INFO Round 298 bots=3 lead_pos=[4, 4] lead_inv=['yogurt', 'milk', 'cheese'] score=70
+2026-03-03 14:00:08,387 INFO Round 299 bots=3 lead_pos=[4, 5] lead_inv=['yogurt', 'milk', 'cheese'] score=70
+2026-03-03 14:00:08,435 INFO Server message type=game_over keys=['type', 'score', 'rounds_used', 'items_delivered', 'orders_completed']
+2026-03-03 14:00:08,437 INFO GAME OVER: {'score': 70, 'rounds_used': 300, 'orders_completed': 7, 'items_delivered': 35}
+2026-03-03 14:00:08,474 INFO Reconnect in 2s
+2026-03-03 14:00:10,630 INFO CONNECTED LIVE kwargs=['origin']
+2026-03-03 14:00:10,632 INFO Round 0 bots=3 lead_pos=[14, 10] lead_inv=[] score=0
+2026-03-03 14:00:10,662 INFO Round 1 bots=3 lead_pos=[14, 9] lead_inv=[] score=0
+2026-03-03 14:00:10,700 INFO Round 2 bots=3 lead_pos=[13, 9] lead_inv=[] score=0
+2026-03-03 14:00:10,732 INFO Round 3 bots=3 lead_pos=[12, 9] lead_inv=[] score=0
+2026-03-03 14:00:10,773 INFO Round 4 bots=3 lead_pos=[11, 9] lead_inv=[] score=0
+2026-03-03 14:00:10,810 INFO Round 5 bots=3 lead_pos=[10, 9] lead_inv=[] score=0
+2026-03-03 14:00:10,849 INFO Round 6 bots=3 lead_pos=[9, 9] lead_inv=[] score=0
+2026-03-03 14:00:10,882 INFO Round 7 bots=3 lead_pos=[8, 9] lead_inv=[] score=0
+2026-03-03 14:00:10,914 INFO Round 8 bots=3 lead_pos=[7, 9] lead_inv=[] score=0
+2026-03-03 14:00:10,947 INFO Round 9 bots=3 lead_pos=[6, 9] lead_inv=[] score=0
+2026-03-03 14:00:10,982 INFO Round 10 bots=3 lead_pos=[5, 9] lead_inv=[] score=0
+2026-03-03 14:00:11,016 INFO Round 11 bots=3 lead_pos=[5, 9] lead_inv=['eggs'] score=0
+2026-03-03 14:00:11,048 INFO Round 12 bots=3 lead_pos=[5, 10] lead_inv=['eggs'] score=0
+2026-03-03 14:00:11,112 INFO Round 13 bots=3 lead_pos=[4, 10] lead_inv=['eggs'] score=0
+2026-03-03 14:00:11,145 INFO Round 14 bots=3 lead_pos=[3, 10] lead_inv=['eggs'] score=0
+2026-03-03 14:00:11,182 INFO Round 15 bots=3 lead_pos=[2, 10] lead_inv=['eggs'] score=0
+2026-03-03 14:00:11,215 INFO Round 16 bots=3 lead_pos=[1, 10] lead_inv=['eggs'] score=0
+2026-03-03 14:00:11,251 INFO Round 17 bots=3 lead_pos=[1, 10] lead_inv=[] score=1
+2026-03-03 14:00:11,284 INFO Round 18 bots=3 lead_pos=[1, 9] lead_inv=[] score=1
+2026-03-03 14:00:11,319 INFO Round 19 bots=3 lead_pos=[2, 9] lead_inv=[] score=1
+2026-03-03 14:00:11,352 INFO Round 20 bots=3 lead_pos=[3, 9] lead_inv=[] score=1
+2026-03-03 14:00:11,386 INFO Round 21 bots=3 lead_pos=[3, 9] lead_inv=['cream'] score=1
+2026-03-03 14:00:11,419 INFO Round 22 bots=3 lead_pos=[4, 9] lead_inv=['cream'] score=1
+2026-03-03 14:00:11,453 INFO Round 23 bots=3 lead_pos=[4, 8] lead_inv=['cream'] score=1
+2026-03-03 14:00:11,489 INFO Round 24 bots=3 lead_pos=[4, 7] lead_inv=['cream'] score=2
+2026-03-03 14:00:11,522 INFO Round 25 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:11,560 INFO Round 26 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:11,594 INFO Round 27 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:11,627 INFO Round 28 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:11,660 INFO Round 29 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:11,694 INFO Round 30 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:11,729 INFO Round 31 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:11,765 INFO Round 32 bots=3 lead_pos=[1, 10] lead_inv=['cream'] score=8
+2026-03-03 14:00:11,800 INFO Round 33 bots=3 lead_pos=[2, 10] lead_inv=['cream'] score=8
+2026-03-03 14:00:11,836 INFO Round 34 bots=3 lead_pos=[2, 9] lead_inv=['cream'] score=9
+2026-03-03 14:00:11,869 INFO Round 35 bots=3 lead_pos=[3, 9] lead_inv=['cream'] score=9
+2026-03-03 14:00:11,904 INFO Round 36 bots=3 lead_pos=[4, 9] lead_inv=['cream'] score=9
+2026-03-03 14:00:11,938 INFO Round 37 bots=3 lead_pos=[4, 8] lead_inv=['cream'] score=9
+2026-03-03 14:00:11,972 INFO Round 38 bots=3 lead_pos=[4, 7] lead_inv=['cream'] score=9
+2026-03-03 14:00:12,006 INFO Round 39 bots=3 lead_pos=[4, 6] lead_inv=['cream'] score=9
+2026-03-03 14:00:12,040 INFO Round 40 bots=3 lead_pos=[4, 5] lead_inv=['cream'] score=9
+2026-03-03 14:00:12,075 INFO Round 41 bots=3 lead_pos=[4, 4] lead_inv=['cream'] score=9
+2026-03-03 14:00:12,109 INFO Round 42 bots=3 lead_pos=[4, 3] lead_inv=['cream'] score=9
+2026-03-03 14:00:12,151 INFO Round 43 bots=3 lead_pos=[4, 2] lead_inv=['cream'] score=9
+2026-03-03 14:00:12,185 INFO Round 44 bots=3 lead_pos=[4, 2] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,219 INFO Round 45 bots=3 lead_pos=[4, 3] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,251 INFO Round 46 bots=3 lead_pos=[4, 4] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,290 INFO Round 47 bots=3 lead_pos=[4, 5] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,324 INFO Round 48 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,358 INFO Round 49 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,397 INFO Round 50 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,432 INFO Round 51 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,466 INFO Round 52 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,501 INFO Round 53 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,533 INFO Round 54 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,569 INFO Round 55 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:12,606 INFO Round 56 bots=3 lead_pos=[1, 10] lead_inv=['cream'] score=10
+2026-03-03 14:00:12,641 INFO Round 57 bots=3 lead_pos=[1, 9] lead_inv=['cream'] score=10
+2026-03-03 14:00:12,674 INFO Round 58 bots=3 lead_pos=[1, 8] lead_inv=['cream'] score=10
+2026-03-03 14:00:12,709 INFO Round 59 bots=3 lead_pos=[1, 7] lead_inv=['cream'] score=10
+2026-03-03 14:00:12,743 INFO Round 60 bots=3 lead_pos=[1, 6] lead_inv=['cream'] score=10
+2026-03-03 14:00:12,776 INFO Round 61 bots=3 lead_pos=[1, 5] lead_inv=['cream'] score=10
+2026-03-03 14:00:12,809 INFO Round 62 bots=3 lead_pos=[1, 4] lead_inv=['cream'] score=10
+2026-03-03 14:00:12,842 INFO Round 63 bots=3 lead_pos=[1, 3] lead_inv=['cream'] score=10
+2026-03-03 14:00:12,875 INFO Round 64 bots=3 lead_pos=[1, 2] lead_inv=['cream'] score=10
+2026-03-03 14:00:12,908 INFO Round 65 bots=3 lead_pos=[1, 1] lead_inv=['cream'] score=17
+2026-03-03 14:00:12,942 INFO Round 66 bots=3 lead_pos=[2, 1] lead_inv=['cream'] score=17
+2026-03-03 14:00:12,975 INFO Round 67 bots=3 lead_pos=[3, 1] lead_inv=['cream'] score=17
+2026-03-03 14:00:13,008 INFO Round 68 bots=3 lead_pos=[4, 1] lead_inv=['cream'] score=17
+2026-03-03 14:00:13,040 INFO Round 69 bots=3 lead_pos=[4, 2] lead_inv=['cream'] score=17
+2026-03-03 14:00:13,073 INFO Round 70 bots=3 lead_pos=[4, 3] lead_inv=['cream'] score=17
+2026-03-03 14:00:13,108 INFO Round 71 bots=3 lead_pos=[4, 4] lead_inv=['cream'] score=17
+2026-03-03 14:00:13,142 INFO Round 72 bots=3 lead_pos=[4, 5] lead_inv=['cream'] score=17
+2026-03-03 14:00:13,174 INFO Round 73 bots=3 lead_pos=[4, 6] lead_inv=['cream'] score=17
+2026-03-03 14:00:13,208 INFO Round 74 bots=3 lead_pos=[5, 6] lead_inv=['cream'] score=17
+2026-03-03 14:00:13,246 INFO Round 75 bots=3 lead_pos=[5, 6] lead_inv=['cream', 'yogurt'] score=17
+2026-03-03 14:00:13,279 INFO Round 76 bots=3 lead_pos=[5, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=17
+2026-03-03 14:00:13,315 INFO Round 77 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=17
+2026-03-03 14:00:13,351 INFO Round 78 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:13,390 INFO Round 79 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:13,427 INFO Round 80 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:13,464 INFO Round 81 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:13,499 INFO Round 82 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:13,537 INFO Round 83 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:13,572 INFO Round 84 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=19
+2026-03-03 14:00:13,606 INFO Round 85 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:13,639 INFO Round 86 bots=3 lead_pos=[1, 9] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:13,674 INFO Round 87 bots=3 lead_pos=[2, 9] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:13,709 INFO Round 88 bots=3 lead_pos=[3, 9] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:13,745 INFO Round 89 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:13,783 INFO Round 90 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:13,816 INFO Round 91 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'yogurt'] score=20
+2026-03-03 14:00:13,850 INFO Round 92 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'yogurt'] score=26
+2026-03-03 14:00:13,884 INFO Round 93 bots=3 lead_pos=[5, 6] lead_inv=['cream', 'yogurt'] score=26
+2026-03-03 14:00:13,917 INFO Round 94 bots=3 lead_pos=[6, 6] lead_inv=['cream', 'yogurt'] score=26
+2026-03-03 14:00:13,950 INFO Round 95 bots=3 lead_pos=[7, 6] lead_inv=['cream', 'yogurt'] score=26
+2026-03-03 14:00:13,987 INFO Round 96 bots=3 lead_pos=[8, 6] lead_inv=['cream', 'yogurt'] score=26
+2026-03-03 14:00:14,019 INFO Round 97 bots=3 lead_pos=[8, 5] lead_inv=['cream', 'yogurt'] score=26
+2026-03-03 14:00:14,052 INFO Round 98 bots=3 lead_pos=[8, 4] lead_inv=['cream', 'yogurt'] score=26
+2026-03-03 14:00:14,085 INFO Round 99 bots=3 lead_pos=[8, 3] lead_inv=['cream', 'yogurt'] score=26
+2026-03-03 14:00:14,133 INFO Round 100 bots=3 lead_pos=[8, 2] lead_inv=['cream', 'yogurt'] score=26
+2026-03-03 14:00:14,166 INFO Round 101 bots=3 lead_pos=[8, 2] lead_inv=['cream', 'yogurt', 'bread'] score=26
+2026-03-03 14:00:14,200 INFO Round 102 bots=3 lead_pos=[8, 3] lead_inv=['cream', 'yogurt', 'bread'] score=26
+2026-03-03 14:00:14,233 INFO Round 103 bots=3 lead_pos=[8, 4] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,268 INFO Round 104 bots=3 lead_pos=[8, 5] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,301 INFO Round 105 bots=3 lead_pos=[8, 6] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,335 INFO Round 106 bots=3 lead_pos=[8, 7] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,368 INFO Round 107 bots=3 lead_pos=[8, 8] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,402 INFO Round 108 bots=3 lead_pos=[8, 9] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,435 INFO Round 109 bots=3 lead_pos=[8, 10] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,470 INFO Round 110 bots=3 lead_pos=[7, 10] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,501 INFO Round 111 bots=3 lead_pos=[6, 10] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,535 INFO Round 112 bots=3 lead_pos=[5, 10] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,567 INFO Round 113 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,601 INFO Round 114 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,634 INFO Round 115 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,668 INFO Round 116 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt', 'bread'] score=28
+2026-03-03 14:00:14,704 INFO Round 117 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt'] score=29
+2026-03-03 14:00:14,737 INFO Round 118 bots=3 lead_pos=[1, 9] lead_inv=['cream', 'yogurt'] score=29
+2026-03-03 14:00:14,771 INFO Round 119 bots=3 lead_pos=[1, 8] lead_inv=['cream', 'yogurt'] score=29
+2026-03-03 14:00:14,805 INFO Round 120 bots=3 lead_pos=[1, 7] lead_inv=['cream', 'yogurt'] score=30
+2026-03-03 14:00:14,839 INFO Round 121 bots=3 lead_pos=[1, 6] lead_inv=['cream', 'yogurt'] score=30
+2026-03-03 14:00:14,873 INFO Round 122 bots=3 lead_pos=[2, 6] lead_inv=['cream', 'yogurt'] score=30
+2026-03-03 14:00:14,907 INFO Round 123 bots=3 lead_pos=[3, 6] lead_inv=['cream', 'yogurt'] score=30
+2026-03-03 14:00:14,943 INFO Round 124 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'yogurt'] score=30
+2026-03-03 14:00:14,976 INFO Round 125 bots=3 lead_pos=[4, 5] lead_inv=['cream', 'yogurt'] score=30
+2026-03-03 14:00:15,009 INFO Round 126 bots=3 lead_pos=[4, 4] lead_inv=['cream', 'yogurt'] score=30
+2026-03-03 14:00:15,042 INFO Round 127 bots=3 lead_pos=[4, 3] lead_inv=['cream', 'yogurt'] score=30
+2026-03-03 14:00:15,076 INFO Round 128 bots=3 lead_pos=[4, 2] lead_inv=['cream', 'yogurt'] score=30
+2026-03-03 14:00:15,109 INFO Round 129 bots=3 lead_pos=[4, 2] lead_inv=['cream', 'yogurt', 'bread'] score=30
+2026-03-03 14:00:15,144 INFO Round 130 bots=3 lead_pos=[4, 3] lead_inv=['cream', 'yogurt', 'bread'] score=30
+2026-03-03 14:00:15,178 INFO Round 131 bots=3 lead_pos=[4, 4] lead_inv=['cream', 'yogurt', 'bread'] score=30
+2026-03-03 14:00:15,214 INFO Round 132 bots=3 lead_pos=[4, 5] lead_inv=['cream', 'yogurt', 'bread'] score=30
+2026-03-03 14:00:15,251 INFO Round 133 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'yogurt', 'bread'] score=30
+2026-03-03 14:00:15,285 INFO Round 134 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'yogurt', 'bread'] score=30
+2026-03-03 14:00:15,321 INFO Round 135 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'yogurt', 'bread'] score=30
+2026-03-03 14:00:15,357 INFO Round 136 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'yogurt', 'bread'] score=36
+2026-03-03 14:00:15,396 INFO Round 137 bots=3 lead_pos=[5, 9] lead_inv=['cream', 'yogurt', 'bread'] score=36
+2026-03-03 14:00:15,431 INFO Round 138 bots=3 lead_pos=[5, 10] lead_inv=['cream', 'yogurt', 'bread'] score=36
+2026-03-03 14:00:15,466 INFO Round 139 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'yogurt', 'bread'] score=36
+2026-03-03 14:00:15,500 INFO Round 140 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'yogurt', 'bread'] score=36
+2026-03-03 14:00:15,533 INFO Round 141 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'yogurt', 'bread'] score=36
+2026-03-03 14:00:15,567 INFO Round 142 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt', 'bread'] score=36
+2026-03-03 14:00:15,609 INFO Round 143 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=38
+2026-03-03 14:00:15,653 INFO Round 144 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=38
+2026-03-03 14:00:15,686 INFO Round 145 bots=3 lead_pos=[2, 9] lead_inv=['yogurt'] score=38
+2026-03-03 14:00:15,731 INFO Round 146 bots=3 lead_pos=[3, 9] lead_inv=['yogurt'] score=38
+2026-03-03 14:00:15,763 INFO Round 147 bots=3 lead_pos=[3, 9] lead_inv=['yogurt', 'cream'] score=38
+2026-03-03 14:00:15,810 INFO Round 148 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'cream'] score=38
+2026-03-03 14:00:15,849 INFO Round 149 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'cream'] score=38
+2026-03-03 14:00:15,891 INFO Round 150 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'cream'] score=38
+2026-03-03 14:00:15,923 INFO Round 151 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=39
+2026-03-03 14:00:15,961 INFO Round 152 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=39
+2026-03-03 14:00:15,994 INFO Round 153 bots=3 lead_pos=[1, 8] lead_inv=['yogurt'] score=39
+2026-03-03 14:00:16,029 INFO Round 154 bots=3 lead_pos=[1, 7] lead_inv=['yogurt'] score=39
+2026-03-03 14:00:16,066 INFO Round 155 bots=3 lead_pos=[1, 6] lead_inv=['yogurt'] score=39
+2026-03-03 14:00:16,099 INFO Round 156 bots=3 lead_pos=[2, 6] lead_inv=['yogurt'] score=40
+2026-03-03 14:00:16,132 INFO Round 157 bots=3 lead_pos=[3, 6] lead_inv=['yogurt'] score=40
+2026-03-03 14:00:16,166 INFO Round 158 bots=3 lead_pos=[4, 6] lead_inv=['yogurt'] score=40
+2026-03-03 14:00:16,198 INFO Round 159 bots=3 lead_pos=[4, 5] lead_inv=['yogurt'] score=40
+2026-03-03 14:00:16,231 INFO Round 160 bots=3 lead_pos=[4, 4] lead_inv=['yogurt'] score=40
+2026-03-03 14:00:16,263 INFO Round 161 bots=3 lead_pos=[4, 3] lead_inv=['yogurt'] score=40
+2026-03-03 14:00:16,300 INFO Round 162 bots=3 lead_pos=[4, 2] lead_inv=['yogurt'] score=47
+2026-03-03 14:00:16,331 INFO Round 163 bots=3 lead_pos=[4, 2] lead_inv=['yogurt', 'bread'] score=47
+2026-03-03 14:00:16,391 INFO Round 164 bots=3 lead_pos=[4, 2] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,425 INFO Round 165 bots=3 lead_pos=[4, 3] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,456 INFO Round 166 bots=3 lead_pos=[4, 4] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,488 INFO Round 167 bots=3 lead_pos=[4, 3] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,525 INFO Round 168 bots=3 lead_pos=[4, 2] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,558 INFO Round 169 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,592 INFO Round 170 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,628 INFO Round 171 bots=3 lead_pos=[2, 1] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,664 INFO Round 172 bots=3 lead_pos=[1, 1] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,698 INFO Round 173 bots=3 lead_pos=[1, 2] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,758 INFO Round 174 bots=3 lead_pos=[1, 3] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,798 INFO Round 175 bots=3 lead_pos=[1, 4] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,833 INFO Round 176 bots=3 lead_pos=[1, 5] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,867 INFO Round 177 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'bread', 'bread'] score=47
+2026-03-03 14:00:16,907 INFO Round 178 bots=3 lead_pos=[1, 5] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:16,953 INFO Round 179 bots=3 lead_pos=[1, 4] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:16,986 INFO Round 180 bots=3 lead_pos=[1, 5] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:17,019 INFO Round 181 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:17,052 INFO Round 182 bots=3 lead_pos=[1, 5] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:17,086 INFO Round 183 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:17,125 INFO Round 184 bots=3 lead_pos=[2, 6] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:17,159 INFO Round 185 bots=3 lead_pos=[3, 6] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:17,191 INFO Round 186 bots=3 lead_pos=[4, 6] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:17,261 INFO Round 187 bots=3 lead_pos=[3, 6] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:26,752 INFO Round 188 bots=3 lead_pos=[3, 6] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:26,758 INFO Round 189 bots=3 lead_pos=[2, 6] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:26,789 INFO Round 190 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'bread', 'bread'] score=48
+2026-03-03 14:00:26,813 INFO Round 191 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:26,840 INFO Round 192 bots=3 lead_pos=[1, 5] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:26,861 INFO Round 193 bots=3 lead_pos=[1, 4] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:26,884 INFO Round 194 bots=3 lead_pos=[1, 3] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:26,909 INFO Round 195 bots=3 lead_pos=[1, 4] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:26,930 INFO Round 196 bots=3 lead_pos=[1, 5] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:26,954 INFO Round 197 bots=3 lead_pos=[1, 5] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:26,977 INFO Round 198 bots=3 lead_pos=[1, 4] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:27,000 INFO Round 199 bots=3 lead_pos=[1, 3] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:27,027 INFO Round 200 bots=3 lead_pos=[1, 4] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:27,048 INFO Round 201 bots=3 lead_pos=[1, 5] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:27,073 INFO Round 202 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:27,091 INFO Round 203 bots=3 lead_pos=[1, 7] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:27,112 INFO Round 204 bots=3 lead_pos=[1, 8] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:27,144 INFO Round 205 bots=3 lead_pos=[1, 9] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:27,160 INFO Round 206 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:27,183 INFO Round 207 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'bread', 'bread'] score=49
+2026-03-03 14:00:27,204 INFO Round 208 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,226 INFO Round 209 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,252 INFO Round 210 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,275 INFO Round 211 bots=3 lead_pos=[1, 8] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,294 INFO Round 212 bots=3 lead_pos=[1, 8] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,317 INFO Round 213 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,339 INFO Round 214 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,364 INFO Round 215 bots=3 lead_pos=[2, 10] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,393 INFO Round 216 bots=3 lead_pos=[2, 9] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,418 INFO Round 217 bots=3 lead_pos=[2, 9] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,439 INFO Round 218 bots=3 lead_pos=[3, 9] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,462 INFO Round 219 bots=3 lead_pos=[3, 9] lead_inv=['yogurt'] score=56
+2026-03-03 14:00:27,485 INFO Round 220 bots=3 lead_pos=[3, 9] lead_inv=['yogurt', 'cream'] score=56
+2026-03-03 14:00:27,506 INFO Round 221 bots=3 lead_pos=[3, 9] lead_inv=['yogurt', 'cream', 'cream'] score=56
+2026-03-03 14:00:27,535 INFO Round 222 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'cream', 'cream'] score=56
+2026-03-03 14:00:27,558 INFO Round 223 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'cream', 'cream'] score=56
+2026-03-03 14:00:27,578 INFO Round 224 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'cream', 'cream'] score=56
+2026-03-03 14:00:27,610 INFO Round 225 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'cream', 'cream'] score=56
+2026-03-03 14:00:27,629 INFO Round 226 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'cream', 'cream'] score=58
+2026-03-03 14:00:27,658 INFO Round 227 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'cream', 'cream'] score=58
+2026-03-03 14:00:27,680 INFO Round 228 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'cream', 'cream'] score=58
+2026-03-03 14:00:27,702 INFO Round 229 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'cream', 'cream'] score=58
+2026-03-03 14:00:27,730 INFO Round 230 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'cream', 'cream'] score=58
+2026-03-03 14:00:27,753 INFO Round 231 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'cream', 'cream'] score=58
+2026-03-03 14:00:27,780 INFO Round 232 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'cream', 'cream'] score=58
+2026-03-03 14:00:27,796 INFO Round 233 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'cream', 'cream'] score=58
+2026-03-03 14:00:27,821 INFO Round 234 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:27,844 INFO Round 235 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:27,865 INFO Round 236 bots=3 lead_pos=[1, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:27,894 INFO Round 237 bots=3 lead_pos=[1, 8] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:27,916 INFO Round 238 bots=3 lead_pos=[1, 8] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:27,937 INFO Round 239 bots=3 lead_pos=[1, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:27,966 INFO Round 240 bots=3 lead_pos=[1, 8] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:27,987 INFO Round 241 bots=3 lead_pos=[1, 8] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,010 INFO Round 242 bots=3 lead_pos=[1, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,042 INFO Round 243 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,068 INFO Round 244 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,093 INFO Round 245 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,114 INFO Round 246 bots=3 lead_pos=[3, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,138 INFO Round 247 bots=3 lead_pos=[3, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,162 INFO Round 248 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,184 INFO Round 249 bots=3 lead_pos=[5, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,208 INFO Round 250 bots=3 lead_pos=[6, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,230 INFO Round 251 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,254 INFO Round 252 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,285 INFO Round 253 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,305 INFO Round 254 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,332 INFO Round 255 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,356 INFO Round 256 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,378 INFO Round 257 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=59
+2026-03-03 14:00:28,404 INFO Round 258 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,423 INFO Round 259 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,451 INFO Round 260 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,477 INFO Round 261 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,498 INFO Round 262 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,519 INFO Round 263 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,546 INFO Round 264 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,567 INFO Round 265 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,588 INFO Round 266 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,619 INFO Round 267 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,639 INFO Round 268 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,659 INFO Round 269 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,698 INFO Round 270 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,710 INFO Round 271 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,737 INFO Round 272 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,763 INFO Round 273 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,787 INFO Round 274 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,809 INFO Round 275 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,839 INFO Round 276 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,863 INFO Round 277 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,887 INFO Round 278 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,909 INFO Round 279 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,931 INFO Round 280 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,952 INFO Round 281 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:28,980 INFO Round 282 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,003 INFO Round 283 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,023 INFO Round 284 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,050 INFO Round 285 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,075 INFO Round 286 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,094 INFO Round 287 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,125 INFO Round 288 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,146 INFO Round 289 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,168 INFO Round 290 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,194 INFO Round 291 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,217 INFO Round 292 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,237 INFO Round 293 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,264 INFO Round 294 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,282 INFO Round 295 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,310 INFO Round 296 bots=3 lead_pos=[9, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,335 INFO Round 297 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,358 INFO Round 298 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,383 INFO Round 299 bots=3 lead_pos=[7, 9] lead_inv=['yogurt', 'cream'] score=60
+2026-03-03 14:00:29,423 INFO Server message type=game_over keys=['type', 'score', 'rounds_used', 'items_delivered', 'orders_completed']
+2026-03-03 14:00:29,427 INFO GAME OVER: {'score': 60, 'rounds_used': 300, 'orders_completed': 6, 'items_delivered': 30}
+2026-03-03 14:00:29,462 INFO Reconnect in 2s
+2026-03-03 14:00:31,619 INFO CONNECTED LIVE kwargs=['origin']
+2026-03-03 14:00:31,620 INFO Round 0 bots=3 lead_pos=[14, 10] lead_inv=[] score=0
+2026-03-03 14:00:31,653 INFO Round 1 bots=3 lead_pos=[14, 9] lead_inv=[] score=0
+2026-03-03 14:00:31,687 INFO Round 2 bots=3 lead_pos=[13, 9] lead_inv=[] score=0
+2026-03-03 14:00:31,721 INFO Round 3 bots=3 lead_pos=[12, 9] lead_inv=[] score=0
+2026-03-03 14:00:31,753 INFO Round 4 bots=3 lead_pos=[11, 9] lead_inv=[] score=0
+2026-03-03 14:00:31,786 INFO Round 5 bots=3 lead_pos=[10, 9] lead_inv=[] score=0
+2026-03-03 14:00:31,822 INFO Round 6 bots=3 lead_pos=[9, 9] lead_inv=[] score=0
+2026-03-03 14:00:31,856 INFO Round 7 bots=3 lead_pos=[8, 9] lead_inv=[] score=0
+2026-03-03 14:00:31,895 INFO Round 8 bots=3 lead_pos=[7, 9] lead_inv=[] score=0
+2026-03-03 14:00:31,932 INFO Round 9 bots=3 lead_pos=[6, 9] lead_inv=[] score=0
+2026-03-03 14:00:31,966 INFO Round 10 bots=3 lead_pos=[5, 9] lead_inv=[] score=0
+2026-03-03 14:00:31,997 INFO Round 11 bots=3 lead_pos=[5, 9] lead_inv=['eggs'] score=0
+2026-03-03 14:00:32,034 INFO Round 12 bots=3 lead_pos=[5, 10] lead_inv=['eggs'] score=0
+2026-03-03 14:00:32,068 INFO Round 13 bots=3 lead_pos=[4, 10] lead_inv=['eggs'] score=0
+2026-03-03 14:00:32,101 INFO Round 14 bots=3 lead_pos=[3, 10] lead_inv=['eggs'] score=0
+2026-03-03 14:00:32,136 INFO Round 15 bots=3 lead_pos=[2, 10] lead_inv=['eggs'] score=0
+2026-03-03 14:00:32,170 INFO Round 16 bots=3 lead_pos=[1, 10] lead_inv=['eggs'] score=0
+2026-03-03 14:00:32,204 INFO Round 17 bots=3 lead_pos=[1, 10] lead_inv=[] score=1
+2026-03-03 14:00:32,239 INFO Round 18 bots=3 lead_pos=[1, 9] lead_inv=[] score=1
+2026-03-03 14:00:32,272 INFO Round 19 bots=3 lead_pos=[2, 9] lead_inv=[] score=1
+2026-03-03 14:00:32,307 INFO Round 20 bots=3 lead_pos=[3, 9] lead_inv=[] score=1
+2026-03-03 14:00:32,344 INFO Round 21 bots=3 lead_pos=[3, 9] lead_inv=['cream'] score=1
+2026-03-03 14:00:32,378 INFO Round 22 bots=3 lead_pos=[4, 9] lead_inv=['cream'] score=1
+2026-03-03 14:00:32,414 INFO Round 23 bots=3 lead_pos=[4, 8] lead_inv=['cream'] score=1
+2026-03-03 14:00:32,455 INFO Round 24 bots=3 lead_pos=[4, 7] lead_inv=['cream'] score=2
+2026-03-03 14:00:32,490 INFO Round 25 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:32,524 INFO Round 26 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:32,557 INFO Round 27 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:32,592 INFO Round 28 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:32,626 INFO Round 29 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:32,660 INFO Round 30 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:32,694 INFO Round 31 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt'] score=2
+2026-03-03 14:00:32,731 INFO Round 32 bots=3 lead_pos=[1, 10] lead_inv=['cream'] score=8
+2026-03-03 14:00:32,764 INFO Round 33 bots=3 lead_pos=[1, 9] lead_inv=['cream'] score=8
+2026-03-03 14:00:32,803 INFO Round 34 bots=3 lead_pos=[2, 9] lead_inv=['cream'] score=8
+2026-03-03 14:00:32,846 INFO Round 35 bots=3 lead_pos=[3, 9] lead_inv=['cream'] score=8
+2026-03-03 14:00:32,881 INFO Round 36 bots=3 lead_pos=[4, 9] lead_inv=['cream'] score=8
+2026-03-03 14:00:32,920 INFO Round 37 bots=3 lead_pos=[4, 8] lead_inv=['cream'] score=8
+2026-03-03 14:00:32,952 INFO Round 38 bots=3 lead_pos=[4, 7] lead_inv=['cream'] score=9
+2026-03-03 14:00:32,986 INFO Round 39 bots=3 lead_pos=[4, 6] lead_inv=['cream'] score=9
+2026-03-03 14:00:33,022 INFO Round 40 bots=3 lead_pos=[4, 5] lead_inv=['cream'] score=9
+2026-03-03 14:00:33,057 INFO Round 41 bots=3 lead_pos=[4, 4] lead_inv=['cream'] score=9
+2026-03-03 14:00:33,091 INFO Round 42 bots=3 lead_pos=[4, 3] lead_inv=['cream'] score=9
+2026-03-03 14:00:33,129 INFO Round 43 bots=3 lead_pos=[4, 2] lead_inv=['cream'] score=9
+2026-03-03 14:00:33,163 INFO Round 44 bots=3 lead_pos=[4, 2] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,198 INFO Round 45 bots=3 lead_pos=[4, 3] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,233 INFO Round 46 bots=3 lead_pos=[4, 4] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,270 INFO Round 47 bots=3 lead_pos=[4, 5] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,308 INFO Round 48 bots=3 lead_pos=[4, 6] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,344 INFO Round 49 bots=3 lead_pos=[4, 7] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,379 INFO Round 50 bots=3 lead_pos=[4, 8] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,413 INFO Round 51 bots=3 lead_pos=[4, 9] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,455 INFO Round 52 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,493 INFO Round 53 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,529 INFO Round 54 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,569 INFO Round 55 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'cheese'] score=9
+2026-03-03 14:00:33,610 INFO Round 56 bots=3 lead_pos=[1, 10] lead_inv=['cream'] score=10
+2026-03-03 14:00:33,657 INFO Round 57 bots=3 lead_pos=[1, 9] lead_inv=['cream'] score=10
+2026-03-03 14:00:33,700 INFO Round 58 bots=3 lead_pos=[1, 8] lead_inv=['cream'] score=10
+2026-03-03 14:00:33,742 INFO Round 59 bots=3 lead_pos=[1, 7] lead_inv=['cream'] score=10
+2026-03-03 14:00:33,776 INFO Round 60 bots=3 lead_pos=[1, 6] lead_inv=['cream'] score=10
+2026-03-03 14:00:33,811 INFO Round 61 bots=3 lead_pos=[1, 5] lead_inv=['cream'] score=10
+2026-03-03 14:00:33,845 INFO Round 62 bots=3 lead_pos=[1, 4] lead_inv=['cream'] score=10
+2026-03-03 14:00:33,881 INFO Round 63 bots=3 lead_pos=[1, 3] lead_inv=['cream'] score=10
+2026-03-03 14:00:33,918 INFO Round 64 bots=3 lead_pos=[1, 2] lead_inv=['cream'] score=10
+2026-03-03 14:00:33,954 INFO Round 65 bots=3 lead_pos=[1, 1] lead_inv=['cream'] score=17
+2026-03-03 14:00:33,989 INFO Round 66 bots=3 lead_pos=[2, 1] lead_inv=['cream'] score=17
+2026-03-03 14:00:34,023 INFO Round 67 bots=3 lead_pos=[3, 1] lead_inv=['cream'] score=17
+2026-03-03 14:00:34,061 INFO Round 68 bots=3 lead_pos=[4, 1] lead_inv=['cream'] score=17
+2026-03-03 14:00:34,095 INFO Round 69 bots=3 lead_pos=[4, 2] lead_inv=['cream'] score=17
+2026-03-03 14:00:34,132 INFO Round 70 bots=3 lead_pos=[4, 3] lead_inv=['cream'] score=17
+2026-03-03 14:00:34,167 INFO Round 71 bots=3 lead_pos=[4, 4] lead_inv=['cream'] score=17
+2026-03-03 14:00:34,204 INFO Round 72 bots=3 lead_pos=[4, 5] lead_inv=['cream'] score=17
+2026-03-03 14:00:34,238 INFO Round 73 bots=3 lead_pos=[4, 6] lead_inv=['cream'] score=17
+2026-03-03 14:00:34,279 INFO Round 74 bots=3 lead_pos=[5, 6] lead_inv=['cream'] score=17
+2026-03-03 14:00:34,313 INFO Round 75 bots=3 lead_pos=[5, 6] lead_inv=['cream', 'yogurt'] score=17
+2026-03-03 14:00:34,349 INFO Round 76 bots=3 lead_pos=[5, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=17
+2026-03-03 14:00:34,383 INFO Round 77 bots=3 lead_pos=[6, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=17
+2026-03-03 14:00:34,420 INFO Round 78 bots=3 lead_pos=[7, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=17
+2026-03-03 14:00:34,455 INFO Round 79 bots=3 lead_pos=[8, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=18
+2026-03-03 14:00:34,493 INFO Round 80 bots=3 lead_pos=[9, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=18
+2026-03-03 14:00:34,529 INFO Round 81 bots=3 lead_pos=[10, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=18
+2026-03-03 14:00:34,565 INFO Round 82 bots=3 lead_pos=[11, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,599 INFO Round 83 bots=3 lead_pos=[10, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,637 INFO Round 84 bots=3 lead_pos=[9, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,670 INFO Round 85 bots=3 lead_pos=[8, 6] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,709 INFO Round 86 bots=3 lead_pos=[8, 7] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,741 INFO Round 87 bots=3 lead_pos=[8, 8] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,782 INFO Round 88 bots=3 lead_pos=[8, 9] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,815 INFO Round 89 bots=3 lead_pos=[8, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,853 INFO Round 90 bots=3 lead_pos=[7, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,886 INFO Round 91 bots=3 lead_pos=[6, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,924 INFO Round 92 bots=3 lead_pos=[5, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,960 INFO Round 93 bots=3 lead_pos=[4, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:34,997 INFO Round 94 bots=3 lead_pos=[3, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:35,032 INFO Round 95 bots=3 lead_pos=[2, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:35,069 INFO Round 96 bots=3 lead_pos=[1, 10] lead_inv=['cream', 'yogurt', 'yogurt'] score=20
+2026-03-03 14:00:35,107 INFO Round 97 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=27
+2026-03-03 14:00:35,143 INFO Round 98 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=27
+2026-03-03 14:00:35,176 INFO Round 99 bots=3 lead_pos=[1, 8] lead_inv=['yogurt'] score=27
+2026-03-03 14:00:35,213 INFO Round 100 bots=3 lead_pos=[1, 7] lead_inv=['yogurt'] score=27
+2026-03-03 14:00:35,247 INFO Round 101 bots=3 lead_pos=[1, 6] lead_inv=['yogurt'] score=27
+2026-03-03 14:00:35,285 INFO Round 102 bots=3 lead_pos=[1, 5] lead_inv=['yogurt'] score=28
+2026-03-03 14:00:35,318 INFO Round 103 bots=3 lead_pos=[1, 4] lead_inv=['yogurt'] score=28
+2026-03-03 14:00:35,357 INFO Round 104 bots=3 lead_pos=[1, 3] lead_inv=['yogurt'] score=28
+2026-03-03 14:00:35,390 INFO Round 105 bots=3 lead_pos=[1, 2] lead_inv=['yogurt'] score=28
+2026-03-03 14:00:35,428 INFO Round 106 bots=3 lead_pos=[1, 1] lead_inv=['yogurt'] score=28
+2026-03-03 14:00:35,464 INFO Round 107 bots=3 lead_pos=[2, 1] lead_inv=['yogurt'] score=28
+2026-03-03 14:00:35,500 INFO Round 108 bots=3 lead_pos=[3, 1] lead_inv=['yogurt'] score=28
+2026-03-03 14:00:35,536 INFO Round 109 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'cheese'] score=28
+2026-03-03 14:00:35,575 INFO Round 110 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'cheese'] score=28
+2026-03-03 14:00:35,615 INFO Round 111 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'cheese'] score=28
+2026-03-03 14:00:35,652 INFO Round 112 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'cheese', 'bread'] score=28
+2026-03-03 14:00:35,690 INFO Round 113 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'cheese', 'bread'] score=28
+2026-03-03 14:00:35,728 INFO Round 114 bots=3 lead_pos=[4, 2] lead_inv=['yogurt', 'cheese', 'bread'] score=28
+2026-03-03 14:00:35,765 INFO Round 115 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:35,800 INFO Round 116 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:35,833 INFO Round 117 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:35,874 INFO Round 118 bots=3 lead_pos=[4, 2] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:35,909 INFO Round 119 bots=3 lead_pos=[4, 3] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:35,944 INFO Round 120 bots=3 lead_pos=[4, 4] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:35,979 INFO Round 121 bots=3 lead_pos=[4, 5] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:36,013 INFO Round 122 bots=3 lead_pos=[4, 6] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:36,046 INFO Round 123 bots=3 lead_pos=[4, 7] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:36,084 INFO Round 124 bots=3 lead_pos=[4, 8] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:36,124 INFO Round 125 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:36,162 INFO Round 126 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:36,199 INFO Round 127 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:36,235 INFO Round 128 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:36,273 INFO Round 129 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'cheese', 'bread'] score=30
+2026-03-03 14:00:36,308 INFO Round 130 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,343 INFO Round 131 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,377 INFO Round 132 bots=3 lead_pos=[1, 8] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,410 INFO Round 133 bots=3 lead_pos=[1, 7] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,445 INFO Round 134 bots=3 lead_pos=[1, 6] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,477 INFO Round 135 bots=3 lead_pos=[2, 6] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,510 INFO Round 136 bots=3 lead_pos=[3, 6] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,546 INFO Round 137 bots=3 lead_pos=[2, 6] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,581 INFO Round 138 bots=3 lead_pos=[3, 6] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,613 INFO Round 139 bots=3 lead_pos=[4, 6] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,653 INFO Round 140 bots=3 lead_pos=[4, 5] lead_inv=['yogurt'] score=37
+2026-03-03 14:00:36,685 INFO Round 141 bots=3 lead_pos=[4, 5] lead_inv=['yogurt', 'milk'] score=37
+2026-03-03 14:00:36,724 INFO Round 142 bots=3 lead_pos=[4, 6] lead_inv=['yogurt', 'milk'] score=37
+2026-03-03 14:00:36,759 INFO Round 143 bots=3 lead_pos=[4, 7] lead_inv=['yogurt', 'milk'] score=37
+2026-03-03 14:00:36,797 INFO Round 144 bots=3 lead_pos=[4, 8] lead_inv=['yogurt', 'milk'] score=39
+2026-03-03 14:00:36,830 INFO Round 145 bots=3 lead_pos=[4, 7] lead_inv=['yogurt', 'milk'] score=39
+2026-03-03 14:00:36,868 INFO Round 146 bots=3 lead_pos=[4, 8] lead_inv=['yogurt', 'milk'] score=39
+2026-03-03 14:00:36,901 INFO Round 147 bots=3 lead_pos=[4, 9] lead_inv=['yogurt', 'milk'] score=39
+2026-03-03 14:00:36,940 INFO Round 148 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'milk'] score=39
+2026-03-03 14:00:36,977 INFO Round 149 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'milk'] score=39
+2026-03-03 14:00:37,013 INFO Round 150 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'milk'] score=39
+2026-03-03 14:00:37,048 INFO Round 151 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'milk'] score=39
+2026-03-03 14:00:37,084 INFO Round 152 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=40
+2026-03-03 14:00:37,118 INFO Round 153 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=40
+2026-03-03 14:00:37,157 INFO Round 154 bots=3 lead_pos=[2, 9] lead_inv=['yogurt'] score=40
+2026-03-03 14:00:37,194 INFO Round 155 bots=3 lead_pos=[3, 9] lead_inv=['yogurt'] score=40
+2026-03-03 14:00:37,230 INFO Round 156 bots=3 lead_pos=[3, 9] lead_inv=['yogurt', 'cream'] score=40
+2026-03-03 14:00:37,264 INFO Round 157 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'cream'] score=40
+2026-03-03 14:00:37,302 INFO Round 158 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'cream'] score=40
+2026-03-03 14:00:37,335 INFO Round 159 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'cream'] score=40
+2026-03-03 14:00:37,372 INFO Round 160 bots=3 lead_pos=[1, 10] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,411 INFO Round 161 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,445 INFO Round 162 bots=3 lead_pos=[2, 9] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,480 INFO Round 163 bots=3 lead_pos=[1, 9] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,517 INFO Round 164 bots=3 lead_pos=[1, 8] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,551 INFO Round 165 bots=3 lead_pos=[1, 7] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,589 INFO Round 166 bots=3 lead_pos=[1, 6] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,624 INFO Round 167 bots=3 lead_pos=[2, 6] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,661 INFO Round 168 bots=3 lead_pos=[3, 6] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,694 INFO Round 169 bots=3 lead_pos=[4, 6] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,732 INFO Round 170 bots=3 lead_pos=[4, 5] lead_inv=['yogurt'] score=46
+2026-03-03 14:00:37,767 INFO Round 171 bots=3 lead_pos=[4, 4] lead_inv=['yogurt'] score=47
+2026-03-03 14:00:37,806 INFO Round 172 bots=3 lead_pos=[4, 5] lead_inv=['yogurt'] score=47
+2026-03-03 14:00:37,844 INFO Round 173 bots=3 lead_pos=[4, 5] lead_inv=['yogurt', 'milk'] score=47
+2026-03-03 14:00:37,878 INFO Round 174 bots=3 lead_pos=[4, 4] lead_inv=['yogurt', 'milk'] score=47
+2026-03-03 14:00:37,911 INFO Round 175 bots=3 lead_pos=[4, 3] lead_inv=['yogurt', 'milk'] score=47
+2026-03-03 14:00:37,948 INFO Round 176 bots=3 lead_pos=[4, 2] lead_inv=['yogurt', 'milk'] score=48
+2026-03-03 14:00:37,983 INFO Round 177 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=48
+2026-03-03 14:00:38,024 INFO Round 178 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=48
+2026-03-03 14:00:38,058 INFO Round 179 bots=3 lead_pos=[6, 1] lead_inv=['yogurt', 'milk'] score=48
+2026-03-03 14:00:38,100 INFO Round 180 bots=3 lead_pos=[7, 1] lead_inv=['yogurt', 'milk'] score=48
+2026-03-03 14:00:38,135 INFO Round 181 bots=3 lead_pos=[8, 1] lead_inv=['yogurt', 'milk'] score=48
+2026-03-03 14:00:38,174 INFO Round 182 bots=3 lead_pos=[9, 1] lead_inv=['yogurt', 'milk'] score=48
+2026-03-03 14:00:38,210 INFO Round 183 bots=3 lead_pos=[9, 1] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:38,250 INFO Round 184 bots=3 lead_pos=[8, 1] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:38,285 INFO Round 185 bots=3 lead_pos=[8, 2] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:38,326 INFO Round 186 bots=3 lead_pos=[8, 3] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:47,978 INFO Round 187 bots=3 lead_pos=[8, 3] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:47,985 INFO Round 188 bots=3 lead_pos=[8, 4] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,017 INFO Round 189 bots=3 lead_pos=[8, 5] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,034 INFO Round 190 bots=3 lead_pos=[8, 6] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,055 INFO Round 191 bots=3 lead_pos=[8, 7] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,076 INFO Round 192 bots=3 lead_pos=[8, 7] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,099 INFO Round 193 bots=3 lead_pos=[8, 8] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,119 INFO Round 194 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,142 INFO Round 195 bots=3 lead_pos=[8, 8] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,166 INFO Round 196 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,182 INFO Round 197 bots=3 lead_pos=[8, 8] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,206 INFO Round 198 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,225 INFO Round 199 bots=3 lead_pos=[8, 8] lead_inv=['yogurt', 'milk', 'bread'] score=48
+2026-03-03 14:00:48,247 INFO Round 200 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,268 INFO Round 201 bots=3 lead_pos=[8, 8] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,291 INFO Round 202 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,310 INFO Round 203 bots=3 lead_pos=[8, 8] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,330 INFO Round 204 bots=3 lead_pos=[8, 9] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,352 INFO Round 205 bots=3 lead_pos=[8, 10] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,377 INFO Round 206 bots=3 lead_pos=[8, 10] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,396 INFO Round 207 bots=3 lead_pos=[7, 10] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,421 INFO Round 208 bots=3 lead_pos=[6, 10] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,452 INFO Round 209 bots=3 lead_pos=[5, 10] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,470 INFO Round 210 bots=3 lead_pos=[4, 10] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,492 INFO Round 211 bots=3 lead_pos=[3, 10] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,518 INFO Round 212 bots=3 lead_pos=[2, 10] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,537 INFO Round 213 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,566 INFO Round 214 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'milk', 'bread'] score=49
+2026-03-03 14:00:48,593 INFO Round 215 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,617 INFO Round 216 bots=3 lead_pos=[1, 10] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,640 INFO Round 217 bots=3 lead_pos=[1, 9] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,659 INFO Round 218 bots=3 lead_pos=[1, 8] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,678 INFO Round 219 bots=3 lead_pos=[1, 7] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,705 INFO Round 220 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,727 INFO Round 221 bots=3 lead_pos=[1, 7] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,758 INFO Round 222 bots=3 lead_pos=[1, 6] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,776 INFO Round 223 bots=3 lead_pos=[1, 5] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,806 INFO Round 224 bots=3 lead_pos=[1, 4] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,826 INFO Round 225 bots=3 lead_pos=[1, 3] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,851 INFO Round 226 bots=3 lead_pos=[1, 4] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,873 INFO Round 227 bots=3 lead_pos=[1, 3] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,897 INFO Round 228 bots=3 lead_pos=[1, 2] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,923 INFO Round 229 bots=3 lead_pos=[1, 1] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,941 INFO Round 230 bots=3 lead_pos=[1, 1] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,960 INFO Round 231 bots=3 lead_pos=[2, 1] lead_inv=['yogurt', 'milk'] score=50
+2026-03-03 14:00:48,981 INFO Round 232 bots=3 lead_pos=[2, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,005 INFO Round 233 bots=3 lead_pos=[1, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,035 INFO Round 234 bots=3 lead_pos=[2, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,058 INFO Round 235 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,079 INFO Round 236 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,102 INFO Round 237 bots=3 lead_pos=[2, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,131 INFO Round 238 bots=3 lead_pos=[1, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,144 INFO Round 239 bots=3 lead_pos=[1, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,167 INFO Round 240 bots=3 lead_pos=[2, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,187 INFO Round 241 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,216 INFO Round 242 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,230 INFO Round 243 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,250 INFO Round 244 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,270 INFO Round 245 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,294 INFO Round 246 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,314 INFO Round 247 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,336 INFO Round 248 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,364 INFO Round 249 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,385 INFO Round 250 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,407 INFO Round 251 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,428 INFO Round 252 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,448 INFO Round 253 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=57
+2026-03-03 14:00:49,470 INFO Round 254 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,491 INFO Round 255 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,512 INFO Round 256 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,534 INFO Round 257 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,553 INFO Round 258 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,575 INFO Round 259 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,597 INFO Round 260 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,619 INFO Round 261 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,641 INFO Round 262 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,662 INFO Round 263 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,681 INFO Round 264 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,703 INFO Round 265 bots=3 lead_pos=[3, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,727 INFO Round 266 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,750 INFO Round 267 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,783 INFO Round 268 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,797 INFO Round 269 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,818 INFO Round 270 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,839 INFO Round 271 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,861 INFO Round 272 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,883 INFO Round 273 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,905 INFO Round 274 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,925 INFO Round 275 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,946 INFO Round 276 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,968 INFO Round 277 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:49,993 INFO Round 278 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,010 INFO Round 279 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,034 INFO Round 280 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,058 INFO Round 281 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,085 INFO Round 282 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,107 INFO Round 283 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,129 INFO Round 284 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,152 INFO Round 285 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,179 INFO Round 286 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,199 INFO Round 287 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,219 INFO Round 288 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,241 INFO Round 289 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,263 INFO Round 290 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,283 INFO Round 291 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,304 INFO Round 292 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,329 INFO Round 293 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,347 INFO Round 294 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,367 INFO Round 295 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,391 INFO Round 296 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,413 INFO Round 297 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,435 INFO Round 298 bots=3 lead_pos=[5, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,460 INFO Round 299 bots=3 lead_pos=[4, 1] lead_inv=['yogurt', 'milk'] score=58
+2026-03-03 14:00:50,486 INFO Server message type=game_over keys=['type', 'score', 'rounds_used', 'items_delivered', 'orders_completed']
+2026-03-03 14:00:50,486 INFO GAME OVER: {'score': 58, 'rounds_used': 300, 'orders_completed': 6, 'items_delivered': 28}
+2026-03-03 14:00:50,526 INFO Reconnect in 2s

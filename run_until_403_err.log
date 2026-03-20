@@ -1,0 +1,4 @@
+2026-03-04 10:10:58,630 INFO CONNECTED kwargs=['origin']
+2026-03-04 10:11:28,092 INFO GAME OVER: {'score': 91, 'rounds_used': 300, 'orders_completed': 10, 'items_delivered': 41}
+2026-03-04 10:11:28,140 INFO Completed game #1 on current token
+Run stopped after 1 game(s): RuntimeError('No connection variant worked. Check URL/token/origin')
