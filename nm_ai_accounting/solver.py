@@ -1171,11 +1171,23 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
             return {"action": "run_payroll", "status": "salary_type_not_found"}
 
         specifications = [
-            {"employee": {"id": employee_id}, "salaryType": {"id": base_type}, "amount": base_amount, "description": "Base salary"}
+            {
+                "employee": {"id": employee_id},
+                "salaryType": {"id": base_type},
+                "description": "Base salary",
+                "count": 1,
+                "rate": base_amount,
+            }
         ]
         if bonus_amount > 0:
             specifications.append(
-                {"employee": {"id": employee_id}, "salaryType": {"id": bonus_type}, "amount": bonus_amount, "description": "Bonus"}
+                {
+                    "employee": {"id": employee_id},
+                    "salaryType": {"id": bonus_type},
+                    "description": "Bonus",
+                    "count": 1,
+                    "rate": bonus_amount,
+                }
             )
 
         payload = {
@@ -1191,7 +1203,42 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
                 }
             ],
         }
-        created = await client.post("/salary/transaction", payload)
+        try:
+            created = await client.post("/salary/transaction", payload)
+        except RuntimeError as exc:
+            # Some environments accept amount-style specs better than rate/count.
+            logger.warning("payroll_rate_count_failed retrying_amount error=%s", exc)
+            fallback_specs = [
+                {
+                    "employee": {"id": employee_id},
+                    "salaryType": {"id": base_type},
+                    "amount": base_amount,
+                    "description": "Base salary",
+                }
+            ]
+            if bonus_amount > 0:
+                fallback_specs.append(
+                    {
+                        "employee": {"id": employee_id},
+                        "salaryType": {"id": bonus_type},
+                        "amount": bonus_amount,
+                        "description": "Bonus",
+                    }
+                )
+            fallback_payload = {
+                "date": today_dt.isoformat(),
+                "year": today_dt.year,
+                "month": today_dt.month,
+                "payslips": [
+                    {
+                        "employee": {"id": employee_id},
+                        "year": today_dt.year,
+                        "month": today_dt.month,
+                        "specifications": fallback_specs,
+                    }
+                ],
+            }
+            created = await client.post("/salary/transaction", fallback_payload)
         return {"action": "run_payroll", "transactionId": _extract_value_id(created), "specCount": len(specifications)}
 
     if _is_travel_expense_intent(prompt_n):
