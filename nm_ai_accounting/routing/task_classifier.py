@@ -22,6 +22,8 @@ DEPARTMENT_WORDS = {"department", "avdeling", "departamento", "departement", "ab
 PAYROLL_WORDS = {"salary", "payroll", "lonn", "loenn", "salaire", "salario", "paie"}
 TRAVEL_WORDS = {"travel", "reise", "expense", "reiseregning", "reiserekning", "deplacement"}
 CREDIT_WORDS = {"credit note", "kreditnota", "gutschrift", "avoir", "nota de credito"}
+LEDGER_WORDS = {"ledger", "hovedbok", "asiento", "asiento contable", "buchung", "ecriture"}
+DIMENSION_WORDS = {"dimension", "dimensjon", "dimensione", "dimension contable", "dimension comptable"}
 
 
 def _intent(prompt_n: str) -> str:
@@ -102,6 +104,10 @@ def classify_task(prompt: str, attachments: list[ParsedAttachment]) -> TaskSpec:
         task_family = "create_department"
         actions = ["create_departments"]
         confidence = 0.84
+    elif contains_any(prompt_n, DIMENSION_WORDS) and contains_any(prompt_n, LEDGER_WORDS):
+        task_family = "ledger_correction"
+        actions = ["create_accounting_dimension", "create_dimension_values", "register_voucher"]
+        confidence = 0.82
     elif contains_any(prompt_n, CUSTOMER_WORDS):
         task_family = "create_customer"
         actions = ["create_customer"]
@@ -127,4 +133,3 @@ def classify_task(prompt: str, attachments: list[ParsedAttachment]) -> TaskSpec:
         risk_flags=risk_flags,
         prompt=prompt,
     )
-

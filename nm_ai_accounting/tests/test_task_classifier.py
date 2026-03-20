@@ -28,3 +28,11 @@ def test_payroll_routes_to_salary_transaction():
     spec = classify_task(prompt, _attachments())
     assert spec.task_family == "salary_transaction"
 
+
+def test_ledger_dimension_prompt_routes_to_ledger_correction():
+    prompt = (
+        'Cree una dimension contable personalizada "Produktlinje" con los valores '
+        '"Standard" y "Basis". Luego registre un asiento en la cuenta 7100 por 43400 NOK.'
+    )
+    spec = classify_task(prompt, _attachments())
+    assert spec.task_family == "ledger_correction"

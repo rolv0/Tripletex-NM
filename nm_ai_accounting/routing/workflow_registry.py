@@ -11,6 +11,7 @@ from workflows.create_project import CreateProjectWorkflow
 from workflows.order_to_invoice import OrderToInvoiceWorkflow
 from workflows.register_payment import RegisterPaymentWorkflow
 from workflows.salary_transaction import SalaryTransactionWorkflow
+from workflows.ledger_correction import LedgerCorrectionWorkflow
 
 WORKFLOW_REGISTRY: dict[str, Workflow] = {
     "create_customer": CreateCustomerWorkflow(),
@@ -23,6 +24,7 @@ WORKFLOW_REGISTRY: dict[str, Workflow] = {
     "create_invoice": CreateInvoiceWorkflow(),
     "register_payment": RegisterPaymentWorkflow(),
     "salary_transaction": SalaryTransactionWorkflow(),
+    "ledger_correction": LedgerCorrectionWorkflow(),
 }
 
 

@@ -29,12 +29,13 @@ def extract_quoted_items(text: str) -> list[str]:
 
 def extract_customer_name(text: str) -> str | None:
     company_suffixes = r"(?:AS|SL|Lda|SARL|GmbH|SA|SAS|Ltd|LLC|Inc)"
+    name_chars = r"A-Za-zÀ-ÖØ-öø-ÿ0-9 .&\-"
 
     patterns = [
-        rf"(?:kunde|customer|cliente|client)\s+([A-Za-z0-9 .&\-]+?\b{company_suffixes}\b)",
-        rf"(?:el cliente|le client|o cliente|der kunde)\s+([A-Za-z0-9 .&\-]+?\b{company_suffixes}\b)",
-        rf"(?:for|para|pour|fur)\s+([A-Za-z0-9 .&\-]+?\b{company_suffixes}\b)",
-        rf"\b([A-Za-z0-9 .&\-]+?\b{company_suffixes}\b)\b",
+        rf"(?:kunde|customer|cliente|client)\s+([{name_chars}]+?\b{company_suffixes}\b)",
+        rf"(?:el cliente|le client|o cliente|der kunde)\s+([{name_chars}]+?\b{company_suffixes}\b)",
+        rf"(?:for|para|pour|fur)\s+([{name_chars}]+?\b{company_suffixes}\b)",
+        rf"\b([{name_chars}]+?\b{company_suffixes}\b)\b",
     ]
 
     for pattern in patterns:

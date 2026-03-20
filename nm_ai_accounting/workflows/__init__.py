@@ -9,6 +9,7 @@ from .create_project import CreateProjectWorkflow
 from .order_to_invoice import OrderToInvoiceWorkflow
 from .register_payment import RegisterPaymentWorkflow
 from .salary_transaction import SalaryTransactionWorkflow
+from .ledger_correction import LedgerCorrectionWorkflow
 
 __all__ = [
     "Workflow",
@@ -22,4 +23,5 @@ __all__ = [
     "OrderToInvoiceWorkflow",
     "RegisterPaymentWorkflow",
     "SalaryTransactionWorkflow",
+    "LedgerCorrectionWorkflow",
 ]
