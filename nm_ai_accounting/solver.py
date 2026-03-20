@@ -45,6 +45,7 @@ TRAVEL_WORDS = {
     "reisekostnad",
     "per diem",
 }
+DELETE_WORDS = {"delete", "remove", "slett", "fjern", "supprimer", "eliminar", "apagar", "loeschen"}
 PAYMENT_WORDS = {
     "betaling",
     "betal",
@@ -77,6 +78,80 @@ TIMESHEET_CONTEXT_WORDS = {
     "stundensatz",
     "taux horaire",
     "taxa horaria",
+}
+ADMIN_WORDS = {
+    "administrator",
+    "admin",
+    "kontoadministrator",
+    "account administrator",
+    "administrateur",
+    "administrador",
+}
+
+MONTH_MAP = {
+    "january": 1,
+    "jan": 1,
+    "januar": 1,
+    "janvier": 1,
+    "enero": 1,
+    "janeiro": 1,
+    "february": 2,
+    "feb": 2,
+    "februar": 2,
+    "fevrier": 2,
+    "febrero": 2,
+    "fevereiro": 2,
+    "march": 3,
+    "mar": 3,
+    "mars": 3,
+    "marzo": 3,
+    "marco": 3,
+    "april": 4,
+    "apr": 4,
+    "avril": 4,
+    "abril": 4,
+    "may": 5,
+    "mai": 5,
+    "mayo": 5,
+    "maio": 5,
+    "june": 6,
+    "jun": 6,
+    "juni": 6,
+    "juin": 6,
+    "junio": 6,
+    "junho": 6,
+    "july": 7,
+    "jul": 7,
+    "juli": 7,
+    "juillet": 7,
+    "julio": 7,
+    "julho": 7,
+    "august": 8,
+    "aug": 8,
+    "aout": 8,
+    "agosto": 8,
+    "september": 9,
+    "sep": 9,
+    "sept": 9,
+    "septembre": 9,
+    "septiembre": 9,
+    "setembro": 9,
+    "october": 10,
+    "oct": 10,
+    "oktober": 10,
+    "octobre": 10,
+    "octubre": 10,
+    "outubro": 10,
+    "november": 11,
+    "nov": 11,
+    "novembre": 11,
+    "noviembre": 11,
+    "december": 12,
+    "dec": 12,
+    "desember": 12,
+    "decembre": 12,
+    "diciembre": 12,
+    "dezembro": 12,
 }
 
 
@@ -164,7 +239,7 @@ def _extract_name(text: str) -> str | None:
 
 
 def _extract_org_number(text: str) -> str | None:
-    match = re.search(r"(?:org\.?\s*(?:nr|n[oº])\.?)\s*([0-9]{9})", text, re.IGNORECASE)
+    match = re.search(r"org[^0-9]{0,12}([0-9]{9})", text, re.IGNORECASE)
     return match.group(1) if match else None
 
 
@@ -194,6 +269,65 @@ def _extract_person_name_and_email(text: str) -> tuple[str | None, str | None]:
         if match:
             return _clean_entity(match.group(1)), email
     return _extract_name(text), email
+
+
+def _to_iso_date(day: int, month: int, year: int) -> str | None:
+    try:
+        return date(year, month, day).isoformat()
+    except Exception:
+        return None
+
+
+def _parse_date_value(candidate: str) -> str | None:
+    simple = re.search(r"(\d{1,2})[./-](\d{1,2})[./-](\d{4})", candidate)
+    if simple:
+        return _to_iso_date(int(simple.group(1)), int(simple.group(2)), int(simple.group(3)))
+
+    words = _normalize_text(candidate)
+    by_name = re.search(r"(\d{1,2})\.?\s+([a-z]+)\s+(\d{4})", words)
+    if not by_name:
+        return None
+    day = int(by_name.group(1))
+    month_name = by_name.group(2)
+    year = int(by_name.group(3))
+    month = MONTH_MAP.get(month_name)
+    if month is None:
+        return None
+    return _to_iso_date(day, month, year)
+
+
+def _extract_context_date(text: str, patterns: list[str]) -> str | None:
+    for pattern in patterns:
+        match = re.search(pattern, text, flags=re.IGNORECASE)
+        if not match:
+            continue
+        parsed = _parse_date_value(match.group(1))
+        if parsed:
+            return parsed
+    fallback = re.search(r"(\d{1,2}[./-]\d{1,2}[./-]\d{4})", text)
+    if fallback:
+        return _parse_date_value(fallback.group(1))
+    return None
+
+
+def _extract_birth_date(text: str) -> str | None:
+    patterns = [
+        r"(?:born|f[oa]dt|geboren|nacido|nee|ne|nascido)\s+([^\.\n,]+)",
+        r"(?:date of birth|fodselsdato|geburtsdatum|fecha de nacimiento|data de nascimento)\s*[:=]?\s*([^\.\n,]+)",
+    ]
+    return _extract_context_date(text, patterns)
+
+
+def _extract_start_date(text: str) -> str | None:
+    patterns = [
+        r"(?:start date|startdato|startdatum|fecha de inicio|data de inicio|commence|debut)\s*[:=]?\s*([^\.\n,]+)",
+        r"(?:starts|starter)\s+([^\.\n,]+)",
+    ]
+    return _extract_context_date(text, patterns)
+
+
+def _is_admin_request(prompt_n: str) -> bool:
+    return _contains_any(prompt_n, ADMIN_WORDS)
 
 
 def _extract_hours(text: str) -> float | None:
@@ -261,21 +395,25 @@ def _extract_project_manager(text: str) -> tuple[str | None, str | None]:
     return None, email
 
 
-def _extract_invoice_lines(text: str) -> list[tuple[str, float]]:
-    lines: list[tuple[str, float]] = []
+def _extract_invoice_lines(text: str) -> list[dict[str, Any]]:
+    lines: list[dict[str, Any]] = []
 
-    detailed_pattern = r"([^,(]+?)\s*\((\d+)\)\s*(?:a|\u00e0)\s*(\d[\d\s.,]*)\s*(?:kr|nok)"
-    for line_name, _line_no, amount_text in re.findall(detailed_pattern, text, flags=re.IGNORECASE):
+    detailed_pattern = (
+        r"([^,(]+?)\s*\((\d+)\)\s*(?:a|\u00e0)\s*(\d[\d\s.,]*)\s*(?:kr|nok)(?:\s*(?:with|med|com)?\s*(\d{1,2}(?:[.,]\d+)?)\s*%)?"
+    )
+    for line_name, _line_no, amount_text, vat_text in re.findall(detailed_pattern, text, flags=re.IGNORECASE):
         amount = _extract_float(amount_text)
-        if amount is not None:
-            lines.append((line_name.strip(), amount))
+        if amount is None:
+            continue
+        vat_rate = _extract_float(vat_text) if vat_text else None
+        lines.append({"description": line_name.strip(), "amount": amount, "vat_rate": vat_rate})
     if lines:
         return lines
 
     quoted = _extract_quoted_items(text)
     amounts = _extract_all_amounts(text)
     if quoted and amounts:
-        return [(quoted[0], amounts[0])]
+        return [{"description": quoted[0], "amount": amounts[0], "vat_rate": None}]
     return []
 
 
@@ -295,7 +433,7 @@ def _extract_product_payload(text: str) -> dict[str, Any]:
         re.IGNORECASE,
     )
     if number_match:
-        payload["productNumber"] = number_match.group(1)
+        payload["number"] = number_match.group(1)
 
     price = _extract_amount(text)
     if price is not None:
@@ -492,24 +630,31 @@ async def _create_employee_with_retry(
     first_name: str,
     last_name: str,
     email: str | None,
-) -> tuple[dict[str, Any], str]:
+    date_of_birth: str | None,
+    prefer_extended: bool,
+) -> tuple[dict[str, Any], str, int | None]:
     payload_base: dict[str, Any] = {"firstName": first_name or "Auto", "lastName": last_name or "User"}
     if email:
         payload_base["email"] = email
+    if date_of_birth:
+        payload_base["dateOfBirth"] = date_of_birth
 
-    variants: list[tuple[str, dict[str, Any]]] = [
-        ("no_user_type", dict(payload_base)),
-        ("userType_employee", {**payload_base, "userType": "EMPLOYEE"}),
+    variants: list[tuple[str, dict[str, Any]]] = []
+    if prefer_extended:
+        variants.append(("userType_extended", {**payload_base, "userType": "EXTENDED"}))
+    variants.extend(
+        [
         ("userType_standard", {**payload_base, "userType": "STANDARD"}),
-        ("userType_1", {**payload_base, "userType": 1}),
-        ("userType_obj_1", {**payload_base, "userType": {"id": 1}}),
-    ]
+        ("userType_extended", {**payload_base, "userType": "EXTENDED"}),
+        ("no_user_type", dict(payload_base)),
+        ]
+    )
 
     last_error = ""
     for variant_name, payload in variants:
         try:
-            await client.post("/employee", payload)
-            return payload, variant_name
+            created = await client.post("/employee", payload)
+            return payload, variant_name, _extract_value_id(created)
         except RuntimeError as exc:
             last_error = str(exc)
             if "Brukertype" not in last_error and "userType" not in last_error:
@@ -535,6 +680,10 @@ def _is_payroll_intent(prompt_n: str) -> bool:
 
 def _is_travel_expense_intent(prompt_n: str) -> bool:
     return _contains_any(prompt_n, TRAVEL_WORDS)
+
+
+def _is_delete_intent(prompt_n: str) -> bool:
+    return _contains_any(prompt_n, DELETE_WORDS)
 
 
 def _is_invoice_create_or_send_intent(prompt_n: str) -> bool:
@@ -573,12 +722,13 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
     )
 
     logger.info(
-        "intent_flags payment=%s credit=%s timesheet=%s payroll=%s travel=%s invoice=%s project=%s department=%s product=%s employee=%s customer=%s",
+        "intent_flags payment=%s credit=%s timesheet=%s payroll=%s travel=%s delete=%s invoice=%s project=%s department=%s product=%s employee=%s customer=%s",
         _is_register_payment_intent(prompt_n),
         _is_credit_note_intent(prompt_n),
         _is_timesheet_intent(prompt_n),
         _is_payroll_intent(prompt_n),
         _is_travel_expense_intent(prompt_n),
+        _is_delete_intent(prompt_n),
         _is_invoice_create_or_send_intent(prompt_n),
         _is_project_intent(prompt_n),
         _is_department_intent(prompt_n),
@@ -796,6 +946,28 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         if employee_id is None:
             return {"action": "travel_expense", "status": "employee_not_found", "name": person_name, "email": person_email}
 
+        if _is_delete_intent(prompt_n):
+            search_params: dict[str, Any] = {
+                "employeeId": str(employee_id),
+                "count": 50,
+                "sorting": "-date",
+                "fields": "id,title,date,employee",
+            }
+            travel_list = await client.get("/travelExpense", params=search_params)
+            values = travel_list.get("values", [])
+            title_norm = _normalize_text(title)
+            target = None
+            for travel in values:
+                if title_norm and title_norm in _normalize_text(str(travel.get("title", ""))):
+                    target = travel
+                    break
+            if target is None and values:
+                target = values[0]
+            if not target:
+                return {"action": "delete_travel_expense", "status": "not_found"}
+            await client.delete(f"/travelExpense/{target['id']}")
+            return {"action": "delete_travel_expense", "travelExpenseId": target["id"]}
+
         travel_payload: dict[str, Any] = {
             "employee": {"id": employee_id},
             "title": title,
@@ -861,9 +1033,28 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         if not lines:
             amount = _extract_amount(prompt) or 0.0
             title = (_extract_quoted_items(prompt) or ["Invoice line"])[0]
-            lines = [(title, amount)]
+            lines = [{"description": title, "amount": amount, "vat_rate": None}]
 
-        order_lines = [{"description": line_name, "count": 1, "unitPriceExcludingVatCurrency": amount} for line_name, amount in lines]
+        order_lines: list[dict[str, Any]] = []
+        vat_id_cache: dict[float, int | None] = {}
+        default_vat_id = await _find_vat_type_id(client, None)
+        for line in lines:
+            line_payload: dict[str, Any] = {
+                "description": line["description"],
+                "count": 1,
+                "unitPriceExcludingVatCurrency": line["amount"],
+            }
+            line_vat_rate = line.get("vat_rate")
+            vat_id: int | None = None
+            if isinstance(line_vat_rate, float):
+                if line_vat_rate not in vat_id_cache:
+                    vat_id_cache[line_vat_rate] = await _find_vat_type_id(client, line_vat_rate)
+                vat_id = vat_id_cache[line_vat_rate]
+            if vat_id is None:
+                vat_id = default_vat_id
+            if vat_id is not None:
+                line_payload["vatType"] = {"id": vat_id}
+            order_lines.append(line_payload)
 
         invoice_id: int | None = None
         try:
@@ -952,8 +1143,8 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
             created_product = await client.post("/product", payload)
         except RuntimeError:
             fallback_payload = {"name": payload["name"], "isInactive": False}
-            if payload.get("productNumber"):
-                fallback_payload["productNumber"] = payload["productNumber"]
+            if payload.get("number"):
+                fallback_payload["number"] = payload["number"]
             created_product = await client.post("/product", fallback_payload)
             payload = fallback_payload
 
@@ -961,8 +1152,48 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
 
     if _is_employee_intent(prompt_n):
         first_name, _, last_name = name.partition(" ")
-        payload, variant = await _create_employee_with_retry(client, first_name, last_name, email)
-        return {"action": "create_employee", "variant": variant, "payload": payload}
+        birth_date = _extract_birth_date(prompt)
+        start_date = _extract_start_date(prompt)
+        wants_admin = _is_admin_request(prompt_n)
+        payload, variant, employee_id = await _create_employee_with_retry(
+            client,
+            first_name,
+            last_name,
+            email,
+            birth_date,
+            wants_admin,
+        )
+
+        employment_created = False
+        if employee_id and start_date:
+            try:
+                await client.post("/employee/employment", {"employee": {"id": employee_id}, "startDate": start_date, "isMainEmployer": True})
+                employment_created = True
+            except Exception:
+                logger.warning("employee_employment_create_failed employee_id=%s start_date=%s", employee_id, start_date)
+
+        entitlement_granted = False
+        if employee_id and wants_admin:
+            try:
+                await client.put(
+                    "/employee/entitlement/:grantEntitlementsByTemplate",
+                    params={"employeeId": employee_id, "template": "ALL_PRIVILEGES"},
+                )
+                entitlement_granted = True
+            except Exception:
+                logger.warning("employee_admin_entitlement_failed employee_id=%s", employee_id)
+
+        return {
+            "action": "create_employee",
+            "variant": variant,
+            "employeeId": employee_id,
+            "payload": payload,
+            "birthDate": birth_date,
+            "startDate": start_date,
+            "employmentCreated": employment_created,
+            "adminRequested": wants_admin,
+            "adminGranted": entitlement_granted,
+        }
 
     if _is_customer_intent(prompt_n):
         customer_name = _extract_customer_name(prompt) or name
@@ -976,3 +1207,4 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         return {"action": "create_customer", "customerId": _extract_value_id(created_customer), "payload": payload}
 
     return {"action": "no_op", "reason": "unclassified_prompt"}
+
