@@ -44,10 +44,13 @@ def _is_create_intent(prompt_l: str) -> bool:
         "opprett",
         "lag",
         "create",
+        "crea",
         "crear",
         "criar",
         "erstelle",
         "creer",
+        "registrer",
+        "register",
     }
     return _contains_any(prompt_l, create_words)
 
@@ -187,6 +190,24 @@ def _extract_quoted_values(text: str) -> list[str]:
 def _extract_company_name(text: str) -> str | None:
     m = re.search(r"(?:for|für|til)\s+([A-ZÆØÅ][^,(]+?)(?:\s*\(|$)", text)
     return m.group(1).strip() if m else None
+
+
+def _extract_project_manager(text: str) -> tuple[str | None, str | None]:
+    patterns = [
+        r"(?:prosjektleder|project manager|director del proyecto|diretor do projeto)\s*(?:er|is)?\s*([A-ZÆØÅ][^,(]+)",
+    ]
+    for p in patterns:
+        m = re.search(p, text, re.IGNORECASE)
+        if m:
+            name = m.group(1).strip().strip(".")
+            email = _extract_email(text)
+            return name, email
+    return None, _extract_email(text)
+
+
+def _extract_project_name(text: str) -> str | None:
+    quoted = _extract_quoted_values(text)
+    return quoted[0] if quoted else None
 
 
 def _extract_org_number(text: str) -> str | None:
@@ -440,9 +461,38 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         return {"action": "create_department", "payload": payload}
 
     if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"prosjekt", "project", "proyecto"}):
-        payload = {"name": name}
-        await client.post("/project", payload)
-        return {"action": "create_project", "payload": payload}
+        project_name = _extract_project_name(req.prompt) or name
+        company_name = _extract_customer_name(req.prompt) or _extract_company_name(req.prompt) or ""
+        org_no = _extract_org_number(req.prompt)
+        manager_name, manager_email = _extract_project_manager(req.prompt)
+
+        customer_id: int | None = None
+        if company_name:
+            params: dict[str, Any] = {"name": company_name, "count": 20, "fields": "id,name,organizationNumber"}
+            if org_no:
+                params["organizationNumber"] = org_no
+            customers = await client.get("/customer", params=params)
+            cvals = customers.get("values", [])
+            if cvals:
+                customer_id = int(cvals[0]["id"])
+            else:
+                created = await client.post("/customer", {"name": company_name, "isCustomer": True, "organizationNumber": org_no})
+                customer_id = _extract_value_id(created)
+
+        project_payload: dict[str, Any] = {"name": project_name}
+        if customer_id is not None:
+            project_payload["customer"] = {"id": customer_id}
+
+        manager_id = await _find_employee_id(client, manager_name, manager_email)
+        if manager_id is not None:
+            project_payload["projectManager"] = {"id": manager_id}
+
+        created_project = await client.post("/project", project_payload)
+        return {
+            "action": "create_project",
+            "projectId": _extract_value_id(created_project),
+            "payload": project_payload,
+        }
 
     if _is_register_payment_intent(prompt_l):
         customer_name = _extract_customer_name(req.prompt) or ""
