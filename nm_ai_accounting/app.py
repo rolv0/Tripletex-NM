@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
+from typing import Any
 
 from fastapi import FastAPI, Header, HTTPException
 
@@ -33,8 +34,14 @@ async def solve(
         if provided != expected_api_key:
             raise HTTPException(status_code=403, detail="Invalid bearer token")
 
-    logger.info("solve_request prompt_len=%d files=%d", len(payload.prompt), len(payload.files))
-    await solve_task(payload)
+    logger.info(
+        "solve_request prompt_len=%d files=%d prompt_preview=%r",
+        len(payload.prompt),
+        len(payload.files),
+        payload.prompt[:180],
+    )
+    result = await solve_task(payload)
+    logger.info("solve_result %s", result)
     return SolveResponse(status="completed")
 
 

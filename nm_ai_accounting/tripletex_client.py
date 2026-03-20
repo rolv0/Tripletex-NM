@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import base64
+import json
 import os
 from typing import Any
 
@@ -23,10 +24,10 @@ class TripletexClient:
         return await self._request("GET", path, params=params)
 
     async def post(self, path: str, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._request("POST", path, json=payload)
+        return await self._request("POST", path, json_payload=payload)
 
     async def put(self, path: str, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._request("PUT", path, json=payload)
+        return await self._request("PUT", path, json_payload=payload)
 
     async def delete(self, path: str) -> dict[str, Any]:
         return await self._request("DELETE", path)
@@ -36,7 +37,7 @@ class TripletexClient:
         method: str,
         path: str,
         params: dict[str, Any] | None = None,
-        json: dict[str, Any] | None = None,
+        json_payload: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         if not self.base_url:
             raise ValueError("Missing Tripletex base_url")
@@ -50,8 +51,22 @@ class TripletexClient:
                 method=method,
                 url=url,
                 params=params,
-                json=json,
+                json=json_payload,
                 headers=self._auth_header(),
             )
-            resp.raise_for_status()
+            if resp.status_code >= 400:
+                body = resp.text
+                try:
+                    parsed = resp.json()
+                    body = json_dumps_safe(parsed)
+                except Exception:
+                    pass
+                raise RuntimeError(f"Tripletex {method} {clean_path} failed: {resp.status_code} body={body}")
             return resp.json() if resp.content else {}
+
+
+def json_dumps_safe(payload: Any) -> str:
+    try:
+        return json.dumps(payload, ensure_ascii=False)
+    except Exception:
+        return str(payload)

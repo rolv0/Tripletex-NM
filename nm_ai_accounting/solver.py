@@ -13,17 +13,39 @@ def _extract_email(text: str) -> str | None:
 
 
 def _extract_name(text: str) -> str | None:
-    match = re.search(
-        r"(?:navn|med navn|kunde(?:n)?|produkt(?:et)?|avdeling(?:en)?|prosjekt(?:et)?)\s+([A-ZÆØÅ][^,.\n]+)",
-        text,
-        re.IGNORECASE,
-    )
-    if match:
-        return match.group(1).strip().strip("\"'")
-    return None
+    patterns = [
+        r"(?:navn|name|nombre|nome|nom)\s*[:=]?\s*['\"]?([^,.\n\"']+)",
+        r"(?:med navn|with name|con nombre|com nome|mit name)\s+['\"]?([^,.\n\"']+)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            candidate = match.group(1).strip()
+            if candidate:
+                return candidate
+    match = re.search(r"\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)\b", text)
+    return match.group(1).strip() if match else None
 
 
-async def solve_task(req: SolveRequest) -> None:
+def _contains_any(text: str, keywords: set[str]) -> bool:
+    return any(k in text for k in keywords)
+
+
+def _is_create_intent(prompt_l: str) -> bool:
+    create_words = {
+        "opprett",
+        "lag",
+        "laga",
+        "create",
+        "crear",
+        "criar",
+        "erstelle",
+        "creer",
+    }
+    return _contains_any(prompt_l, create_words)
+
+
+async def solve_task(req: SolveRequest) -> dict[str, Any]:
     prompt_l = req.prompt.lower()
     client = TripletexClient(
         base_url=req.tripletex_credentials.base_url,
@@ -33,7 +55,7 @@ async def solve_task(req: SolveRequest) -> None:
     name = _extract_name(req.prompt) or "Auto Generated"
     email = _extract_email(req.prompt)
 
-    if "opprett" in prompt_l and ("ansatt" in prompt_l or "employee" in prompt_l):
+    if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"ansatt", "employee", "empleado", "funcionario"}):
         first_name, _, last_name = name.partition(" ")
         payload: dict[str, Any] = {
             "firstName": first_name or "Auto",
@@ -42,26 +64,28 @@ async def solve_task(req: SolveRequest) -> None:
         if email:
             payload["email"] = email
         await client.post("/employee", payload)
-        return
+        return {"action": "create_employee", "payload": payload}
 
-    if "opprett" in prompt_l and ("kunde" in prompt_l or "customer" in prompt_l):
+    if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"kunde", "customer", "cliente", "client"}):
         payload = {"name": name, "isCustomer": True}
         if email:
             payload["email"] = email
         await client.post("/customer", payload)
-        return
+        return {"action": "create_customer", "payload": payload}
 
-    if "opprett" in prompt_l and ("produkt" in prompt_l or "product" in prompt_l):
-        await client.post("/product", {"name": name, "isInactive": False})
-        return
+    if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"produkt", "product", "producto"}):
+        payload = {"name": name, "isInactive": False}
+        await client.post("/product", payload)
+        return {"action": "create_product", "payload": payload}
 
-    if "opprett" in prompt_l and ("avdeling" in prompt_l or "department" in prompt_l):
-        await client.post("/department", {"name": name})
-        return
+    if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"avdeling", "department", "departamento"}):
+        payload = {"name": name}
+        await client.post("/department", payload)
+        return {"action": "create_department", "payload": payload}
 
-    if "opprett" in prompt_l and ("prosjekt" in prompt_l or "project" in prompt_l):
-        await client.post("/project", {"name": name})
-        return
+    if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"prosjekt", "project", "proyecto"}):
+        payload = {"name": name}
+        await client.post("/project", payload)
+        return {"action": "create_project", "payload": payload}
 
-    # If we cannot confidently classify the prompt yet, do no writes.
-    return
+    return {"action": "no_op", "reason": "unclassified_prompt"}
