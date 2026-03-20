@@ -6,7 +6,7 @@ import os
 import time
 from typing import Any
 
-from fastapi import FastAPI, Header, HTTPException, Response
+from fastapi import FastAPI, Header, HTTPException
 
 from models import SolveRequest, SolveResponse
 from solver import solve_task
@@ -18,8 +18,8 @@ logger = logging.getLogger("nm-ai-accounting")
 app = FastAPI(title="NM AI Accounting Agent", version="0.1.0")
 
 
-@app.api_route("/", methods=["GET", "HEAD"])
-async def root() -> dict[str, str] | Response:
+@app.get("/")
+async def root() -> dict[str, str]:
     return {"status": "ok"}
 
 
