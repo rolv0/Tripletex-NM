@@ -96,6 +96,12 @@ class FamilyRule:
     actions: list[str]
 
 
+@dataclass(frozen=True)
+class DomainRule:
+    primary: set[str]
+    families: tuple[str, ...]
+
+
 FAMILY_RULES: dict[str, FamilyRule] = {
     "register_payment": FamilyRule(
         primary=PAYMENT_WORDS | {"outstanding invoice", "utestaende faktura", "full payment", "register payment"},
@@ -197,6 +203,41 @@ FAMILY_RULES: dict[str, FamilyRule] = {
     ),
 }
 
+DOMAIN_RULES: dict[str, DomainRule] = {
+    "invoicing": DomainRule(
+        primary=INVOICE_WORDS | ORDER_WORDS | PAYMENT_WORDS | CREDIT_WORDS | CONVERT_WORDS,
+        families=("order_to_invoice", "register_payment", "create_credit_note", "create_invoice"),
+    ),
+    "payroll": DomainRule(
+        primary=PAYROLL_WORDS,
+        families=("salary_transaction",),
+    ),
+    "travel": DomainRule(
+        primary=TRAVEL_WORDS | {"conference", "kundebesok", "conferencia"},
+        families=("delete_travel_expense", "create_travel_expense"),
+    ),
+    "ledger": DomainRule(
+        primary=LEDGER_WORDS | DIMENSION_WORDS | {"7100", "7300"},
+        families=("ledger_correction",),
+    ),
+    "masterdata": DomainRule(
+        primary=CUSTOMER_WORDS
+        | SUPPLIER_WORDS
+        | EMPLOYEE_WORDS
+        | PRODUCT_WORDS
+        | PROJECT_WORDS
+        | DEPARTMENT_WORDS,
+        families=(
+            "create_supplier",
+            "create_customer",
+            "create_employee",
+            "create_product",
+            "create_project",
+            "create_department",
+        ),
+    ),
+}
+
 
 def _intent(prompt_n: str) -> str:
     if contains_any(prompt_n, CREATE_WORDS):
@@ -266,7 +307,15 @@ def _score_family(prompt_n: str, family: str, entities_map: dict[str, object]) -
     return score
 
 
-def _pick_task_family(prompt_n: str, entities_map: dict[str, object]) -> tuple[str, list[str], float, list[str]]:
+def _score_domain(prompt_n: str, domain: str) -> float:
+    rule = DOMAIN_RULES[domain]
+    return _score_keywords(prompt_n, rule.primary, 1.4, limit=4)
+
+
+def _pick_task_family(
+    prompt_n: str,
+    entities_map: dict[str, object],
+) -> tuple[str, list[str], float, list[str], dict[str, object]]:
     has_invoice = contains_any(prompt_n, INVOICE_WORDS)
     has_order = contains_any(prompt_n, ORDER_WORDS)
     has_payment = contains_any(prompt_n, PAYMENT_WORDS)
@@ -274,24 +323,41 @@ def _pick_task_family(prompt_n: str, entities_map: dict[str, object]) -> tuple[s
     has_create = contains_any(prompt_n, CREATE_WORDS)
 
     if has_order and has_invoice and has_convert:
-        return "order_to_invoice", FAMILY_RULES["order_to_invoice"].actions, 0.95, []
+        return "order_to_invoice", FAMILY_RULES["order_to_invoice"].actions, 0.95, [], {"route_mode": "hard_rule"}
     if has_payment and has_invoice and not (has_order and has_create):
-        return "register_payment", FAMILY_RULES["register_payment"].actions, 0.9, []
+        return "register_payment", FAMILY_RULES["register_payment"].actions, 0.9, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, CREDIT_WORDS) and has_invoice:
-        return "create_credit_note", FAMILY_RULES["create_credit_note"].actions, 0.9, []
+        return "create_credit_note", FAMILY_RULES["create_credit_note"].actions, 0.9, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, DIMENSION_WORDS) and (
         contains_any(prompt_n, LEDGER_WORDS) or any(number in prompt_n for number in ("7100", "7300"))
     ):
-        return "ledger_correction", FAMILY_RULES["ledger_correction"].actions, 0.88, []
+        return "ledger_correction", FAMILY_RULES["ledger_correction"].actions, 0.88, [], {"route_mode": "hard_rule"}
 
-    scores = {family: _score_family(prompt_n, family, entities_map) for family in FAMILY_RULES}
+    domain_scores = {domain: _score_domain(prompt_n, domain) for domain in DOMAIN_RULES}
+    ranked_domains = sorted(domain_scores.items(), key=lambda item: item[1], reverse=True)
+    best_domain, best_domain_score = ranked_domains[0]
+    second_domain_score = ranked_domains[1][1] if len(ranked_domains) > 1 else -999.0
+    domain_margin = best_domain_score - second_domain_score
+
+    candidate_families = list(FAMILY_RULES)
+    route_mode = "global"
+    if best_domain_score >= 1.4 and domain_margin >= 0.2:
+        candidate_families = list(DOMAIN_RULES[best_domain].families)
+        route_mode = f"domain:{best_domain}"
+
+    scores = {family: _score_family(prompt_n, family, entities_map) for family in candidate_families}
     ranked = sorted(scores.items(), key=lambda item: item[1], reverse=True)
     best_family, best_score = ranked[0]
     second_score = ranked[1][1] if len(ranked) > 1 else -999.0
     margin = best_score - second_score
+    debug = {
+        "route_mode": route_mode,
+        "domain_scores": {k: round(v, 2) for k, v in sorted(domain_scores.items(), key=lambda item: item[1], reverse=True)[:3]},
+        "candidate_scores": {k: round(v, 2) for k, v in ranked[:4]},
+    }
 
     if best_score < 2.2:
-        return "unknown", [], 0.55, ["unclassified_prompt", "low_evidence"]
+        return "unknown", [], 0.55, ["unclassified_prompt", "low_evidence"], debug
 
     risk_flags: list[str] = []
     confidence = min(0.97, FAMILY_RULES[best_family].base_confidence + min(best_score / 20.0, 0.08))
@@ -299,7 +365,7 @@ def _pick_task_family(prompt_n: str, entities_map: dict[str, object]) -> tuple[s
         risk_flags.append("low_margin_classification")
         confidence = max(0.6, confidence - 0.12)
 
-    return best_family, FAMILY_RULES[best_family].actions, confidence, risk_flags
+    return best_family, FAMILY_RULES[best_family].actions, confidence, risk_flags, debug
 
 
 def classify_task(prompt: str, attachments: list[ParsedAttachment]) -> TaskSpec:
@@ -313,13 +379,14 @@ def classify_task(prompt: str, attachments: list[ParsedAttachment]) -> TaskSpec:
         Entity(type="project", data={"name": entities_map.get("projectName")}),
     ]
 
-    task_family, actions, confidence, risk_flags = _pick_task_family(prompt_n, entities_map)
+    task_family, actions, confidence, risk_flags, routing_debug = _pick_task_family(prompt_n, entities_map)
 
     if task_family == "register_payment" and contains_any(prompt_n, ORDER_WORDS) and contains_any(prompt_n, CREATE_WORDS):
         task_family = "order_to_invoice"
         actions = FAMILY_RULES["order_to_invoice"].actions
         confidence = 0.72
         risk_flags.append("payment_order_conflict_resolved_to_order_to_invoice")
+        routing_debug["route_mode"] = "guardrail:payment_order_conflict"
 
     return TaskSpec(
         language=language,
@@ -330,5 +397,6 @@ def classify_task(prompt: str, attachments: list[ParsedAttachment]) -> TaskSpec:
         requires_payment=task_family == "register_payment",
         confidence=confidence,
         risk_flags=risk_flags,
+        routing_debug=routing_debug,
         prompt=prompt,
     )

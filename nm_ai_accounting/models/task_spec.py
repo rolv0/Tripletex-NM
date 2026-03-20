@@ -45,4 +45,5 @@ class TaskSpec(BaseModel):
     requires_payment: bool = False
     confidence: float = 0.0
     risk_flags: list[str] = Field(default_factory=list)
+    routing_debug: dict[str, Any] = Field(default_factory=dict)
     prompt: str = ""

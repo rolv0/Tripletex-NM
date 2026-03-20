@@ -36,6 +36,8 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
             language=task_spec.language,
             task_family=task_spec.task_family,
             confidence=task_spec.confidence,
+            risk_flags=task_spec.risk_flags,
+            routing_debug=task_spec.routing_debug,
             files=len(attachments),
             duration_ms=int((time.perf_counter() - started) * 1000),
             result=result,
@@ -56,6 +58,8 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         language=task_spec.language,
         task_family=task_spec.task_family,
         confidence=task_spec.confidence,
+        risk_flags=task_spec.risk_flags,
+        routing_debug=task_spec.routing_debug,
         files=len(attachments),
         steps=[step.op for step in plan.steps],
         allowed_endpoints=plan.allowed_endpoints,
@@ -83,4 +87,3 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         duration_ms=duration_ms,
     )
     return result
-
