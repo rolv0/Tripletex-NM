@@ -796,7 +796,27 @@ async def _create_employee_with_retry(
 
 
 def _is_register_payment_intent(prompt_n: str) -> bool:
-    return _contains_any(prompt_n, PAYMENT_WORDS) and _contains_any(prompt_n, INVOICE_WORDS)
+    # Keep this strict to avoid routing "create invoice/order" prompts into payment flow.
+    if not (_contains_any(prompt_n, PAYMENT_WORDS) and _contains_any(prompt_n, INVOICE_WORDS)):
+        return False
+    has_register_verb = _contains_any(
+        prompt_n,
+        {
+            "register",
+            "registrer",
+            "registrer",
+            "registrar",
+            "enregistrer",
+            "book",
+            "bokfor",
+            "bokforing",
+        },
+    )
+    explicit_payment_phrase = any(
+        phrase in prompt_n
+        for phrase in ("full payment", "partial payment", "part payment", "delbetaling", "paiement complet")
+    )
+    return has_register_verb or explicit_payment_phrase
 
 
 def _is_credit_note_intent(prompt_n: str) -> bool:
@@ -1022,7 +1042,7 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
             "invoiceDateTo": to_date,
             "count": 200,
             "sorting": "-invoiceDate",
-            "fields": "id,customer,customerId,invoiceDate,invoiceNumber,amountExcludingVat,amountExcludingVatCurrency,amountIncludingVat,paidAmount,amountOutstanding,invoiceStatus",
+            "fields": "id,customer,invoiceDate,invoiceNumber,amountExcludingVat,amountExcludingVatCurrency,amountIncludingVat,paidAmount,amountOutstanding,invoiceStatus",
         }
         if customer_id is not None:
             invoice_params["customerId"] = str(customer_id)
@@ -1075,7 +1095,7 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
             "invoiceDateTo": to_date,
             "count": 200,
             "sorting": "-invoiceDate",
-            "fields": "id,customer,customerId,invoiceDate,invoiceNumber,amountExcludingVat,amountExcludingVatCurrency,amountIncludingVat,paidAmount,amountOutstanding,comment,reference",
+            "fields": "id,customer,invoiceDate,invoiceNumber,amountExcludingVat,amountExcludingVatCurrency,amountIncludingVat,paidAmount,amountOutstanding,comment,reference",
         }
         if customer_id is not None:
             invoice_params["customerId"] = str(customer_id)
