@@ -69,6 +69,20 @@ def _is_travel_expense_intent(prompt_l: str) -> bool:
     return _contains_any(prompt_l, words)
 
 
+def _is_credit_note_intent(prompt_l: str) -> bool:
+    credit_words = {
+        "kreditnota",
+        "credit note",
+        "creditnote",
+        "gutschrift",
+        "nota de credito",
+        "nota de crédito",
+        "avoir",
+    }
+    invoice_words = {"faktura", "invoice", "rechnung"}
+    return _contains_any(prompt_l, credit_words) and _contains_any(prompt_l, invoice_words)
+
+
 def _is_timesheet_intent(prompt_l: str) -> bool:
     hour_words = {"stunden", "hours", "timer", "timar", "timesheet", "timeregistrering"}
     context_words = {"aktivitet", "aktivität", "activity", "prosjekt", "project", "stundensatz", "hourly rate"}
@@ -173,6 +187,39 @@ def _extract_quoted_values(text: str) -> list[str]:
 def _extract_company_name(text: str) -> str | None:
     m = re.search(r"(?:for|für|til)\s+([A-ZÆØÅ][^,(]+?)(?:\s*\(|$)", text)
     return m.group(1).strip() if m else None
+
+
+def _extract_org_number(text: str) -> str | None:
+    m = re.search(r"(?:org\.?-?nr\.?|org\.?-?no\.?)\s*([0-9]{9})", text, re.IGNORECASE)
+    return m.group(1) if m else None
+
+
+def _pick_invoice_for_credit(
+    invoices: list[dict[str, Any]],
+    amount_ex_vat: float | None,
+    hint_text: str | None,
+) -> dict[str, Any] | None:
+    if not invoices:
+        return None
+    candidates = invoices[:]
+    if amount_ex_vat is not None:
+        amount_matches = [
+            inv
+            for inv in candidates
+            if inv.get("amountExVat") is not None and abs(float(inv["amountExVat"]) - amount_ex_vat) < 0.01
+        ]
+        if amount_matches:
+            candidates = amount_matches
+    if hint_text:
+        hint = hint_text.lower().strip()
+        text_matches = []
+        for inv in candidates:
+            blob = f"{inv.get('comment','')} {inv.get('reference','')} {inv.get('invoiceNumber','')}".lower()
+            if hint in blob:
+                text_matches.append(inv)
+        if text_matches:
+            candidates = text_matches
+    return sorted(candidates, key=lambda inv: str(inv.get("invoiceDate", "")), reverse=True)[0]
 
 
 def _split_name(full_name: str | None) -> tuple[str | None, str | None]:
@@ -451,6 +498,43 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
             "paymentTypeId": payment_type_id,
             "paidAmount": paid_amount,
         }
+
+    if _is_credit_note_intent(prompt_l):
+        customer_name = _extract_customer_name(req.prompt) or _extract_company_name(req.prompt) or ""
+        amount = _extract_amount(req.prompt)
+        org_no = _extract_org_number(req.prompt)
+        quoted = _extract_quoted_values(req.prompt)
+        hint = quoted[0] if quoted else None
+        today = date.today()
+        from_date = (today - timedelta(days=3650)).isoformat()
+        to_date = (today + timedelta(days=1)).isoformat()
+
+        customer_id: int | None = None
+        if customer_name:
+            params: dict[str, Any] = {"name": customer_name, "count": 20, "fields": "id,name,organizationNumber"}
+            if org_no:
+                params["organizationNumber"] = org_no
+            customer_resp = await client.get("/customer", params=params)
+            customer = _pick_customer(customer_resp.get("values", []), customer_name)
+            if customer:
+                customer_id = int(customer["id"])
+
+        invoice_params: dict[str, Any] = {
+            "invoiceDateFrom": from_date,
+            "invoiceDateTo": to_date,
+            "count": 200,
+            "sorting": "-invoiceDate",
+            "fields": "id,customer,customerId,invoiceDate,invoiceNumber,amountExVat,amountInclVat,paidAmount,amountOutstanding,comment,reference",
+        }
+        if customer_id is not None:
+            invoice_params["customerId"] = str(customer_id)
+        invoices_resp = await client.get("/invoice", params=invoice_params)
+        invoice = _pick_invoice_for_credit(invoices_resp.get("values", []), amount, hint)
+        if not invoice:
+            return {"action": "create_credit_note", "status": "no_invoice_found", "customer": customer_name}
+
+        await client.put(f"/invoice/{invoice['id']}/:createCreditNote")
+        return {"action": "create_credit_note", "invoiceId": invoice["id"]}
 
     if _is_travel_expense_intent(prompt_l):
         person_name, person_email = _extract_person_name_and_email(req.prompt)
