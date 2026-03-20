@@ -156,7 +156,15 @@ MONTH_MAP = {
 
 
 def _normalize_text(text: str) -> str:
-    normalized = unicodedata.normalize("NFKD", text)
+    translit = (
+        text.replace("ø", "o")
+        .replace("Ø", "O")
+        .replace("å", "a")
+        .replace("Å", "A")
+        .replace("æ", "ae")
+        .replace("Æ", "AE")
+    )
+    normalized = unicodedata.normalize("NFKD", translit)
     without_marks = "".join(ch for ch in normalized if not unicodedata.combining(ch))
     return without_marks.lower()
 
@@ -476,11 +484,22 @@ def _invoice_outstanding_amount(invoice: dict[str, Any]) -> float:
         except Exception:
             return 0.0
     try:
-        amount_incl = float(invoice.get("amountInclVat") or 0)
+        amount_incl = float(invoice.get("amountIncludingVat") or invoice.get("amount") or 0)
         paid_amount = float(invoice.get("paidAmount") or 0)
         return max(amount_incl - paid_amount, 0.0)
     except Exception:
         return 0.0
+
+
+def _invoice_amount_ex_vat(invoice: dict[str, Any]) -> float | None:
+    for key in ("amountExVat", "amountExcludingVat", "amountExcludingVatCurrency"):
+        if invoice.get(key) is None:
+            continue
+        try:
+            return float(invoice[key])
+        except Exception:
+            continue
+    return None
 
 
 def _pick_customer(customers: list[dict[str, Any]], customer_name: str) -> dict[str, Any] | None:
@@ -501,11 +520,11 @@ def _pick_invoice_for_payment(invoices: list[dict[str, Any]], amount_ex_vat: flo
     if not candidates:
         return None
     if amount_ex_vat is not None:
-        close_match = [
-            invoice
-            for invoice in candidates
-            if invoice.get("amountExVat") is not None and abs(float(invoice["amountExVat"]) - amount_ex_vat) < 0.01
-        ]
+        close_match = []
+        for invoice in candidates:
+            value = _invoice_amount_ex_vat(invoice)
+            if value is not None and abs(value - amount_ex_vat) < 0.01:
+                close_match.append(invoice)
         if close_match:
             candidates = close_match
     return sorted(candidates, key=lambda item: str(item.get("invoiceDate", "")), reverse=True)[0]
@@ -520,11 +539,11 @@ def _pick_invoice_for_credit(
         return None
     candidates = invoices[:]
     if amount_ex_vat is not None:
-        amount_match = [
-            invoice
-            for invoice in candidates
-            if invoice.get("amountExVat") is not None and abs(float(invoice["amountExVat"]) - amount_ex_vat) < 0.01
-        ]
+        amount_match = []
+        for invoice in candidates:
+            value = _invoice_amount_ex_vat(invoice)
+            if value is not None and abs(value - amount_ex_vat) < 0.01:
+                amount_match.append(invoice)
         if amount_match:
             candidates = amount_match
 
@@ -596,7 +615,7 @@ async def _find_salary_type_id(client: TripletexClient, query: str) -> int | Non
 
 async def _find_vat_type_id(client: TripletexClient, target_rate: float | None) -> int | None:
     try:
-        response = await client.get("/ledger/vatType", params={"count": 100, "fields": "id,name,number,rate,percent,percentage"})
+        response = await client.get("/ledger/vatType", params={"count": 100})
     except Exception:
         return None
     values = response.get("values", [])
@@ -763,7 +782,7 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
             "invoiceDateTo": to_date,
             "count": 200,
             "sorting": "-invoiceDate",
-            "fields": "id,customer,customerId,invoiceDate,invoiceNumber,amountExVat,amountInclVat,paidAmount,amountOutstanding,invoiceStatus",
+            "fields": "id,customer,customerId,invoiceDate,invoiceNumber,amountExcludingVat,amountExcludingVatCurrency,amountIncludingVat,paidAmount,amountOutstanding,invoiceStatus",
         }
         if customer_id is not None:
             invoice_params["customerId"] = str(customer_id)
@@ -816,7 +835,7 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
             "invoiceDateTo": to_date,
             "count": 200,
             "sorting": "-invoiceDate",
-            "fields": "id,customer,customerId,invoiceDate,invoiceNumber,amountExVat,amountInclVat,paidAmount,amountOutstanding,comment,reference",
+            "fields": "id,customer,customerId,invoiceDate,invoiceNumber,amountExcludingVat,amountExcludingVatCurrency,amountIncludingVat,paidAmount,amountOutstanding,comment,reference",
         }
         if customer_id is not None:
             invoice_params["customerId"] = str(customer_id)
