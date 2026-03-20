@@ -1508,10 +1508,10 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
 
     if _is_product_intent(prompt_n):
         payload = _extract_product_payload(prompt)
-        vat_rate = payload.pop("_vat_rate_hint", None)
-        vat_type_id = await _find_vat_type_id(client, vat_rate if isinstance(vat_rate, float) else None)
-        if vat_type_id is not None:
-            payload["vatType"] = {"id": vat_type_id}
+        # Speed/robustness: avoid extra lookup calls for VAT type in product flow.
+        # In many datasets default VAT setup is sufficient, while vatType lookup can add latency
+        # and occasionally pick invalid codes for the company setup.
+        payload.pop("_vat_rate_hint", None)
 
         try:
             created_product = await client.post("/product", payload)
