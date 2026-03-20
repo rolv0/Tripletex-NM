@@ -47,7 +47,7 @@ class RegisterPaymentWorkflow(Workflow):
             "invoiceDateTo": date_to,
             "count": 50,
             "sorting": "-invoiceDate",
-            "fields": "id,invoiceDate,invoiceNumber,amountExcludingVat,amountIncludingVat,amountOutstanding,paidAmount,customer,invoiceStatus",
+            "fields": "id,invoiceDate,invoiceNumber,amountExcludingVat,amountIncludingVat,amountOutstanding,paidAmount,customer",
         }
         if customer_id is not None:
             params["customerId"] = str(customer_id)
@@ -82,4 +82,3 @@ class RegisterPaymentWorkflow(Workflow):
             "paymentTypeId": payment_type_id,
             "paidAmount": outstanding,
         }
-

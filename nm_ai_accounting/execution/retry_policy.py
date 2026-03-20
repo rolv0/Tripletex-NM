@@ -10,6 +10,28 @@ class RetryPolicy:
     def should_retry(self, attempt: int, error_text: str) -> bool:
         if attempt >= self.max_retries:
             return False
-        normalized = error_text.lower()
-        return any(token in normalized for token in ("validation", "required", "kan ikke være null", "missing"))
 
+        normalized = error_text.lower()
+
+        # Do not retry deterministic contract/schema failures.
+        if any(
+            token in normalized
+            for token in (
+                "illegal field in fields filter",
+                "does not match a field in the model",
+                "is not allowed for selected workflow",
+                "endpoint ",
+            )
+        ):
+            return False
+
+        return any(
+            token in normalized
+            for token in (
+                "validation",
+                "required",
+                "kan ikke være null",
+                "kan ikke vaere null",
+                "missing",
+            )
+        )

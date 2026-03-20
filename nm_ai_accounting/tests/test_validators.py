@@ -16,6 +16,17 @@ def test_validate_request_removes_illegal_invoice_fields():
     assert result.params["fields"] == "id,amountIncludingVat"
 
 
+def test_validate_request_removes_invoice_status_field():
+    result = validate_request(
+        method="GET",
+        path="/invoice",
+        params={"fields": "id,invoiceStatus,amountOutstanding", "count": 20},
+        payload=None,
+        allowed_endpoints={"/invoice"},
+    )
+    assert result.params["fields"] == "id,amountOutstanding"
+
+
 def test_validate_request_keeps_put_action_params():
     result = validate_request(
         method="PUT",
