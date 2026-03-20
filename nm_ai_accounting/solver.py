@@ -722,8 +722,10 @@ async def _find_vat_type_id(client: TripletexClient, target_rate: float | None) 
     if not values:
         return None
 
-    best_id: int | None = None
-    best_diff = 9999.0
+    best_id_non_incoming: int | None = None
+    best_diff_non_incoming = 9999.0
+    best_id_any: int | None = None
+    best_diff_any = 9999.0
     normalized_target = target_rate if target_rate is not None else 25.0
     for value in values:
         rate_candidate = None
@@ -732,16 +734,28 @@ async def _find_vat_type_id(client: TripletexClient, target_rate: float | None) 
                 rate_candidate = _extract_float(str(value[field]))
                 if rate_candidate is not None:
                     break
+        name_norm = _normalize_text(str(value.get("name", "")))
         if rate_candidate is None:
-            name_norm = _normalize_text(str(value.get("name", "")))
-            if "standard" in name_norm and "25" in name_norm:
+            if "standard" in name_norm and "25" in name_norm and "inngaende" not in name_norm and "input" not in name_norm:
                 return int(value["id"])
             continue
+        is_incoming = any(
+            token in name_norm
+            for token in ("inngaende", "input", "fradrag", "purchase", "kjop", "kjoep", "kost")
+        )
         diff = abs(rate_candidate - normalized_target)
-        if diff < best_diff:
-            best_diff = diff
-            best_id = int(value["id"])
-    return best_id
+        if diff < best_diff_any:
+            best_diff_any = diff
+            best_id_any = int(value["id"])
+        if not is_incoming and diff < best_diff_non_incoming:
+            best_diff_non_incoming = diff
+            best_id_non_incoming = int(value["id"])
+    return best_id_non_incoming if best_id_non_incoming is not None else best_id_any
+
+
+def _is_missing_bank_account_error(err: Exception | str) -> bool:
+    text_n = _normalize_text(str(err))
+    return "bankkontonummer" in text_n or "bankkonto" in text_n or ("bank account" in text_n and "invoice" in text_n)
 
 
 async def _create_employee_with_retry(
@@ -939,11 +953,25 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         if order_id is None:
             return {"action": "project_invoice_combo", "status": "order_create_failed", "projectId": project_id}
 
-        created_invoice = await client.put(
-            f"/order/{order_id}/:invoice",
-            params={"invoiceDate": date.today().isoformat(), "sendToCustomer": False, "sendType": "MANUAL"},
-        )
-        invoice_id = _extract_value_id(created_invoice)
+        try:
+            created_invoice = await client.put(
+                f"/order/{order_id}/:invoice",
+                params={"invoiceDate": date.today().isoformat(), "sendToCustomer": False, "sendType": "MANUAL"},
+            )
+            invoice_id = _extract_value_id(created_invoice)
+        except RuntimeError as exc:
+            if _is_missing_bank_account_error(exc):
+                return {
+                    "action": "project_invoice_combo",
+                    "status": "blocked_missing_bank_account",
+                    "customerId": customer_id,
+                    "projectId": project_id,
+                    "orderId": order_id,
+                    "invoiceAmount": invoice_amount,
+                    "fixedPriceAmount": fixed_price_amount,
+                    "partPercent": part_percent,
+                }
+            raise
         if invoice_id is None:
             latest = await client.get(
                 "/invoice",
@@ -1268,7 +1296,6 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
 
         order_lines: list[dict[str, Any]] = []
         vat_id_cache: dict[float, int | None] = {}
-        default_vat_id = await _find_vat_type_id(client, None)
         for line in lines:
             line_payload: dict[str, Any] = {
                 "description": line["description"],
@@ -1281,8 +1308,6 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
                 if line_vat_rate not in vat_id_cache:
                     vat_id_cache[line_vat_rate] = await _find_vat_type_id(client, line_vat_rate)
                 vat_id = vat_id_cache[line_vat_rate]
-            if vat_id is None:
-                vat_id = default_vat_id
             if vat_id is not None:
                 line_payload["vatType"] = {"id": vat_id}
             order_lines.append(line_payload)
@@ -1335,18 +1360,35 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
                     },
                 )
                 invoice_id = _extract_value_id(created_invoice)
-            except RuntimeError:
+            except RuntimeError as exc:
+                if _is_missing_bank_account_error(exc):
+                    return {
+                        "action": "create_invoice",
+                        "status": "blocked_missing_bank_account",
+                        "orderId": order_id,
+                        "lineCount": len(order_lines),
+                    }
                 # Secondary fallback to traditional /invoice with linked order.
-                created_invoice = await client.post(
-                    "/invoice",
-                    {
-                        "customer": {"id": customer_id},
-                        "invoiceDate": today_iso,
-                        "invoiceDueDate": today_iso,
-                        "orders": [{"id": order_id}],
-                    },
-                )
-                invoice_id = _extract_value_id(created_invoice)
+                try:
+                    created_invoice = await client.post(
+                        "/invoice",
+                        {
+                            "customer": {"id": customer_id},
+                            "invoiceDate": today_iso,
+                            "invoiceDueDate": today_iso,
+                            "orders": [{"id": order_id}],
+                        },
+                    )
+                    invoice_id = _extract_value_id(created_invoice)
+                except RuntimeError as post_exc:
+                    if _is_missing_bank_account_error(post_exc):
+                        return {
+                            "action": "create_invoice",
+                            "status": "blocked_missing_bank_account",
+                            "orderId": order_id,
+                            "lineCount": len(order_lines),
+                        }
+                    logger.warning("invoice_create_fallback_failed error=%s", post_exc)
             if invoice_id is None:
                 # Some action endpoints may return sparse payloads; recover by searching latest invoice.
                 latest = await client.get(
