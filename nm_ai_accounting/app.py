@@ -6,12 +6,11 @@ import os
 import time
 from typing import Any
 
-from fastapi import FastAPI, Header, HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, Header, HTTPException, Response
 
 from models import SolveRequest, SolveResponse
 from solver import solve_task
-from tripletex_client import TripletexClient
+from tripletex import TripletexClient
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 logger = logging.getLogger("nm-ai-accounting")
@@ -19,9 +18,9 @@ logger = logging.getLogger("nm-ai-accounting")
 app = FastAPI(title="NM AI Accounting Agent", version="0.1.0")
 
 
-@app.get("/")
-async def root() -> RedirectResponse:
-    return RedirectResponse(url="/dashboard", status_code=307)
+@app.api_route("/", methods=["GET", "HEAD"])
+async def root() -> dict[str, str] | Response:
+    return {"status": "ok"}
 
 
 @app.get("/health")

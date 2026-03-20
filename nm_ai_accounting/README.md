@@ -1,43 +1,74 @@
 # NM AI Accounting Agent
 
-Starter implementation for the NM Tripletex `/solve` endpoint contract.
+Production-oriented Tripletex competition agent with deterministic workflow routing.
 
-## 1. Install
+## Architecture
+
+Pipeline per request:
+
+1. Intake (`/solve`): validate request and decode attachments.
+2. Structured parsing: language + entities + task classification.
+3. Select one primary task family.
+4. Build minimal execution plan for that workflow.
+5. Validate endpoint/query/fields before each HTTP call.
+6. Execute with max one intelligent retry.
+7. Return `{"status":"completed"}`.
+
+Main folders:
+
+- `models/`: typed request/task/plan models
+- `parsing/`: language detect, normalization, attachment parsing, entity extraction
+- `routing/`: task classifier and workflow registry
+- `workflows/`: isolated workflow implementations
+- `tripletex/`: client + request validators + field allowlists
+- `execution/`: planner, executor, retry policy
+- `tests/`: regression tests for routing and request validation
+
+## Implemented workflows
+
+- `create_customer`
+- `create_employee`
+- `create_product`
+- `create_department`
+- `create_project`
+- `create_invoice`
+- `order_to_invoice`
+- `register_payment`
+- `salary_transaction`
+
+## Install
 
 ```powershell
 cd nm_ai_accounting
-..\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
-
-If your venv is not set up, create one first:
-
-```powershell
 python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-## 2. Configure env
+## Configure env
 
-Copy `.env.example` to `.env` and set values:
+Copy `.env.example` to `.env` and set:
 
 - `TRIPLETEX_API_URL`
 - `TRIPLETEX_SESSION_TOKEN`
-- `SOLVE_API_KEY` (optional, if you set API key in submission form)
+- `SOLVE_API_KEY` (optional)
+- `LOG_LEVEL`
+- `TRIPLETEX_TIMEOUT_SECONDS`
+- `MAX_INTELLIGENT_RETRIES`
 
-## 3. Run locally
+## Run locally
 
 ```powershell
 cd nm_ai_accounting
-..\.venv\Scripts\python.exe -m uvicorn app:app --host 0.0.0.0 --port 8000
+.venv\Scripts\python.exe -m uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 
-Health check:
+Health:
 
 ```powershell
 curl http://localhost:8000/health
 ```
 
-Solve contract test:
+Solve test:
 
 ```powershell
 curl -X POST http://localhost:8000/solve `
@@ -45,23 +76,9 @@ curl -X POST http://localhost:8000/solve `
   -d "{\"prompt\":\"Opprett en kunde med navn Testkunde AS, test@example.org\",\"files\":[],\"tripletex_credentials\":{\"base_url\":\"https://kkpqfuj-amager.tripletex.dev/v2\",\"session_token\":\"YOUR_TOKEN\"}}"
 ```
 
-## 4. Connect in dashboard
+## Run tests
 
-Set endpoint URL to your deployed `/solve`, for example:
-
-- `https://your-domain.tld/solve`
-
-If you set `SOLVE_API_KEY`, send:
-
-```text
-Authorization: Bearer <SOLVE_API_KEY>
+```powershell
+cd nm_ai_accounting
+.venv\Scripts\python.exe -m pytest -q
 ```
-
-## Notes
-
-- Endpoint spec implemented:
-  - Request: `prompt`, `files`, `tripletex_credentials`
-  - Response: `{"status":"completed"}`
-- Current solver supports first-pass "opprett X" tasks for:
-  - `employee`, `customer`, `product`, `department`, `project`
-- This should be extended with more robust prompt interpretation and multi-step workflows.

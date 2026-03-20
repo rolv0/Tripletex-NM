@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TaskFile(BaseModel):
@@ -18,9 +18,10 @@ class SolveRequest(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     prompt: str
-    files: list[TaskFile] = []
+    files: list[TaskFile] = Field(default_factory=list)
     tripletex_credentials: TripletexCredentials
 
 
 class SolveResponse(BaseModel):
     status: str = "completed"
+
