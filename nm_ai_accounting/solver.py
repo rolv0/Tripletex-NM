@@ -52,6 +52,17 @@ def _is_register_payment_intent(prompt_l: str) -> bool:
     return _contains_any(prompt_l, payment_words) and _contains_any(prompt_l, invoice_words)
 
 
+def _is_travel_expense_intent(prompt_l: str) -> bool:
+    words = {
+        "reiserekning",
+        "reiseregning",
+        "travel expense",
+        "expense report",
+        "travel report",
+    }
+    return _contains_any(prompt_l, words)
+
+
 def _extract_amount(text: str) -> float | None:
     match = re.search(r"(\d[\d\s.,]*)\s*kr", text, re.IGNORECASE)
     if not match:
@@ -77,6 +88,87 @@ def _extract_customer_name(text: str) -> str | None:
         if match:
             return match.group(1).strip().strip("\"'")
     return None
+
+
+def _extract_person_name_and_email(text: str) -> tuple[str | None, str | None]:
+    email = _extract_email(text)
+    m = re.search(r"(?:for|til)\s+([A-ZÆØÅ][^,(]+)", text)
+    name = m.group(1).strip() if m else None
+    return name, email
+
+
+def _extract_quoted_title(text: str) -> str | None:
+    m = re.search(r"\"([^\"]+)\"", text)
+    return m.group(1).strip() if m else None
+
+
+def _extract_days_and_rate(text: str) -> tuple[int | None, float | None]:
+    days = None
+    day_rate = None
+    m_days = re.search(r"(\d+)\s*(?:dagar|dager|days)", text, re.IGNORECASE)
+    if m_days:
+        days = int(m_days.group(1))
+    m_rate = re.search(r"(?:dagssats|day rate)\s*(\d[\d\s.,]*)\s*kr", text, re.IGNORECASE)
+    if m_rate:
+        raw = m_rate.group(1).replace(" ", "").replace(",", ".")
+        try:
+            day_rate = float(raw)
+        except ValueError:
+            day_rate = None
+    return days, day_rate
+
+
+def _extract_expense_items(text: str) -> list[tuple[str, float]]:
+    items: list[tuple[str, float]] = []
+    for label, amount in re.findall(
+        r"([A-Za-zÆØÅæøå \-]+?)\s+(\d[\d\s.,]*)\s*kr",
+        text,
+        flags=re.IGNORECASE,
+    ):
+        l = label.strip().lower()
+        if any(token in l for token in ["dagssats", "day rate", "diett"]):
+            continue
+        raw = amount.replace(" ", "").replace(",", ".")
+        try:
+            items.append((label.strip(), float(raw)))
+        except ValueError:
+            continue
+    return items
+
+
+def _split_name(full_name: str | None) -> tuple[str | None, str | None]:
+    if not full_name:
+        return None, None
+    parts = full_name.split()
+    if len(parts) == 1:
+        return parts[0], None
+    return parts[0], " ".join(parts[1:])
+
+
+async def _find_employee_id(client: TripletexClient, full_name: str | None, email: str | None) -> int | None:
+    fields = "id,firstName,lastName,email,displayName"
+    if email:
+        res = await client.get("/employee", params={"email": email, "count": 20, "fields": fields})
+        values = res.get("values", [])
+        if values:
+            return int(values[0]["id"])
+    first, last = _split_name(full_name)
+    params: dict[str, Any] = {"count": 50, "fields": fields}
+    if first:
+        params["firstName"] = first
+    if last:
+        params["lastName"] = last
+    res = await client.get("/employee", params=params)
+    values = res.get("values", [])
+    if not values:
+        return None
+    if full_name:
+        target = full_name.lower().strip()
+        for v in values:
+            display = str(v.get("displayName") or f"{v.get('firstName','')} {v.get('lastName','')}").lower().strip()
+            if display == target:
+                return int(v["id"])
+    return int(values[0]["id"])
 
 
 def _pick_customer(customers: list[dict[str, Any]], customer_name: str) -> dict[str, Any] | None:
@@ -245,6 +337,74 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
             "invoiceId": invoice["id"],
             "paymentTypeId": payment_type_id,
             "paidAmount": paid_amount,
+        }
+
+    if _is_travel_expense_intent(prompt_l):
+        person_name, person_email = _extract_person_name_and_email(req.prompt)
+        title = _extract_quoted_title(req.prompt) or "Travel Expense"
+        days, day_rate = _extract_days_and_rate(req.prompt)
+        expenses = _extract_expense_items(req.prompt)
+        today = date.today().isoformat()
+
+        employee_id = await _find_employee_id(client, person_name, person_email)
+        if employee_id is None:
+            return {"action": "travel_expense", "status": "employee_not_found", "name": person_name, "email": person_email}
+
+        travel_payload: dict[str, Any] = {
+            "employee": {"id": employee_id},
+            "title": title,
+            "date": today,
+            "travelDetails": {
+                "departureDate": today,
+                "returnDate": today,
+                "purpose": title,
+                "isCompensationFromRates": True,
+            },
+        }
+        tr = await client.post("/travelExpense", travel_payload)
+        travel_id = tr.get("value", {}).get("id")
+        if not travel_id:
+            return {"action": "travel_expense", "status": "travel_create_failed"}
+
+        created_costs = 0
+        cost_categories = await client.get("/travelExpense/costCategory", params={"count": 20, "fields": "id,description"})
+        cc_values = cost_categories.get("values", [])
+        cost_category_id = int(cc_values[0]["id"]) if cc_values else None
+
+        for label, amount in expenses:
+            cost_payload: dict[str, Any] = {
+                "travelExpense": {"id": travel_id},
+                "comments": label,
+                "amountCurrencyIncVat": amount,
+                "date": today,
+                "isPaidByEmployee": True,
+            }
+            if cost_category_id is not None:
+                cost_payload["costCategory"] = {"id": cost_category_id}
+            try:
+                await client.post("/travelExpense/cost", cost_payload)
+                created_costs += 1
+            except Exception:
+                pass
+
+        per_diem_created = False
+        if days and day_rate:
+            per_diem_payload: dict[str, Any] = {
+                "travelExpense": {"id": travel_id},
+                "count": days,
+                "rate": day_rate,
+            }
+            try:
+                await client.post("/travelExpense/perDiemCompensation", per_diem_payload)
+                per_diem_created = True
+            except Exception:
+                pass
+
+        return {
+            "action": "travel_expense",
+            "travelExpenseId": travel_id,
+            "costItemsCreated": created_costs,
+            "perDiemCreated": per_diem_created,
         }
 
     return {"action": "no_op", "reason": "unclassified_prompt"}
