@@ -29,14 +29,20 @@ def _extract_name(text: str) -> str | None:
 
 
 def _contains_any(text: str, keywords: set[str]) -> bool:
-    return any(k in text for k in keywords)
+    for k in keywords:
+        if " " in k:
+            if k in text:
+                return True
+            continue
+        if re.search(rf"\b{re.escape(k)}\b", text, re.IGNORECASE):
+            return True
+    return False
 
 
 def _is_create_intent(prompt_l: str) -> bool:
     create_words = {
         "opprett",
         "lag",
-        "laga",
         "create",
         "crear",
         "criar",
@@ -61,6 +67,12 @@ def _is_travel_expense_intent(prompt_l: str) -> bool:
         "travel report",
     }
     return _contains_any(prompt_l, words)
+
+
+def _is_timesheet_intent(prompt_l: str) -> bool:
+    hour_words = {"stunden", "hours", "timer", "timar", "timesheet", "timeregistrering"}
+    context_words = {"aktivitet", "aktivität", "activity", "prosjekt", "project", "stundensatz", "hourly rate"}
+    return _contains_any(prompt_l, hour_words) and _contains_any(prompt_l, context_words)
 
 
 def _extract_amount(text: str) -> float | None:
@@ -136,6 +148,33 @@ def _extract_expense_items(text: str) -> list[tuple[str, float]]:
     return items
 
 
+def _extract_hours(text: str) -> float | None:
+    m = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:stunden|hours|timer|timar)", text, re.IGNORECASE)
+    if not m:
+        return None
+    return float(m.group(1).replace(",", "."))
+
+
+def _extract_hourly_rate(text: str) -> float | None:
+    m = re.search(r"(?:stundensatz|hourly rate|timesats)\s*[:=]?\s*(\d[\d\s.,]*)", text, re.IGNORECASE)
+    if not m:
+        return None
+    raw = m.group(1).replace(" ", "").replace(",", ".")
+    try:
+        return float(raw)
+    except ValueError:
+        return None
+
+
+def _extract_quoted_values(text: str) -> list[str]:
+    return [m.strip() for m in re.findall(r'"([^"]+)"', text)]
+
+
+def _extract_company_name(text: str) -> str | None:
+    m = re.search(r"(?:for|für|til)\s+([A-ZÆØÅ][^,(]+?)(?:\s*\(|$)", text)
+    return m.group(1).strip() if m else None
+
+
 def _split_name(full_name: str | None) -> tuple[str | None, str | None]:
     if not full_name:
         return None, None
@@ -180,6 +219,16 @@ def _pick_customer(customers: list[dict[str, Any]], customer_name: str) -> dict[
     if contains:
         return contains[0]
     return customers[0] if customers else None
+
+
+def _extract_value_id(resp: dict[str, Any]) -> int | None:
+    value = resp.get("value") if isinstance(resp, dict) else None
+    if isinstance(value, dict) and value.get("id") is not None:
+        try:
+            return int(value["id"])
+        except Exception:
+            return None
+    return None
 
 
 def _invoice_outstanding_amount(inv: dict[str, Any]) -> float:
@@ -256,6 +305,70 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
 
     name = _extract_name(req.prompt) or "Auto Generated"
     email = _extract_email(req.prompt)
+
+    if _is_timesheet_intent(prompt_l):
+        person_name, person_email = _extract_person_name_and_email(req.prompt)
+        employee_id = await _find_employee_id(client, person_name, person_email or email)
+        if employee_id is None:
+            return {"action": "timesheet_entry", "status": "employee_not_found"}
+
+        quoted = _extract_quoted_values(req.prompt)
+        activity_name = quoted[0] if len(quoted) >= 1 else "Work"
+        project_name = quoted[1] if len(quoted) >= 2 else "Project"
+        company_name = _extract_company_name(req.prompt)
+        hours = _extract_hours(req.prompt) or 0.0
+        hourly_rate = _extract_hourly_rate(req.prompt)
+        today = date.today().isoformat()
+
+        customer_id: int | None = None
+        if company_name:
+            customers = await client.get("/customer", params={"name": company_name, "count": 10, "fields": "id,name"})
+            cvals = customers.get("values", [])
+            if cvals:
+                customer_id = int(cvals[0]["id"])
+            else:
+                created_customer = await client.post("/customer", {"name": company_name, "isCustomer": True})
+                customer_id = _extract_value_id(created_customer)
+
+        projects = await client.get("/project", params={"name": project_name, "count": 20, "fields": "id,name,customer"})
+        pvals = projects.get("values", [])
+        project_id: int | None = int(pvals[0]["id"]) if pvals else None
+        if project_id is None:
+            project_payload: dict[str, Any] = {"name": project_name}
+            if customer_id is not None:
+                project_payload["customer"] = {"id": customer_id}
+            created_project = await client.post("/project", project_payload)
+            project_id = _extract_value_id(created_project)
+        if project_id is None:
+            return {"action": "timesheet_entry", "status": "project_not_found_or_created"}
+
+        activities = await client.get("/activity", params={"name": activity_name, "count": 20, "fields": "id,name,isProjectActivity"})
+        avals = activities.get("values", [])
+        activity_id: int | None = int(avals[0]["id"]) if avals else None
+        if activity_id is None:
+            created_activity = await client.post("/activity", {"name": activity_name, "isProjectActivity": True})
+            activity_id = _extract_value_id(created_activity)
+        if activity_id is None:
+            return {"action": "timesheet_entry", "status": "activity_not_found_or_created"}
+
+        entry_payload: dict[str, Any] = {
+            "employee": {"id": employee_id},
+            "project": {"id": project_id},
+            "activity": {"id": activity_id},
+            "date": today,
+            "hours": hours,
+        }
+        if hourly_rate is not None:
+            entry_payload["hourlyRate"] = hourly_rate
+        await client.post("/timesheet/entry", entry_payload)
+        return {
+            "action": "timesheet_entry",
+            "employeeId": employee_id,
+            "projectId": project_id,
+            "activityId": activity_id,
+            "hours": hours,
+            "hourlyRate": hourly_rate,
+        }
 
     if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"ansatt", "employee", "empleado", "funcionario"}):
         first_name, _, last_name = name.partition(" ")
