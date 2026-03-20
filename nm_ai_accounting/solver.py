@@ -171,20 +171,35 @@ MONTH_MAP = {
 
 
 def _normalize_text(text: str) -> str:
-    translit = (
-        text.replace("ø", "o")
-        .replace("Ø", "O")
-        .replace("å", "a")
-        .replace("Å", "A")
-        .replace("æ", "ae")
-        .replace("Æ", "AE")
-        .replace("Ã¸", "o")
-        .replace("Ã˜", "O")
-        .replace("Ã¥", "a")
-        .replace("Ã…", "A")
-        .replace("Ã¦", "ae")
-        .replace("Ã†", "AE")
+    translit = text.translate(
+        str.maketrans(
+            {
+                "\u00f8": "o",
+                "\u00d8": "O",
+                "\u00e5": "a",
+                "\u00c5": "A",
+                "\u00e6": "ae",
+                "\u00c6": "AE",
+            }
+        )
     )
+    # Handle common mojibake sequences seen in logs/source copies.
+    for bad, good in (
+        ("Ã¸", "o"),
+        ("Ã˜", "O"),
+        ("Ã¥", "a"),
+        ("Ã…", "A"),
+        ("Ã¦", "ae"),
+        ("Ã†", "AE"),
+        ("ÃƒÂ¸", "o"),
+        ("ÃƒËœ", "O"),
+        ("ÃƒÂ¥", "a"),
+        ("Ãƒâ€¦", "A"),
+        ("ÃƒÂ¦", "ae"),
+        ("Ãƒâ€ ", "AE"),
+    ):
+        translit = translit.replace(bad, good)
+
     normalized = unicodedata.normalize("NFKD", translit)
     without_marks = "".join(ch for ch in normalized if not unicodedata.combining(ch))
     return without_marks.lower()
@@ -479,7 +494,7 @@ def _extract_product_payload(text: str) -> dict[str, Any]:
 
 def _extract_fixed_price_amount(text: str) -> float | None:
     patterns = [
-        r"(?:fixed price|fastpris|preco fixo|prix fixe|festpreis)\s*(?:de|of|pa|på|von)?\s*(\d[\d\s.,]*)\s*(?:kr|nok)?",
+        r"(?:fixed price|fastpris|preco fixo|prix fixe|festpreis)\s*(?:de|of|pa|paa|von)?\s*(\d[\d\s.,]*)\s*(?:kr|nok)?",
     ]
     for pattern in patterns:
         match = re.search(pattern, text, re.IGNORECASE)
