@@ -1,4 +1,5 @@
 from .base import Workflow
+from .create_credit_note import CreateCreditNoteWorkflow
 from .create_department import CreateDepartmentWorkflow
 from .create_customer import CreateCustomerWorkflow
 from .create_employee import CreateEmployeeWorkflow
@@ -11,6 +12,7 @@ from .salary_transaction import SalaryTransactionWorkflow
 
 __all__ = [
     "Workflow",
+    "CreateCreditNoteWorkflow",
     "CreateDepartmentWorkflow",
     "CreateCustomerWorkflow",
     "CreateEmployeeWorkflow",
