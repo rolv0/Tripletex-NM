@@ -41,6 +41,7 @@ def test_supplier_prompt_routes_to_create_supplier():
     prompt = "Register the supplier Silveroak Ltd with organization number 943413231."
     spec = classify_task(prompt, _attachments())
     assert spec.task_family == "create_supplier"
+    assert spec.language == "en"
 
 
 def test_portuguese_travel_prompt_routes_to_create_travel_expense():
@@ -50,6 +51,7 @@ def test_portuguese_travel_prompt_routes_to_create_travel_expense():
     )
     spec = classify_task(prompt, _attachments())
     assert spec.task_family == "create_travel_expense"
+    assert spec.language == "pt"
 
 
 def test_french_dimension_prompt_routes_to_ledger_correction():
@@ -57,6 +59,17 @@ def test_french_dimension_prompt_routes_to_ledger_correction():
         'Creez une dimension comptable personnalisee "Prosjekttype" avec les valeurs '
         '"Internt" et "Utvikling". Puis comptabilisez une piece sur le compte 7300 '
         "pour 10150 NOK."
+    )
+    spec = classify_task(prompt, _attachments())
+    assert spec.task_family == "ledger_correction"
+    assert spec.language == "fr"
+
+
+def test_logged_french_dimension_prompt_routes_to_ledger_correction():
+    prompt = (
+        'Créez une dimension comptable personnalisée "Prosjekttype" avec les valeurs '
+        '"Internt" et "Utvikling". Puis comptabilisez une pièce sur le compte 7300 '
+        "pour 10150 NOK, liée à la valeur de dimension."
     )
     spec = classify_task(prompt, _attachments())
     assert spec.task_family == "ledger_correction"
