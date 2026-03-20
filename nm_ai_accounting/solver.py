@@ -69,6 +69,9 @@ PAYMENT_WORDS = {
     "paiement",
     "zahlung",
     "pago",
+    "delbetaling",
+    "partial payment",
+    "part payment",
 }
 CREDIT_NOTE_WORDS = {
     "kreditnota",
@@ -101,6 +104,32 @@ ADMIN_WORDS = {
     "account administrator",
     "administrateur",
     "administrador",
+}
+
+INVOICE_ACTION_WORDS = {
+    "fakturer",
+    "invoice",
+    "facturer",
+    "faturar",
+    "invoicer",
+    "billing",
+}
+
+CUSTOMER_CREATE_WORDS = {
+    "opprett",
+    "lag",
+    "registrer",
+    "register",
+    "create",
+    "crear",
+    "crea",
+    "creer",
+    "creez",
+    "criar",
+    "crie",
+    "erstellen",
+    "erstelle",
+    "add",
 }
 
 MONTH_MAP = {
@@ -288,6 +317,20 @@ def _extract_org_number(text: str) -> str | None:
 
 
 def _extract_customer_name(text: str) -> str | None:
+    def _is_valid_customer_candidate(value: str | None) -> bool:
+        if not value:
+            return False
+        normalized = _normalize_text(value).strip()
+        if not normalized:
+            return False
+        if normalized.startswith("for "):
+            return False
+        if "%" in value:
+            return False
+        if normalized.startswith("50 ") or normalized.startswith("100 "):
+            return False
+        return True
+
     patterns = [
         r"(?:kunde(?:n)?|customer|cliente|client)\s+([^,(.\n]+)",
         r"(?:for|til|pour|para|fuer)\s+([A-Z][^,(.\n]+?)(?:\s*\(|$)",
@@ -296,10 +339,11 @@ def _extract_customer_name(text: str) -> str | None:
         match = re.search(pattern, text, re.IGNORECASE)
         if match:
             cleaned = _clean_entity(match.group(1))
-            if cleaned:
+            if _is_valid_customer_candidate(cleaned):
                 return cleaned
     org_context = re.search(r"([A-Z][^,(.\n]+?)\s*\(\s*org", text, re.IGNORECASE)
-    return _clean_entity(org_context.group(1) if org_context else None)
+    candidate = _clean_entity(org_context.group(1) if org_context else None)
+    return candidate if _is_valid_customer_candidate(candidate) else None
 
 
 def _extract_person_name_and_email(text: str) -> tuple[str | None, str | None]:
@@ -430,7 +474,7 @@ def _extract_project_name(text: str) -> str | None:
 def _extract_project_manager(text: str) -> tuple[str | None, str | None]:
     email = _extract_email(text)
     patterns = [
-        r"(?:project manager|prosjektleder|director del proyecto|diretor do projeto|gestor de projeto|directeur du projet|projektleiter)\s*(?:is|er|es|est)?\s*([A-Z][^,(.\n]+)",
+        r"(?:project manager|prosjektleder|prosjektleiar|director del proyecto|diretor do projeto|gestor de projeto|directeur du projet|projektleiter)\s*(?:is|er|es|est)?\s*([A-Z][^,(.\n]+)",
     ]
     for pattern in patterns:
         match = re.search(pattern, text, re.IGNORECASE)
@@ -503,6 +547,13 @@ def _extract_fixed_price_amount(text: str) -> float | None:
             if value is not None:
                 return value
     return _extract_amount(text)
+
+
+def _extract_percentage(text: str) -> float | None:
+    match = re.search(r"(\d{1,3}(?:[.,]\d+)?)\s*%", text)
+    if not match:
+        return None
+    return _extract_float(match.group(1))
 
 
 def _split_name(full_name: str | None) -> tuple[str | None, str | None]:
@@ -761,17 +812,23 @@ def _is_delete_intent(prompt_n: str) -> bool:
 
 
 def _is_invoice_create_or_send_intent(prompt_n: str) -> bool:
-    return _contains_any(prompt_n, INVOICE_WORDS) and (
+    invoice_mention = _contains_any(prompt_n, INVOICE_WORDS) or _contains_any(prompt_n, INVOICE_ACTION_WORDS)
+    return invoice_mention and (
         _contains_any(prompt_n, CREATE_WORDS) or _contains_any(prompt_n, SEND_WORDS) or "line" in prompt_n
     )
 
 
 def _is_project_intent(prompt_n: str) -> bool:
-    if not _contains_any(prompt_n, PROJECT_WORDS):
+    if not (_contains_any(prompt_n, PROJECT_WORDS) or "prosjektet" in prompt_n):
         return False
     if _contains_any(prompt_n, CREATE_WORDS) or _contains_any(prompt_n, PROJECT_UPDATE_WORDS):
         return True
-    return "project manager" in prompt_n or "prosjektleder" in prompt_n or "gestor de projeto" in prompt_n
+    return (
+        "project manager" in prompt_n
+        or "prosjektleder" in prompt_n
+        or "prosjektleiar" in prompt_n
+        or "gestor de projeto" in prompt_n
+    )
 
 
 def _is_department_intent(prompt_n: str) -> bool:
@@ -787,7 +844,8 @@ def _is_employee_intent(prompt_n: str) -> bool:
 
 
 def _is_customer_intent(prompt_n: str) -> bool:
-    return _contains_any(prompt_n, CUSTOMER_WORDS) and _contains_any(prompt_n, CREATE_WORDS)
+    # Avoid false positives like "fakturer kunden for 50% ..."
+    return _contains_any(prompt_n, CUSTOMER_WORDS) and _contains_any(prompt_n, CUSTOMER_CREATE_WORDS)
 
 
 async def solve_task(req: SolveRequest) -> dict[str, Any]:
@@ -817,6 +875,101 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
 
     name = _extract_name(prompt) or "Auto Generated"
     email = _extract_email(prompt)
+
+    if _is_project_intent(prompt_n) and _is_invoice_create_or_send_intent(prompt_n):
+        project_name = _extract_project_name(prompt) or name
+        company_name = _extract_customer_name(prompt) or "Customer"
+        org_no = _extract_org_number(prompt)
+        manager_name, manager_email = _extract_project_manager(prompt)
+        fixed_price_amount = _extract_fixed_price_amount(prompt)
+        part_percent = _extract_percentage(prompt)
+
+        customer_id = await _find_or_create_customer(client, company_name, org_no)
+        if customer_id is None:
+            return {"action": "project_invoice_combo", "status": "customer_not_found_or_created"}
+
+        manager_id = await _find_employee_id(client, manager_name, manager_email)
+
+        project_id: int | None = None
+        existing = await client.get("/project", params={"name": project_name, "count": 20, "fields": "id,name"})
+        existing_values = existing.get("values", [])
+        if existing_values:
+            project_id = int(existing_values[0]["id"])
+        else:
+            project_payload: dict[str, Any] = {"name": project_name, "customer": {"id": customer_id}}
+            if manager_id is not None:
+                project_payload["projectManager"] = {"id": manager_id}
+            if fixed_price_amount is not None:
+                project_payload["isFixedPrice"] = True
+                project_payload["fixedPrice"] = fixed_price_amount
+            created_project = await client.post("/project", project_payload)
+            project_id = _extract_value_id(created_project)
+
+        if project_id is not None and fixed_price_amount is not None:
+            try:
+                await client.put(
+                    f"/project/{project_id}",
+                    {"isFixedPrice": True, "fixedPrice": fixed_price_amount, **({"projectManager": {"id": manager_id}} if manager_id else {})},
+                )
+            except Exception:
+                logger.warning("project_fixed_price_update_failed project_id=%s", project_id)
+
+        invoice_amount = _extract_amount(prompt) or 0.0
+        if fixed_price_amount is not None and part_percent is not None and 0 < part_percent <= 100:
+            invoice_amount = round(fixed_price_amount * (part_percent / 100.0), 2)
+        if invoice_amount <= 0 and fixed_price_amount is not None:
+            invoice_amount = fixed_price_amount
+
+        order_payload: dict[str, Any] = {
+            "customer": {"id": customer_id},
+            "orderDate": date.today().isoformat(),
+            "deliveryDate": date.today().isoformat(),
+            "orderLines": [
+                {
+                    "description": f"Delbetaling prosjekt {project_name}",
+                    "count": 1,
+                    "unitPriceExcludingVatCurrency": invoice_amount,
+                }
+            ],
+        }
+        if project_id is not None:
+            order_payload["project"] = {"id": project_id}
+        created_order = await client.post("/order", order_payload)
+        order_id = _extract_value_id(created_order)
+        if order_id is None:
+            return {"action": "project_invoice_combo", "status": "order_create_failed", "projectId": project_id}
+
+        created_invoice = await client.put(
+            f"/order/{order_id}/:invoice",
+            params={"invoiceDate": date.today().isoformat(), "sendToCustomer": False, "sendType": "MANUAL"},
+        )
+        invoice_id = _extract_value_id(created_invoice)
+        if invoice_id is None:
+            latest = await client.get(
+                "/invoice",
+                params={
+                    "customerId": str(customer_id),
+                    "invoiceDateFrom": (date.today() - timedelta(days=30)).isoformat(),
+                    "invoiceDateTo": (date.today() + timedelta(days=1)).isoformat(),
+                    "count": 5,
+                    "sorting": "-invoiceDate",
+                    "fields": "id,invoiceDate,customer",
+                },
+            )
+            latest_values = latest.get("values", [])
+            if latest_values:
+                invoice_id = int(latest_values[0]["id"])
+
+        return {
+            "action": "project_invoice_combo",
+            "customerId": customer_id,
+            "projectId": project_id,
+            "orderId": order_id,
+            "invoiceId": invoice_id,
+            "invoiceAmount": invoice_amount,
+            "fixedPriceAmount": fixed_price_amount,
+            "partPercent": part_percent,
+        }
 
     if _is_register_payment_intent(prompt_n):
         customer_name = _extract_customer_name(prompt) or ""
