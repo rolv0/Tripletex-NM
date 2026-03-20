@@ -45,6 +45,39 @@ def _is_create_intent(prompt_l: str) -> bool:
     return _contains_any(prompt_l, create_words)
 
 
+async def _create_employee_with_retry(
+    client: TripletexClient,
+    first_name: str,
+    last_name: str,
+    email: str | None,
+) -> tuple[dict[str, Any], str]:
+    base_payload: dict[str, Any] = {
+        "firstName": first_name or "Auto",
+        "lastName": last_name or "User",
+    }
+    if email:
+        base_payload["email"] = email
+
+    variants: list[tuple[str, dict[str, Any]]] = [
+        ("no_user_type", dict(base_payload)),
+        ("userType_string_employee", {**base_payload, "userType": "EMPLOYEE"}),
+        ("userType_string_standard", {**base_payload, "userType": "STANDARD"}),
+        ("userType_number_1", {**base_payload, "userType": 1}),
+        ("userType_obj_id_1", {**base_payload, "userType": {"id": 1}}),
+    ]
+
+    last_error = ""
+    for variant_name, payload in variants:
+        try:
+            await client.post("/employee", payload)
+            return payload, variant_name
+        except RuntimeError as exc:
+            last_error = str(exc)
+            if "Brukertype" not in last_error and "userType" not in last_error:
+                raise
+    raise RuntimeError(last_error or "Employee create failed")
+
+
 async def solve_task(req: SolveRequest) -> dict[str, Any]:
     prompt_l = req.prompt.lower()
     client = TripletexClient(
@@ -57,14 +90,8 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
 
     if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"ansatt", "employee", "empleado", "funcionario"}):
         first_name, _, last_name = name.partition(" ")
-        payload: dict[str, Any] = {
-            "firstName": first_name or "Auto",
-            "lastName": last_name or "User",
-        }
-        if email:
-            payload["email"] = email
-        await client.post("/employee", payload)
-        return {"action": "create_employee", "payload": payload}
+        payload, variant = await _create_employee_with_retry(client, first_name, last_name, email)
+        return {"action": "create_employee", "variant": variant, "payload": payload}
 
     if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"kunde", "customer", "cliente", "client"}):
         payload = {"name": name, "isCustomer": True}
