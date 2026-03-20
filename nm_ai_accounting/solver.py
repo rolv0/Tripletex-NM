@@ -61,6 +61,16 @@ def _is_register_payment_intent(prompt_l: str) -> bool:
     return _contains_any(prompt_l, payment_words) and _contains_any(prompt_l, invoice_words)
 
 
+def _is_invoice_create_intent(prompt_l: str) -> bool:
+    invoice_words = {"faktura", "invoice", "facture", "fatura", "rechnung"}
+    return _is_create_intent(prompt_l) and _contains_any(prompt_l, invoice_words)
+
+
+def _is_invoice_send_intent(prompt_l: str) -> bool:
+    send_words = {"send", "envoyez", "envoyer", "enviar", "sendez", "sende"}
+    return _contains_any(prompt_l, send_words)
+
+
 def _is_travel_expense_intent(prompt_l: str) -> bool:
     words = {
         "reiserekning",
@@ -92,6 +102,11 @@ def _is_timesheet_intent(prompt_l: str) -> bool:
     return _contains_any(prompt_l, hour_words) and _contains_any(prompt_l, context_words)
 
 
+def _is_payroll_intent(prompt_l: str) -> bool:
+    payroll_words = {"paie", "salary", "lonn", "lønn", "payroll", "salario"}
+    return _contains_any(prompt_l, payroll_words)
+
+
 def _extract_amount(text: str) -> float | None:
     match = re.search(r"(\d[\d\s.,]*)\s*kr", text, re.IGNORECASE)
     if not match:
@@ -105,6 +120,21 @@ def _extract_amount(text: str) -> float | None:
         return float(raw)
     except ValueError:
         return None
+
+
+def _extract_all_amounts(text: str) -> list[float]:
+    values: list[float] = []
+    for m in re.findall(r"(\d[\d\s.,]*)\s*(?:kr|nok)", text, flags=re.IGNORECASE):
+        raw = m.replace(" ", "")
+        if raw.count(",") == 1 and raw.count(".") == 0:
+            raw = raw.replace(",", ".")
+        else:
+            raw = raw.replace(",", "")
+        try:
+            values.append(float(raw))
+        except ValueError:
+            pass
+    return values
 
 
 def _extract_customer_name(text: str) -> str | None:
@@ -214,6 +244,25 @@ def _extract_quoted_items(text: str) -> list[str]:
     return [x.strip() for x in re.findall(r'"([^"]+)"', text)]
 
 
+def _extract_invoice_lines(text: str) -> list[tuple[str, float]]:
+    lines: list[tuple[str, float]] = []
+    pattern = r'([A-Za-zÀ-ÿ0-9 \-]+?)\s*\((\d+)\)\s*(?:a|à)\s*(\d[\d\s.,]*)\s*(?:kr|nok)'
+    for name, _number, amount in re.findall(pattern, text, flags=re.IGNORECASE):
+        raw = amount.replace(" ", "").replace(",", ".")
+        try:
+            lines.append((name.strip(), float(raw)))
+        except ValueError:
+            continue
+    if lines:
+        return lines
+    # fallback: one service in quotes + one amount
+    quoted = _extract_quoted_items(text)
+    amounts = _extract_all_amounts(text)
+    if quoted and amounts:
+        return [(quoted[0], amounts[0])]
+    return []
+
+
 def _extract_org_number(text: str) -> str | None:
     m = re.search(r"(?:org\.?-?nr\.?|org\.?-?no\.?)\s*([0-9]{9})", text, re.IGNORECASE)
     return m.group(1) if m else None
@@ -280,6 +329,33 @@ async def _find_employee_id(client: TripletexClient, full_name: str | None, emai
             if display == target:
                 return int(v["id"])
     return int(values[0]["id"])
+
+
+async def _find_or_create_customer(
+    client: TripletexClient,
+    customer_name: str,
+    org_no: str | None = None,
+) -> int | None:
+    params: dict[str, Any] = {"customerName": customer_name, "count": 20, "fields": "id,name,organizationNumber"}
+    if org_no:
+        params["organizationNumber"] = org_no
+    existing = await client.get("/customer", params=params)
+    values = existing.get("values", [])
+    if values:
+        return int(values[0]["id"])
+    payload: dict[str, Any] = {"name": customer_name, "isCustomer": True}
+    if org_no:
+        payload["organizationNumber"] = org_no
+    created = await client.post("/customer", payload)
+    return _extract_value_id(created)
+
+
+async def _find_salary_type_id(client: TripletexClient, query: str) -> int | None:
+    res = await client.get("/salary/type", params={"name": query, "count": 20, "fields": "id,name,number"})
+    values = res.get("values", [])
+    if values:
+        return int(values[0]["id"])
+    return None
 
 
 def _pick_customer(customers: list[dict[str, Any]], customer_name: str) -> dict[str, Any] | None:
@@ -508,6 +584,43 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
             "payload": project_payload,
         }
 
+    if _is_invoice_create_intent(prompt_l):
+        customer_name = _extract_customer_name(req.prompt) or _extract_company_name(req.prompt) or "Customer"
+        org_no = _extract_org_number(req.prompt)
+        customer_id = await _find_or_create_customer(client, customer_name, org_no)
+        if customer_id is None:
+            return {"action": "create_invoice", "status": "customer_not_found_or_created"}
+
+        today = date.today().isoformat()
+        lines = _extract_invoice_lines(req.prompt)
+        if not lines:
+            amounts = _extract_all_amounts(req.prompt)
+            amount = amounts[0] if amounts else 0.0
+            title = (_extract_quoted_items(req.prompt) or ["Invoice line"])[0]
+            lines = [(title, amount)]
+
+        order_lines = [
+            {
+                "description": line_name,
+                "count": 1,
+                "unitPriceExcludingVatCurrency": amount,
+            }
+            for line_name, amount in lines
+        ]
+        inv_payload: dict[str, Any] = {
+            "customer": {"id": customer_id},
+            "invoiceDate": today,
+            "invoiceDueDate": today,
+            "orderLines": order_lines,
+        }
+        created_invoice = await client.post("/invoice", inv_payload)
+        invoice_id = _extract_value_id(created_invoice)
+
+        if invoice_id and _is_invoice_send_intent(prompt_l):
+            await client.put(f"/invoice/{invoice_id}/:send", params={"sendType": "EMAIL"})
+            return {"action": "create_and_send_invoice", "invoiceId": invoice_id, "lineCount": len(order_lines)}
+        return {"action": "create_invoice", "invoiceId": invoice_id, "lineCount": len(order_lines)}
+
     if _is_register_payment_intent(prompt_l):
         customer_name = _extract_customer_name(req.prompt) or ""
         amount = _extract_amount(req.prompt)
@@ -599,6 +712,50 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
 
         await client.put(f"/invoice/{invoice['id']}/:createCreditNote")
         return {"action": "create_credit_note", "invoiceId": invoice["id"]}
+
+    if _is_payroll_intent(prompt_l):
+        person_name, person_email = _extract_person_name_and_email(req.prompt)
+        employee_id = await _find_employee_id(client, person_name, person_email or email)
+        if employee_id is None:
+            return {"action": "run_payroll", "status": "employee_not_found"}
+
+        amounts = _extract_all_amounts(req.prompt)
+        base_amount = amounts[0] if amounts else 0.0
+        bonus_amount = amounts[1] if len(amounts) > 1 else 0.0
+        today_dt = date.today()
+
+        base_type = await _find_salary_type_id(client, "lonn") or await _find_salary_type_id(client, "salary")
+        bonus_type = await _find_salary_type_id(client, "bonus") or base_type
+        if base_type is None:
+            salary_types = await client.get("/salary/type", params={"count": 5, "fields": "id,name,number"})
+            vals = salary_types.get("values", [])
+            if vals:
+                base_type = int(vals[0]["id"])
+                bonus_type = int(vals[1]["id"]) if len(vals) > 1 else base_type
+        if base_type is None:
+            return {"action": "run_payroll", "status": "salary_type_not_found"}
+
+        specs = [
+            {"employee": {"id": employee_id}, "salaryType": {"id": base_type}, "amount": base_amount, "description": "Base salary"},
+        ]
+        if bonus_amount > 0:
+            specs.append({"employee": {"id": employee_id}, "salaryType": {"id": bonus_type}, "amount": bonus_amount, "description": "Bonus"})
+
+        payload = {
+            "date": today_dt.isoformat(),
+            "year": today_dt.year,
+            "month": today_dt.month,
+            "payslips": [
+                {
+                    "employee": {"id": employee_id},
+                    "year": today_dt.year,
+                    "month": today_dt.month,
+                    "specifications": specs,
+                }
+            ],
+        }
+        created = await client.post("/salary/transaction", payload)
+        return {"action": "run_payroll", "transactionId": _extract_value_id(created), "specCount": len(specs)}
 
     if _is_travel_expense_intent(prompt_l):
         person_name, person_email = _extract_person_name_and_email(req.prompt)
