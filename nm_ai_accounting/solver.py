@@ -26,6 +26,11 @@ CREATE_WORDS = {
     "erstellen",
     "erstelle",
     "add",
+    "define",
+    "defina",
+    "definir",
+    "set",
+    "sett",
 }
 SEND_WORDS = {"send", "sende", "envoyer", "envoyez", "enviar", "envoie"}
 INVOICE_WORDS = {"invoice", "faktura", "facture", "fatura", "factura", "rechnung"}
@@ -33,6 +38,16 @@ CUSTOMER_WORDS = {"kunde", "kunden", "customer", "cliente", "client"}
 EMPLOYEE_WORDS = {"employee", "ansatt", "empleado", "employe", "mitarbeiter", "funcionario"}
 PRODUCT_WORDS = {"produkt", "product", "producto", "produit"}
 PROJECT_WORDS = {"prosjekt", "project", "proyecto", "projet", "projekt"}
+PROJECT_UPDATE_WORDS = {
+    "fixed price",
+    "fastpris",
+    "preco fixo",
+    "precofijo",
+    "prix fixe",
+    "festpreis",
+    "vinculado",
+    "linked",
+}
 DEPARTMENT_WORDS = {"avdeling", "avdelinger", "department", "departments", "departamento", "departamentos"}
 PAYROLL_WORDS = {"payroll", "salary", "salario", "paie", "salaire", "lonn", "loenn", "paye"}
 TRAVEL_WORDS = {
@@ -163,6 +178,12 @@ def _normalize_text(text: str) -> str:
         .replace("Å", "A")
         .replace("æ", "ae")
         .replace("Æ", "AE")
+        .replace("Ã¸", "o")
+        .replace("Ã˜", "O")
+        .replace("Ã¥", "a")
+        .replace("Ã…", "A")
+        .replace("Ã¦", "ae")
+        .replace("Ã†", "AE")
     )
     normalized = unicodedata.normalize("NFKD", translit)
     without_marks = "".join(ch for ch in normalized if not unicodedata.combining(ch))
@@ -394,7 +415,7 @@ def _extract_project_name(text: str) -> str | None:
 def _extract_project_manager(text: str) -> tuple[str | None, str | None]:
     email = _extract_email(text)
     patterns = [
-        r"(?:project manager|prosjektleder|director del proyecto|diretor do projeto|directeur du projet|projektleiter)\s*(?:is|er|es|est)?\s*([A-Z][^,(.\n]+)",
+        r"(?:project manager|prosjektleder|director del proyecto|diretor do projeto|gestor de projeto|directeur du projet|projektleiter)\s*(?:is|er|es|est)?\s*([A-Z][^,(.\n]+)",
     ]
     for pattern in patterns:
         match = re.search(pattern, text, re.IGNORECASE)
@@ -454,6 +475,19 @@ def _extract_product_payload(text: str) -> dict[str, Any]:
             payload["_vat_rate_hint"] = vat_rate
 
     return payload
+
+
+def _extract_fixed_price_amount(text: str) -> float | None:
+    patterns = [
+        r"(?:fixed price|fastpris|preco fixo|prix fixe|festpreis)\s*(?:de|of|pa|på|von)?\s*(\d[\d\s.,]*)\s*(?:kr|nok)?",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            value = _extract_float(match.group(1))
+            if value is not None:
+                return value
+    return _extract_amount(text)
 
 
 def _split_name(full_name: str | None) -> tuple[str | None, str | None]:
@@ -694,7 +728,13 @@ def _is_timesheet_intent(prompt_n: str) -> bool:
 
 
 def _is_payroll_intent(prompt_n: str) -> bool:
-    return _contains_any(prompt_n, PAYROLL_WORDS)
+    if _contains_any(prompt_n, PAYROLL_WORDS):
+        return True
+    if re.search(r"\b(kjor|kjor|run|executez|executer|execute)\b.*\b(lonn|payroll|paie|salary|salario|salaire)\b", prompt_n):
+        return True
+    return ("engangsbonus" in prompt_n or "bonus" in prompt_n) and (
+        "maned" in prompt_n or "mois" in prompt_n or "month" in prompt_n
+    )
 
 
 def _is_travel_expense_intent(prompt_n: str) -> bool:
@@ -712,7 +752,11 @@ def _is_invoice_create_or_send_intent(prompt_n: str) -> bool:
 
 
 def _is_project_intent(prompt_n: str) -> bool:
-    return _contains_any(prompt_n, PROJECT_WORDS) and _contains_any(prompt_n, CREATE_WORDS)
+    if not _contains_any(prompt_n, PROJECT_WORDS):
+        return False
+    if _contains_any(prompt_n, CREATE_WORDS) or _contains_any(prompt_n, PROJECT_UPDATE_WORDS):
+        return True
+    return "project manager" in prompt_n or "prosjektleder" in prompt_n or "gestor de projeto" in prompt_n
 
 
 def _is_department_intent(prompt_n: str) -> bool:
@@ -1118,21 +1162,61 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         company_name = _extract_customer_name(prompt)
         org_no = _extract_org_number(prompt)
         manager_name, manager_email = _extract_project_manager(prompt)
+        fixed_price_amount = _extract_fixed_price_amount(prompt) if _contains_any(prompt_n, PROJECT_UPDATE_WORDS) else None
 
         customer_id: int | None = None
         if company_name:
             customer_id = await _find_or_create_customer(client, company_name, org_no)
 
-        project_payload: dict[str, Any] = {"name": project_name}
-        if customer_id is not None:
-            project_payload["customer"] = {"id": customer_id}
-
         manager_id = await _find_employee_id(client, manager_name, manager_email)
-        if manager_id is not None:
-            project_payload["projectManager"] = {"id": manager_id}
+        project_id: int | None = None
+        try:
+            existing = await client.get(
+                "/project",
+                params={"name": project_name, "count": 20, "fields": "id,name,customer,projectManager,isFixedPrice,fixedPrice"},
+            )
+            values = existing.get("values", [])
+            if values:
+                project_id = int(values[0]["id"])
+        except Exception:
+            values = []
 
-        created_project = await client.post("/project", project_payload)
-        return {"action": "create_project", "projectId": _extract_value_id(created_project), "payload": project_payload}
+        if project_id is None:
+            project_payload: dict[str, Any] = {"name": project_name}
+            if customer_id is not None:
+                project_payload["customer"] = {"id": customer_id}
+            if manager_id is not None:
+                project_payload["projectManager"] = {"id": manager_id}
+            if fixed_price_amount is not None:
+                project_payload["isFixedPrice"] = True
+                project_payload["fixedPrice"] = fixed_price_amount
+            created_project = await client.post("/project", project_payload)
+            project_id = _extract_value_id(created_project)
+            return {"action": "create_project", "projectId": project_id, "payload": project_payload}
+
+        update_payload: dict[str, Any] = {}
+        if manager_id is not None:
+            update_payload["projectManager"] = {"id": manager_id}
+        if fixed_price_amount is not None:
+            update_payload["isFixedPrice"] = True
+            update_payload["fixedPrice"] = fixed_price_amount
+
+        if update_payload:
+            updated = False
+            attempts = [update_payload]
+            if fixed_price_amount is not None:
+                attempts.append({"isFixedPrice": True, "fixedPriceAmount": fixed_price_amount})
+                attempts.append({"isFixedPrice": True})
+            for payload in attempts:
+                try:
+                    await client.put(f"/project/{project_id}", payload)
+                    updated = True
+                    break
+                except Exception:
+                    continue
+            return {"action": "update_project", "projectId": project_id, "updated": updated, "payload": update_payload}
+
+        return {"action": "project_already_exists", "projectId": project_id}
 
     if _is_department_intent(prompt_n):
         names = _extract_quoted_items(prompt)
@@ -1226,4 +1310,5 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         return {"action": "create_customer", "customerId": _extract_value_id(created_customer), "payload": payload}
 
     return {"action": "no_op", "reason": "unclassified_prompt"}
+
 
