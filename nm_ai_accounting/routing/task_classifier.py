@@ -34,8 +34,34 @@ TRAVEL_WORDS = {
     "voyage",
 }
 CREDIT_WORDS = {"credit note", "kreditnota", "gutschrift", "avoir", "nota de credito"}
-LEDGER_WORDS = {"ledger", "hovedbok", "asiento", "asiento contable", "buchung", "ecriture"}
-DIMENSION_WORDS = {"dimension", "dimensjon", "dimensione", "dimension contable", "dimension comptable"}
+LEDGER_WORDS = {
+    "ledger",
+    "hovedbok",
+    "asiento",
+    "asiento contable",
+    "buchung",
+    "ecriture",
+    "journal entry",
+    "posting",
+    "bokfor",
+    "bokforing",
+    "comptabilisez",
+    "comptabiliser",
+    "piece",
+    "pieza",
+    "lign",
+    "linked to the dimension value",
+}
+DIMENSION_WORDS = {
+    "dimension",
+    "dimensjon",
+    "dimensione",
+    "dimension contable",
+    "dimension comptable",
+    "accounting dimension",
+    "dimension personnalis",
+    "personalisada",
+}
 
 
 def _intent(prompt_n: str) -> str:
@@ -120,7 +146,9 @@ def classify_task(prompt: str, attachments: list[ParsedAttachment]) -> TaskSpec:
         task_family = "create_supplier"
         actions = ["create_supplier"]
         confidence = 0.84
-    elif contains_any(prompt_n, DIMENSION_WORDS) and contains_any(prompt_n, LEDGER_WORDS):
+    elif contains_any(prompt_n, DIMENSION_WORDS) and (
+        contains_any(prompt_n, LEDGER_WORDS) or "7300" in prompt_n or "7100" in prompt_n
+    ):
         task_family = "ledger_correction"
         actions = ["create_accounting_dimension", "create_dimension_values", "register_voucher"]
         confidence = 0.82

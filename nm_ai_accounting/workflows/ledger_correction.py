@@ -11,7 +11,7 @@ from workflows.common import today_iso
 
 
 def _parse_account_number(prompt: str) -> str | None:
-    match = re.search(r"(?:konto|account|cuenta)\s*(\d{4})", prompt, re.IGNORECASE)
+    match = re.search(r"(?:konto|account|cuenta|compte|conta)\s*(\d{4})", prompt, re.IGNORECASE)
     return match.group(1) if match else None
 
 
@@ -122,4 +122,3 @@ class LedgerCorrectionWorkflow(Workflow):
             "dimensionValueIds": created_value_ids,
             "voucherId": voucher_id,
         }
-

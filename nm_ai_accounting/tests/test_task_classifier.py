@@ -50,3 +50,13 @@ def test_portuguese_travel_prompt_routes_to_create_travel_expense():
     )
     spec = classify_task(prompt, _attachments())
     assert spec.task_family == "create_travel_expense"
+
+
+def test_french_dimension_prompt_routes_to_ledger_correction():
+    prompt = (
+        'Creez une dimension comptable personnalisee "Prosjekttype" avec les valeurs '
+        '"Internt" et "Utvikling". Puis comptabilisez une piece sur le compte 7300 '
+        "pour 10150 NOK."
+    )
+    spec = classify_task(prompt, _attachments())
+    assert spec.task_family == "ledger_correction"

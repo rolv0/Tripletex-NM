@@ -8,10 +8,10 @@ LANG_KEYWORDS: dict[LanguageCode, set[str]] = {
     "nb": {"opprett", "faktura", "kunde", "ansatt", "lonn", "betaling", "prosjekt"},
     "nn": {"opprett", "faktura", "kunde", "reiserekning", "prosjektleiar", "timar"},
     "en": {"create", "invoice", "customer", "employee", "payment", "project", "supplier", "register"},
-    "es": {"crea", "factura", "cliente", "pedido", "proyecto", "pago", "asiento", "dimension"},
-    "pt": {"crie", "fatura", "cliente", "pedido", "projeto", "pagamento", "despesa", "viagem", "registe"},
+    "es": {"crea", "factura", "cliente", "pedido", "proyecto", "pago", "asiento", "dimension", "registre"},
+    "pt": {"crie", "fatura", "cliente", "pedido", "projeto", "pagamento", "despesa", "viagem", "registe", "ajudas de custo"},
     "de": {"erstellen", "rechnung", "kunde", "projekt", "zahlung", "stunden"},
-    "fr": {"creez", "facture", "client", "projet", "paiement", "salaire"},
+    "fr": {"creez", "facture", "client", "projet", "paiement", "salaire", "comptabilisez", "piece", "compte"},
 }
 
 
