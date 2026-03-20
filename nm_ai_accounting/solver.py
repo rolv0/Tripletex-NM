@@ -210,6 +210,10 @@ def _extract_project_name(text: str) -> str | None:
     return quoted[0] if quoted else None
 
 
+def _extract_quoted_items(text: str) -> list[str]:
+    return [x.strip() for x in re.findall(r'"([^"]+)"', text)]
+
+
 def _extract_org_number(text: str) -> str | None:
     m = re.search(r"(?:org\.?-?nr\.?|org\.?-?no\.?)\s*([0-9]{9})", text, re.IGNORECASE)
     return m.group(1) if m else None
@@ -455,12 +459,22 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         await client.post("/product", payload)
         return {"action": "create_product", "payload": payload}
 
-    if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"avdeling", "department", "departamento"}):
-        payload = {"name": name}
-        await client.post("/department", payload)
-        return {"action": "create_department", "payload": payload}
+    if _is_create_intent(prompt_l) and _contains_any(
+        prompt_l, {"avdeling", "avdelinger", "department", "departments", "departamento", "departamentos"}
+    ):
+        names = _extract_quoted_items(req.prompt)
+        if not names:
+            names = [name]
+        created: list[str] = []
+        for dep_name in names:
+            payload = {"name": dep_name}
+            await client.post("/department", payload)
+            created.append(dep_name)
+        return {"action": "create_department", "count": len(created), "names": created}
 
-    if _is_create_intent(prompt_l) and _contains_any(prompt_l, {"prosjekt", "project", "proyecto"}):
+    if _is_create_intent(prompt_l) and _contains_any(
+        prompt_l, {"prosjekt", "project", "proyecto", "proyectos", "projekt"}
+    ):
         project_name = _extract_project_name(req.prompt) or name
         company_name = _extract_customer_name(req.prompt) or _extract_company_name(req.prompt) or ""
         org_no = _extract_org_number(req.prompt)
