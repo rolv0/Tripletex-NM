@@ -7,7 +7,7 @@ from parsing.language_detector import detect_language
 from parsing.prompt_normalizer import normalize_prompt
 from utils.text import contains_any
 
-CREATE_WORDS = {"create", "opprett", "lag", "registrer", "crea", "crie", "erstellen", "creez"}
+CREATE_WORDS = {"create", "opprett", "lag", "registrer", "register", "crea", "crie", "erstellen", "creez", "registe"}
 UPDATE_WORDS = {"update", "oppdater", "endre", "actualizar", "aktualisieren", "modifier"}
 DELETE_WORDS = {"delete", "remove", "slett", "fjern", "eliminar", "supprimer", "loschen"}
 PAYMENT_WORDS = {"payment", "betaling", "pago", "pagamento", "zahlung", "paiement", "delbetaling"}
@@ -17,10 +17,22 @@ CONVERT_WORDS = {"convert", "konverter", "convierte", "converter", "umwandeln", 
 PROJECT_WORDS = {"project", "prosjekt", "proyecto", "projet", "projekt"}
 PRODUCT_WORDS = {"product", "produkt", "producto", "produit"}
 CUSTOMER_WORDS = {"customer", "kunde", "cliente", "client", "kunden"}
+SUPPLIER_WORDS = {"supplier", "leverandor", "fornecedor", "fournisseur", "proveedor", "lieferant"}
 EMPLOYEE_WORDS = {"employee", "ansatt", "empleado", "mitarbeiter", "salarie"}
 DEPARTMENT_WORDS = {"department", "avdeling", "departamento", "departement", "abteilung"}
 PAYROLL_WORDS = {"salary", "payroll", "lonn", "loenn", "salaire", "salario", "paie"}
-TRAVEL_WORDS = {"travel", "reise", "expense", "reiseregning", "reiserekning", "deplacement"}
+TRAVEL_WORDS = {
+    "travel",
+    "reise",
+    "expense",
+    "reiseregning",
+    "reiserekning",
+    "deplacement",
+    "viagem",
+    "despesa",
+    "despesa de viagem",
+    "voyage",
+}
 CREDIT_WORDS = {"credit note", "kreditnota", "gutschrift", "avoir", "nota de credito"}
 LEDGER_WORDS = {"ledger", "hovedbok", "asiento", "asiento contable", "buchung", "ecriture"}
 DIMENSION_WORDS = {"dimension", "dimensjon", "dimensione", "dimension contable", "dimension comptable"}
@@ -103,6 +115,10 @@ def classify_task(prompt: str, attachments: list[ParsedAttachment]) -> TaskSpec:
     elif contains_any(prompt_n, DEPARTMENT_WORDS):
         task_family = "create_department"
         actions = ["create_departments"]
+        confidence = 0.84
+    elif contains_any(prompt_n, SUPPLIER_WORDS):
+        task_family = "create_supplier"
+        actions = ["create_supplier"]
         confidence = 0.84
     elif contains_any(prompt_n, DIMENSION_WORDS) and contains_any(prompt_n, LEDGER_WORDS):
         task_family = "ledger_correction"

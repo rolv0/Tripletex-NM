@@ -7,9 +7,9 @@ from utils.text import contains_any
 LANG_KEYWORDS: dict[LanguageCode, set[str]] = {
     "nb": {"opprett", "faktura", "kunde", "ansatt", "lonn", "betaling", "prosjekt"},
     "nn": {"opprett", "faktura", "kunde", "reiserekning", "prosjektleiar", "timar"},
-    "en": {"create", "invoice", "customer", "employee", "payment", "project"},
-    "es": {"crea", "factura", "cliente", "pedido", "proyecto", "pago"},
-    "pt": {"crie", "fatura", "cliente", "pedido", "projeto", "pagamento"},
+    "en": {"create", "invoice", "customer", "employee", "payment", "project", "supplier", "register"},
+    "es": {"crea", "factura", "cliente", "pedido", "proyecto", "pago", "asiento", "dimension"},
+    "pt": {"crie", "fatura", "cliente", "pedido", "projeto", "pagamento", "despesa", "viagem", "registe"},
     "de": {"erstellen", "rechnung", "kunde", "projekt", "zahlung", "stunden"},
     "fr": {"creez", "facture", "client", "projet", "paiement", "salaire"},
 }
@@ -24,4 +24,3 @@ def detect_language(prompt_normalized: str) -> LanguageCode:
 
     best = max(hits.items(), key=lambda item: item[1])
     return best[0] if best[1] > 0 else "unknown"
-

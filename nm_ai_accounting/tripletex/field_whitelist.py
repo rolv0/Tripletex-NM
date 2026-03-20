@@ -2,6 +2,7 @@ from __future__ import annotations
 
 ALLOWED_QUERY_PARAMS: dict[str, set[str]] = {
     "/customer": {"name", "organizationNumber", "count", "from", "sorting", "fields"},
+    "/supplier": {"name", "organizationNumber", "count", "from", "sorting", "fields"},
     "/employee": {"email", "firstName", "lastName", "count", "from", "sorting", "fields"},
     "/project": {"name", "customerId", "count", "from", "sorting", "fields"},
     "/product": {"name", "number", "count", "from", "sorting", "fields"},
@@ -22,6 +23,7 @@ ALLOWED_QUERY_PARAMS: dict[str, set[str]] = {
 
 ALLOWED_FIELDS: dict[str, set[str]] = {
     "/customer": {"id", "name", "email", "organizationNumber", "isCustomer"},
+    "/supplier": {"id", "name", "email", "organizationNumber", "isSupplier", "invoiceEmail"},
     "/employee": {"id", "firstName", "lastName", "email", "displayName"},
     "/project": {"id", "name", "customer", "projectManager", "isFixedPrice", "fixedPrice"},
     "/product": {"id", "name", "number", "priceExcludingVatCurrency", "vatType"},
@@ -44,4 +46,3 @@ ALLOWED_FIELDS: dict[str, set[str]] = {
     "/salary/type": {"id", "name", "number"},
     "/travelExpense": {"id", "title", "date", "employee"},
 }
-

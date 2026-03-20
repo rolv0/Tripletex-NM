@@ -36,3 +36,17 @@ def test_ledger_dimension_prompt_routes_to_ledger_correction():
     )
     spec = classify_task(prompt, _attachments())
     assert spec.task_family == "ledger_correction"
+
+def test_supplier_prompt_routes_to_create_supplier():
+    prompt = "Register the supplier Silveroak Ltd with organization number 943413231."
+    spec = classify_task(prompt, _attachments())
+    assert spec.task_family == "create_supplier"
+
+
+def test_portuguese_travel_prompt_routes_to_create_travel_expense():
+    prompt = (
+        'Registe uma despesa de viagem para Bruno Silva referente a "Conferencia Bodo". '
+        'A viagem durou 3 dias com ajudas de custo.'
+    )
+    spec = classify_task(prompt, _attachments())
+    assert spec.task_family == "create_travel_expense"

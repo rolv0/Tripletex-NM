@@ -42,6 +42,15 @@ async def find_customer(client: TripletexClient, name: str, org_no: str | None =
     return values[0] if values else None
 
 
+async def find_supplier(client: TripletexClient, name: str, org_no: str | None = None) -> dict[str, Any] | None:
+    params: dict[str, Any] = {"name": name, "count": 10, "fields": "id,name,organizationNumber"}
+    if org_no:
+        params["organizationNumber"] = org_no
+    response = await client.get("/supplier", params=params)
+    values = response.get("values", [])
+    return values[0] if values else None
+
+
 async def ensure_customer(client: TripletexClient, prompt: str) -> int | None:
     customer_name = extract_customer_name(prompt) or "Customer"
     org_no = extract_org_number(prompt)
@@ -115,4 +124,3 @@ def today_iso() -> str:
 def invoice_lookup_range() -> tuple[str, str]:
     now = date.today()
     return (now - timedelta(days=3650)).isoformat(), (now + timedelta(days=1)).isoformat()
-

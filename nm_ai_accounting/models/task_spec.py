@@ -8,6 +8,7 @@ TaskFamily = Literal[
     "create_employee",
     "update_employee",
     "create_customer",
+    "create_supplier",
     "update_customer",
     "create_product",
     "create_project",
@@ -45,4 +46,3 @@ class TaskSpec(BaseModel):
     confidence: float = 0.0
     risk_flags: list[str] = Field(default_factory=list)
     prompt: str = ""
-
