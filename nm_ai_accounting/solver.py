@@ -1119,21 +1119,56 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
                 line_payload["vatType"] = {"id": vat_id}
             order_lines.append(line_payload)
 
+        # Tripletex expects invoice creation from order in many setups.
+        # Avoid direct /invoice with orderLines first because it often yields 422 (empty orders).
         invoice_id: int | None = None
+        order_id: int | None = None
+        order_payload = {
+            "customer": {"id": customer_id},
+            "orderDate": today_iso,
+            "deliveryDate": today_iso,
+            "orderLines": order_lines,
+        }
         try:
-            invoice_payload = {
-                "customer": {"id": customer_id},
-                "invoiceDate": today_iso,
-                "invoiceDueDate": today_iso,
-                "orderLines": order_lines,
-            }
-            created_invoice = await client.post("/invoice", invoice_payload)
-            invoice_id = _extract_value_id(created_invoice)
-        except RuntimeError:
-            order_payload = {"customer": {"id": customer_id}, "orderDate": today_iso, "orderLines": order_lines}
             created_order = await client.post("/order", order_payload)
             order_id = _extract_value_id(created_order)
-            if order_id is not None:
+        except RuntimeError as exc:
+            # Fallback: remove potential strict fields and retry with minimal line payload.
+            logger.warning("order_create_failed retrying_minimal error=%s", exc)
+            minimal_order_lines = []
+            for line in order_lines:
+                minimal_order_lines.append(
+                    {
+                        "description": line.get("description", "Invoice line"),
+                        "count": line.get("count", 1),
+                        "unitPriceExcludingVatCurrency": line.get("unitPriceExcludingVatCurrency", 0),
+                    }
+                )
+            created_order = await client.post(
+                "/order",
+                {
+                    "customer": {"id": customer_id},
+                    "orderDate": today_iso,
+                    "deliveryDate": today_iso,
+                    "orderLines": minimal_order_lines,
+                },
+            )
+            order_id = _extract_value_id(created_order)
+
+        if order_id is not None:
+            should_send = False
+            try:
+                created_invoice = await client.put(
+                    f"/order/{order_id}/:invoice",
+                    params={
+                        "invoiceDate": today_iso,
+                        "sendToCustomer": should_send,
+                        "sendType": "EMAIL" if should_send else "MANUAL",
+                    },
+                )
+                invoice_id = _extract_value_id(created_invoice)
+            except RuntimeError:
+                # Secondary fallback to traditional /invoice with linked order.
                 created_invoice = await client.post(
                     "/invoice",
                     {
@@ -1144,6 +1179,22 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
                     },
                 )
                 invoice_id = _extract_value_id(created_invoice)
+            if invoice_id is None:
+                # Some action endpoints may return sparse payloads; recover by searching latest invoice.
+                latest = await client.get(
+                    "/invoice",
+                    params={
+                        "customerId": str(customer_id),
+                        "invoiceDateFrom": (date.today() - timedelta(days=30)).isoformat(),
+                        "invoiceDateTo": (date.today() + timedelta(days=1)).isoformat(),
+                        "count": 5,
+                        "sorting": "-invoiceDate",
+                        "fields": "id,invoiceDate,customer",
+                    },
+                )
+                latest_values = latest.get("values", [])
+                if latest_values:
+                    invoice_id = int(latest_values[0]["id"])
 
         if invoice_id is None:
             return {"action": "create_invoice", "status": "invoice_create_failed"}
@@ -1153,9 +1204,19 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
                 await client.put(f"/invoice/{invoice_id}/:send", params={"sendType": "EMAIL"})
             except Exception:
                 logger.warning("invoice_send_failed invoice_id=%s", invoice_id)
-            return {"action": "create_and_send_invoice", "invoiceId": invoice_id, "lineCount": len(order_lines)}
+            return {
+                "action": "create_and_send_invoice",
+                "invoiceId": invoice_id,
+                "orderId": order_id,
+                "lineCount": len(order_lines),
+            }
 
-        return {"action": "create_invoice", "invoiceId": invoice_id, "lineCount": len(order_lines)}
+        return {
+            "action": "create_invoice",
+            "invoiceId": invoice_id,
+            "orderId": order_id,
+            "lineCount": len(order_lines),
+        }
 
     if _is_project_intent(prompt_n):
         project_name = _extract_project_name(prompt) or name
