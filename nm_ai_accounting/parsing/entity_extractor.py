@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import re
 from typing import Any
@@ -12,7 +12,11 @@ def extract_email(text: str) -> str | None:
 
 
 def extract_org_number(text: str) -> str | None:
-    match = re.search(r"(?:org(?:\.|anization)?\s*(?:nr|number|n[uú]mero|n[oº]))\s*[:#]?\s*(\d{9})", text, re.IGNORECASE)
+    match = re.search(
+        r"(?:org(?:\.|anization)?\s*(?:nr|number|numero|no))\s*[:#]?\s*(\d{9})",
+        text,
+        re.IGNORECASE,
+    )
     if match:
         return match.group(1)
     loose = re.search(r"\b(\d{9})\b", text)
@@ -20,24 +24,36 @@ def extract_org_number(text: str) -> str | None:
 
 
 def extract_quoted_items(text: str) -> list[str]:
-    return [m.group(1).strip() for m in re.finditer(r"[\"“”']([^\"“”']+)[\"“”']", text)]
+    return [m.group(1).strip() for m in re.finditer(r"[\"']([^\"']+)[\"']", text)]
 
 
 def extract_customer_name(text: str) -> str | None:
+    company_suffixes = r"(?:AS|SL|Lda|SARL|GmbH|SA|SAS|Ltd|LLC|Inc)"
+
     patterns = [
-        r"(?:kunde|customer|cliente|client)\s+([A-ZÆØÅA-Za-z0-9 .&\-]+?)(?:\s*\(|,| har| with| de |$)",
-        r"(?:for|para|pour)\s+([A-ZÆØÅA-Za-z0-9 .&\-]+?\b(?:AS|SL|Lda|SARL|GmbH))",
+        rf"(?:kunde|customer|cliente|client)\s+([A-Za-z0-9 .&\-]+?\b{company_suffixes}\b)",
+        rf"(?:el cliente|le client|o cliente|der kunde)\s+([A-Za-z0-9 .&\-]+?\b{company_suffixes}\b)",
+        rf"(?:for|para|pour|fur)\s+([A-Za-z0-9 .&\-]+?\b{company_suffixes}\b)",
+        rf"\b([A-Za-z0-9 .&\-]+?\b{company_suffixes}\b)\b",
     ]
-    for p in patterns:
-        m = re.search(p, text, re.IGNORECASE)
-        if m:
-            name = m.group(1).strip().strip(",.")
-            if len(name) >= 3:
-                return name
+
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if not match:
+            continue
+
+        name = match.group(1).strip().strip(",.")
+        name = re.sub(r"^(?:el cliente|le client|o cliente|der kunde)\s+", "", name, flags=re.IGNORECASE).strip()
+        name = re.sub(r"\s+", " ", name)
+
+        if len(name) >= 3:
+            return name
+
     quoted = extract_quoted_items(text)
-    for q in quoted:
-        if any(token in q.lower() for token in ("as", "sl", "sarl", "lda", "gmbh")):
-            return q
+    for value in quoted:
+        if re.search(company_suffixes, value, re.IGNORECASE):
+            return value.strip()
+
     return None
 
 
@@ -46,18 +62,20 @@ def extract_person_name(text: str) -> str | None:
     if email:
         local = email.split("@")[0].replace(".", " ").replace("_", " ").strip()
         if local:
-            return " ".join([part.capitalize() for part in local.split()[:2]])
+            return " ".join(part.capitalize() for part in local.split()[:2])
+
     match = re.search(
-        r"(?:named|navn|name|employee|ansatt|empleado|mitarbeiter|salarie|de)\s+([A-ZÆØÅ][A-Za-zÆØÅæøå\-']+\s+[A-ZÆØÅ][A-Za-zÆØÅæøå\-']+)",
+        r"(?:named|navn|name|employee|ansatt|empleado|mitarbeiter|salarie|de)\s+([A-Z][A-Za-z\-']+\s+[A-Z][A-Za-z\-']+)",
         text,
     )
     if match:
         return match.group(1).strip()
+
     return None
 
 
 def extract_project_name(text: str) -> str | None:
-    match = re.search(r"(?:prosjekt|project|proyecto|projet|projekt)\s+[\"“”']?([^\"“”'\n,]+)", text, re.IGNORECASE)
+    match = re.search(r"(?:prosjekt|project|proyecto|projet|projekt)\s+[\"']?([^\"'\n,]+)", text, re.IGNORECASE)
     if match:
         return match.group(1).strip()
     return None
@@ -79,4 +97,3 @@ def extract_all_entities(prompt: str, attachment_texts: list[str]) -> dict[str, 
         "projectName": extract_project_name(merged),
         "amounts": extract_all_amounts(merged),
     }
-
