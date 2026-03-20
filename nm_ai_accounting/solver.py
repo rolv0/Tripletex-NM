@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from datetime import date, timedelta
 from typing import Any
 
 from models import SolveRequest
@@ -43,6 +44,82 @@ def _is_create_intent(prompt_l: str) -> bool:
         "creer",
     }
     return _contains_any(prompt_l, create_words)
+
+
+def _is_register_payment_intent(prompt_l: str) -> bool:
+    payment_words = {"betaling", "betal", "register payment", "registere betaling", "registrer full betaling"}
+    invoice_words = {"faktura", "invoice"}
+    return _contains_any(prompt_l, payment_words) and _contains_any(prompt_l, invoice_words)
+
+
+def _extract_amount(text: str) -> float | None:
+    match = re.search(r"(\d[\d\s.,]*)\s*kr", text, re.IGNORECASE)
+    if not match:
+        return None
+    raw = match.group(1).replace(" ", "")
+    if raw.count(",") == 1 and raw.count(".") == 0:
+        raw = raw.replace(",", ".")
+    else:
+        raw = raw.replace(",", "")
+    try:
+        return float(raw)
+    except ValueError:
+        return None
+
+
+def _extract_customer_name(text: str) -> str | None:
+    patterns = [
+        r"(?:kunden|customer)\s+(.+?)\s*(?:\(|har|has)",
+        r"(?:for|to)\s+customer\s+(.+?)(?:,|\.|$)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            return match.group(1).strip().strip("\"'")
+    return None
+
+
+def _pick_customer(customers: list[dict[str, Any]], customer_name: str) -> dict[str, Any] | None:
+    target = customer_name.lower().strip()
+    exact = [c for c in customers if str(c.get("name", "")).lower().strip() == target]
+    if exact:
+        return exact[0]
+    contains = [c for c in customers if target in str(c.get("name", "")).lower()]
+    if contains:
+        return contains[0]
+    return customers[0] if customers else None
+
+
+def _invoice_outstanding_amount(inv: dict[str, Any]) -> float:
+    if inv.get("amountOutstanding") is not None:
+        try:
+            return float(inv["amountOutstanding"])
+        except Exception:
+            return 0.0
+    try:
+        amount_incl = float(inv.get("amountInclVat") or 0)
+        paid = float(inv.get("paidAmount") or 0)
+        return max(amount_incl - paid, 0.0)
+    except Exception:
+        return 0.0
+
+
+def _pick_invoice_for_payment(
+    invoices: list[dict[str, Any]],
+    amount_ex_vat: float | None,
+) -> dict[str, Any] | None:
+    candidates = [inv for inv in invoices if _invoice_outstanding_amount(inv) > 0]
+    if not candidates:
+        return None
+    if amount_ex_vat is not None:
+        close = [
+            inv
+            for inv in candidates
+            if inv.get("amountExVat") is not None and abs(float(inv["amountExVat"]) - amount_ex_vat) < 0.01
+        ]
+        if close:
+            return close[0]
+    return sorted(candidates, key=lambda inv: str(inv.get("invoiceDate", "")), reverse=True)[0]
 
 
 async def _create_employee_with_retry(
@@ -114,5 +191,60 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
         payload = {"name": name}
         await client.post("/project", payload)
         return {"action": "create_project", "payload": payload}
+
+    if _is_register_payment_intent(prompt_l):
+        customer_name = _extract_customer_name(req.prompt) or ""
+        amount = _extract_amount(req.prompt)
+        today = date.today()
+        from_date = (today - timedelta(days=3650)).isoformat()
+        to_date = (today + timedelta(days=1)).isoformat()
+
+        customer_id: int | None = None
+        if customer_name:
+            customer_resp = await client.get(
+                "/customer",
+                params={"name": customer_name, "count": 20, "fields": "id,name,organizationNumber"},
+            )
+            customer = _pick_customer(customer_resp.get("values", []), customer_name)
+            if customer:
+                customer_id = int(customer["id"])
+
+        invoice_params: dict[str, Any] = {
+            "invoiceDateFrom": from_date,
+            "invoiceDateTo": to_date,
+            "count": 200,
+            "sorting": "-invoiceDate",
+            "fields": "id,customer,customerId,invoiceDate,invoiceNumber,amountExVat,amountInclVat,paidAmount,amountOutstanding,invoiceStatus",
+        }
+        if customer_id is not None:
+            invoice_params["customerId"] = str(customer_id)
+
+        invoice_resp = await client.get("/invoice", params=invoice_params)
+        invoices = invoice_resp.get("values", [])
+        invoice = _pick_invoice_for_payment(invoices, amount)
+        if not invoice:
+            return {"action": "register_invoice_payment", "status": "no_invoice_found", "customer": customer_name}
+
+        payment_types = await client.get("/invoice/paymentType", params={"count": 20, "fields": "id,description"})
+        payment_values = payment_types.get("values", [])
+        if not payment_values:
+            return {"action": "register_invoice_payment", "status": "no_payment_type_found", "invoiceId": invoice.get("id")}
+        payment_type_id = int(payment_values[0]["id"])
+
+        paid_amount = _invoice_outstanding_amount(invoice)
+        await client.put(
+            f"/invoice/{invoice['id']}/:payment",
+            params={
+                "paymentDate": today.isoformat(),
+                "paymentTypeId": payment_type_id,
+                "paidAmount": paid_amount,
+            },
+        )
+        return {
+            "action": "register_invoice_payment",
+            "invoiceId": invoice["id"],
+            "paymentTypeId": payment_type_id,
+            "paidAmount": paid_amount,
+        }
 
     return {"action": "no_op", "reason": "unclassified_prompt"}

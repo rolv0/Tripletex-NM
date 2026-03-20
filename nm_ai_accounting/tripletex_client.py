@@ -26,8 +26,13 @@ class TripletexClient:
     async def post(self, path: str, payload: dict[str, Any]) -> dict[str, Any]:
         return await self._request("POST", path, json_payload=payload)
 
-    async def put(self, path: str, payload: dict[str, Any]) -> dict[str, Any]:
-        return await self._request("PUT", path, json_payload=payload)
+    async def put(
+        self,
+        path: str,
+        payload: dict[str, Any] | None = None,
+        params: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        return await self._request("PUT", path, params=params, json_payload=payload)
 
     async def delete(self, path: str) -> dict[str, Any]:
         return await self._request("DELETE", path)
