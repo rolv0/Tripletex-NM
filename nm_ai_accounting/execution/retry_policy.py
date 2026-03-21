@@ -21,6 +21,9 @@ class RetryPolicy:
                 "does not match a field in the model",
                 "is not allowed for selected workflow",
                 "endpoint ",
+                "payslips.specifications.count",
+                "payslips.specifications.rate",
+                "registrert med et arbeidsforhold",
             )
         ):
             return False

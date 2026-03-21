@@ -12,6 +12,12 @@ def canonical_endpoint(path: str) -> str:
     clean = re.sub(r"/\d+", "/{id}", clean)
     if "/:" in clean:
         clean = clean.split("/:")[0]
+    if clean.startswith("/employee/employment/details"):
+        return "/employee/employment/details"
+    if clean.startswith("/employee/employment/workingHoursScheme"):
+        return "/employee/employment/workingHoursScheme"
+    if clean.startswith("/employee/employment"):
+        return "/employee/employment"
     if clean.startswith("/invoice/paymentType"):
         return "/invoice/paymentType"
     if clean.startswith("/salary/type"):

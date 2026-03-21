@@ -5,6 +5,10 @@ def test_canonical_endpoint_action_path_maps_to_order():
     assert canonical_endpoint("/order/401960073/:invoice") == "/order"
 
 
+def test_canonical_endpoint_maps_employee_employment_details():
+    assert canonical_endpoint("/employee/employment/details") == "/employee/employment/details"
+
+
 def test_validate_request_removes_illegal_invoice_fields():
     result = validate_request(
         method="GET",
@@ -36,3 +40,15 @@ def test_validate_request_keeps_put_action_params():
         allowed_endpoints={"/order"},
     )
     assert result.params["sendType"] == "MANUAL"
+
+
+def test_validate_request_keeps_employee_employment_query_params():
+    result = validate_request(
+        method="GET",
+        path="/employee/employment",
+        params={"employeeId": 123, "count": 10, "fields": "id,startDate,endDate,unknownField"},
+        payload=None,
+        allowed_endpoints={"/employee/employment"},
+    )
+    assert result.params["employeeId"] == 123
+    assert result.params["fields"] == "id,startDate,endDate"

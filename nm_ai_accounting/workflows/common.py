@@ -152,3 +152,86 @@ def today_iso() -> str:
 def invoice_lookup_range() -> tuple[str, str]:
     now = date.today()
     return (now - timedelta(days=3650)).isoformat(), (now + timedelta(days=1)).isoformat()
+
+
+def _safe_iso_date(value: Any) -> date | None:
+    raw = str(value or "").strip()
+    if not raw:
+        return None
+    try:
+        return date.fromisoformat(raw[:10])
+    except ValueError:
+        return None
+
+
+def _is_active_employment(employment: dict[str, Any], *, on_date: date) -> bool:
+    start_date = _safe_iso_date(employment.get("startDate"))
+    end_date = _safe_iso_date(employment.get("endDate"))
+    if start_date and start_date > on_date:
+        return False
+    if end_date and end_date < on_date:
+        return False
+    return True
+
+
+async def ensure_employee_employment(
+    client: TripletexClient,
+    *,
+    employee_id: int,
+    effective_date: date,
+    base_salary_amount: float | None = None,
+) -> int | None:
+    employment_response = await client.get(
+        "/employee/employment",
+        params={"employeeId": employee_id, "count": 10, "fields": "id,startDate,endDate"},
+    )
+    employments = employment_response.get("values", [])
+    active_employment = next(
+        (
+            employment
+            for employment in employments
+            if isinstance(employment, dict) and _is_active_employment(employment, on_date=effective_date)
+        ),
+        None,
+    )
+
+    if active_employment:
+        employment_id = int(active_employment["id"])
+    else:
+        created_employment = await client.post(
+            "/employee/employment",
+            {
+                "employee": {"id": employee_id},
+                "startDate": effective_date.isoformat(),
+                "isMainEmployer": True,
+            },
+        )
+        employment_id = pick_first_value_id(created_employment)
+        if employment_id is None:
+            return None
+
+    details_response = await client.get(
+        "/employee/employment/details",
+        params={
+            "employmentId": str(employment_id),
+            "count": 10,
+            "fields": "id,date,employmentType,employmentForm,remunerationType,workingHoursScheme,percentageOfFullTimeEquivalent,annualSalary,hourlyWage",
+        },
+    )
+    detail_values = details_response.get("values", [])
+    detail_exists = any(isinstance(value, dict) for value in detail_values)
+    if not detail_exists:
+        details_payload: dict[str, Any] = {
+            "employment": {"id": employment_id},
+            "date": effective_date.isoformat(),
+            "employmentType": "ORDINARY",
+            "employmentForm": "PERMANENT",
+            "remunerationType": "MONTHLY_WAGE",
+            "workingHoursScheme": "NOT_SHIFT",
+            "percentageOfFullTimeEquivalent": 100,
+        }
+        if base_salary_amount and base_salary_amount > 0:
+            details_payload["annualSalary"] = float(base_salary_amount) * 12
+        await client.post("/employee/employment/details", details_payload)
+
+    return employment_id
