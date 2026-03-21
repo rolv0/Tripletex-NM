@@ -22,6 +22,36 @@ DIMENSION_HINTS = (
     "accounting dimension",
 )
 
+DEPRECIATION_HINTS = (
+    "depreciation",
+    "depreciate",
+    "amortissement",
+    "amortization",
+    "amortizacao",
+    "avskrivning",
+    "abschreibung",
+    "immobilisation",
+    "fixed asset",
+    "anleggsmiddel",
+)
+
+YEAR_END_HINTS = (
+    "year end",
+    "year-end",
+    "annual close",
+    "annual closing",
+    "cloture annuelle",
+    "cloture simplifiee",
+    "arsavslutning",
+    "arsoppgjor",
+    "cierre anual",
+    "fecho anual",
+    "cloture mensuelle",
+    "monthly close",
+    "cierre mensual",
+    "fecho mensal",
+)
+
 MONTH_MAP = {
     "january": 1,
     "januar": 1,
@@ -120,7 +150,75 @@ def _parse_voucher_date(prompt: str) -> str:
         year = int(year_match.group(1))
         last_day = calendar.monthrange(year, month)[1]
         return date(year, month, last_day).isoformat()
+    if year_match and any(token in prompt_l for token in YEAR_END_HINTS):
+        year = int(year_match.group(1))
+        return date(year, 12, 31).isoformat()
     return today_iso()
+
+
+def _is_year_end_task(prompt: str) -> bool:
+    prompt_l = normalize_prompt(prompt)
+    return any(token in prompt_l for token in YEAR_END_HINTS) or any(token in prompt_l for token in DEPRECIATION_HINTS)
+
+
+def _parse_years(value: str) -> float | None:
+    year_match = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:ans?|years?|jahre?|ar|anos?)\b", value, re.IGNORECASE)
+    if year_match:
+        return float(year_match.group(1).replace(",", "."))
+    month_match = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:months?|monate?|mois|meses?)\b", value, re.IGNORECASE)
+    if month_match:
+        months = float(month_match.group(1).replace(",", "."))
+        if months > 0:
+            return months / 12.0
+    return None
+
+
+def _clean_asset_name(raw: str) -> str:
+    text = raw.strip().strip(" :-")
+    text = re.sub(r"^\d+\)\s*", "", text)
+    text = re.sub(
+        r"^(?:and|und|et|og|e|y|then|puis|ensuite|luego)\s+",
+        "",
+        text,
+        flags=re.IGNORECASE,
+    )
+    if ":" in text:
+        text = text.split(":")[-1].strip()
+    return text
+
+
+def _parse_asset_specs(prompt: str) -> list[dict[str, Any]]:
+    asset_specs: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+
+    for match in re.finditer(r"([A-ZÀ-ÖØ-öø-ÿ0-9][^(\n]{1,120}?)\s*\(([^)]{8,220})\)", prompt):
+        raw_name, body = match.groups()
+        amount_values = extract_all_amounts(body)
+        if not amount_values:
+            continue
+        lifetime_years = _parse_years(body)
+        if lifetime_years is None or lifetime_years <= 0:
+            continue
+        account_numbers = _parse_account_numbers(body)
+        if not account_numbers:
+            continue
+        name = _clean_asset_name(raw_name)
+        acquisition_cost = float(amount_values[0])
+        unique_key = (name.lower(), account_numbers[0])
+        if unique_key in seen:
+            continue
+        seen.add(unique_key)
+        asset_specs.append(
+            {
+                "name": name or f"Asset {len(asset_specs) + 1}",
+                "acquisitionCost": acquisition_cost,
+                "lifetimeYears": lifetime_years,
+                "assetAccountNumber": account_numbers[0],
+                "expenseAccountNumber": account_numbers[1] if len(account_numbers) > 1 else None,
+            }
+        )
+
+    return asset_specs
 
 
 async def _find_account(client: TripletexClient, number: str) -> dict[str, Any] | None:
@@ -162,6 +260,40 @@ async def _find_offset_account(
             continue
         return value
     return None
+
+
+async def _find_depreciation_expense_account(
+    client: TripletexClient,
+    *,
+    exclude_numbers: set[str],
+) -> dict[str, Any] | None:
+    response = await client.get(
+        "/ledger/account",
+        params={
+            "isBalanceAccount": False,
+            "count": 200,
+            "fields": "id,number,name,type,ledgerType,isInactive,isBankAccount,vatType,vatLocked,legalVatTypes",
+        },
+    )
+    values = response.get("values", [])
+    keywords = ("depreci", "amort", "avskr", "abschreib", "verdifall")
+    fallback: dict[str, Any] | None = None
+    for value in values:
+        if str(value.get("ledgerType") or "GENERAL") != "GENERAL":
+            continue
+        if value.get("isInactive"):
+            continue
+        if value.get("isBankAccount"):
+            continue
+        number = str(value.get("number") or "")
+        if number in exclude_numbers:
+            continue
+        if fallback is None and number.startswith(("6", "7")):
+            fallback = value
+        normalized_name = normalize_prompt(str(value.get("name") or ""))
+        if any(token in normalized_name for token in keywords):
+            return value
+    return fallback
 
 
 def _is_balance_type(account: dict[str, Any]) -> bool:
@@ -219,6 +351,69 @@ def _build_postings(
     return [source_posting, offset_posting]
 
 
+async def _build_depreciation_postings(
+    *,
+    client: TripletexClient,
+    voucher_date: str,
+    asset_specs: list[dict[str, Any]],
+    dimension_value_id: int | None,
+) -> list[dict[str, Any]]:
+    postings: list[dict[str, Any]] = []
+    used_numbers = {str(spec["assetAccountNumber"]) for spec in asset_specs if spec.get("assetAccountNumber")}
+    shared_expense_account = await _find_depreciation_expense_account(client, exclude_numbers=used_numbers)
+
+    row = 1
+    for spec in asset_specs:
+        asset_account = await _find_account(client, str(spec["assetAccountNumber"]))
+        if asset_account is None:
+            continue
+
+        expense_account: dict[str, Any] | None = shared_expense_account
+        explicit_expense_number = spec.get("expenseAccountNumber")
+        if explicit_expense_number:
+            expense_account = await _find_account(client, str(explicit_expense_number))
+        if expense_account is None:
+            expense_account = await _find_offset_account(
+                client,
+                prefer_balance=False,
+                exclude_numbers={str(asset_account.get("number") or "")},
+            )
+        if expense_account is None:
+            continue
+
+        lifetime_years = float(spec["lifetimeYears"])
+        depreciation_amount = round(float(spec["acquisitionCost"]) / lifetime_years, 2)
+        if depreciation_amount <= 0:
+            continue
+
+        expense_posting: dict[str, Any] = {
+            "row": row,
+            "date": voucher_date,
+            "description": f"Annual depreciation {spec['name']}",
+            "account": {"id": int(expense_account["id"])},
+            "amountGross": depreciation_amount,
+            "amountGrossCurrency": depreciation_amount,
+        }
+        if dimension_value_id is not None:
+            expense_posting["freeAccountingDimension1"] = {"id": dimension_value_id}
+
+        asset_posting: dict[str, Any] = {
+            "row": row + 1,
+            "date": voucher_date,
+            "description": f"Annual depreciation {spec['name']}",
+            "account": {"id": int(asset_account["id"])},
+            "amountGross": -depreciation_amount,
+            "amountGrossCurrency": -depreciation_amount,
+        }
+        if dimension_value_id is not None:
+            asset_posting["freeAccountingDimension1"] = {"id": dimension_value_id}
+
+        postings.extend([expense_posting, asset_posting])
+        row += 2
+
+    return postings
+
+
 class LedgerCorrectionWorkflow(Workflow):
     name = "ledger_correction"
 
@@ -257,6 +452,7 @@ class LedgerCorrectionWorkflow(Workflow):
         amount = amounts[0] if amounts else 0.0
         account_numbers = _parse_account_numbers(prompt)
         primary_account_no = account_numbers[0] if account_numbers else "7100"
+        asset_specs = _parse_asset_specs(prompt)
         dimension_name = _parse_dimension_name(prompt)
         dimension_values = _parse_dimension_values(prompt)
         wants_dimension = _wants_dimension(prompt)
@@ -292,7 +488,24 @@ class LedgerCorrectionWorkflow(Workflow):
                     created_value_ids.append(int(val["id"]))
 
         voucher_id: int | None = None
-        if amount > 0:
+        if asset_specs and _is_year_end_task(prompt):
+            postings = await _build_depreciation_postings(
+                client=client,
+                voucher_date=voucher_date,
+                asset_specs=asset_specs,
+                dimension_value_id=created_value_ids[0] if created_value_ids else None,
+            )
+            voucher_payload: dict[str, Any] = {
+                "date": voucher_date,
+                "description": "Auto year-end depreciation entry",
+                "postings": postings,
+            }
+            if postings:
+                voucher_resp = await client.post("/ledger/voucher", voucher_payload)
+                val = voucher_resp.get("value", {})
+                if val.get("id") is not None:
+                    voucher_id = int(val["id"])
+        elif amount > 0:
             source_account = await _find_account(client, primary_account_no)
             if source_account is not None:
                 offset_account = await _find_offset_account(
@@ -330,5 +543,6 @@ class LedgerCorrectionWorkflow(Workflow):
             "dimensionId": created_dimension_id,
             "dimensionIndex": dimension_index,
             "dimensionValueIds": created_value_ids,
+            "assetCount": len(asset_specs),
             "voucherId": voucher_id,
         }
