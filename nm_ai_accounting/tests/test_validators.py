@@ -17,7 +17,7 @@ def test_validate_request_removes_illegal_invoice_fields():
         payload=None,
         allowed_endpoints={"/invoice"},
     )
-    assert result.params["fields"] == "id,amountIncludingVat"
+    assert result.params["fields"] == "id"
 
 
 def test_validate_request_removes_invoice_status_field():

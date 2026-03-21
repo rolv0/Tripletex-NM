@@ -46,7 +46,7 @@ class CreateCreditNoteWorkflow(Workflow):
             "invoiceDateTo": date_to,
             "count": 100,
             "sorting": "-invoiceDate",
-            "fields": "id,invoiceDate,invoiceNumber,amountExcludingVat,amountIncludingVat,customer,comment,reference",
+            "fields": "id,invoiceDate,invoiceNumber,amountExcludingVat,customer,comment,reference",
         }
         if customer_id is not None:
             params["customerId"] = str(customer_id)
@@ -60,7 +60,7 @@ class CreateCreditNoteWorkflow(Workflow):
         chosen: dict[str, Any] = values[0]
         if target_amount is not None:
             for invoice in values:
-                amount = float(invoice.get("amountExcludingVat") or invoice.get("amountIncludingVat") or 0)
+                amount = float(invoice.get("amountExcludingVat") or 0)
                 if abs(amount - target_amount) < 1.0:
                     chosen = invoice
                     break
@@ -68,4 +68,3 @@ class CreateCreditNoteWorkflow(Workflow):
         invoice_id = int(chosen["id"])
         await client.put(f"/invoice/{invoice_id}/:createCreditNote")
         return {"action": "create_credit_note", "invoiceId": invoice_id}
-

@@ -47,7 +47,7 @@ class RegisterPaymentWorkflow(Workflow):
             "invoiceDateTo": date_to,
             "count": 50,
             "sorting": "-invoiceDate",
-            "fields": "id,invoiceDate,invoiceNumber,amountExcludingVat,amountIncludingVat,amountOutstanding,paidAmount,customer",
+            "fields": "id,invoiceDate,invoiceNumber,amountExcludingVat,amountOutstanding,paidAmount,customer",
         }
         if customer_id is not None:
             params["customerId"] = str(customer_id)
@@ -60,7 +60,7 @@ class RegisterPaymentWorkflow(Workflow):
         chosen = invoices[0]
         if target_amount is not None:
             for inv in invoices:
-                amount = float(inv.get("amountExcludingVat") or inv.get("amountIncludingVat") or 0)
+                amount = float(inv.get("amountExcludingVat") or 0)
                 if abs(amount - target_amount) < 1.0:
                     chosen = inv
                     break
@@ -71,7 +71,7 @@ class RegisterPaymentWorkflow(Workflow):
             return {"action": "register_payment", "status": "no_payment_type"}
         payment_type_id = int(payment_types[0]["id"])
 
-        outstanding = float(chosen.get("amountOutstanding") or chosen.get("amountIncludingVat") or chosen.get("amountExcludingVat") or 0)
+        outstanding = float(chosen.get("amountOutstanding") or chosen.get("amountExcludingVat") or 0)
         await client.put(
             f"/invoice/{chosen['id']}/:payment",
             params={"paymentDate": today_iso(), "paymentTypeId": payment_type_id, "paidAmount": outstanding},

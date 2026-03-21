@@ -69,7 +69,6 @@ ALLOWED_FIELDS: dict[str, set[str]] = {
         "customer",
         "amountExcludingVat",
         "amountExcludingVatCurrency",
-        "amountIncludingVat",
         "paidAmount",
         "amountOutstanding",
         "comment",
