@@ -1,5 +1,6 @@
 ﻿from __future__ import annotations
 
+from datetime import datetime
 import re
 from typing import Any
 
@@ -124,6 +125,96 @@ def extract_amount(text: str) -> float | None:
     return values[0] if values else None
 
 
+def extract_invoice_number(text: str) -> str | None:
+    match = re.search(
+        r"(?:invoice|faktura|factura|fatura|rechnung)\s*(?:nr|number|no|n[oº°]?|numero)?\s*[:#]?\s*([A-Z0-9][A-Z0-9\-/]{2,})",
+        text,
+        re.IGNORECASE,
+    )
+    return match.group(1).strip() if match else None
+
+
+def _parse_date_token(raw: str) -> str | None:
+    value = raw.strip()
+    for fmt in ("%Y-%m-%d", "%d.%m.%Y", "%d/%m/%Y", "%d-%m-%Y"):
+        try:
+            return datetime.strptime(value, fmt).date().isoformat()
+        except ValueError:
+            continue
+    return None
+
+
+def extract_invoice_date(text: str) -> str | None:
+    patterns = [
+        r"(?:invoice date|fakturadato|data da fatura|date de facture|rechnungsdatum)\s*[:#]?\s*([0-9./-]{8,10})",
+        r"(?:dated|dato)\s*[:#]?\s*([0-9./-]{8,10})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            parsed = _parse_date_token(match.group(1))
+            if parsed:
+                return parsed
+    return None
+
+
+def extract_due_date(text: str) -> str | None:
+    patterns = [
+        r"(?:due date|forfallsdato|vencimento|date d[' ]echeance|falligkeit)\s*[:#]?\s*([0-9./-]{8,10})",
+        r"(?:due)\s*[:#]?\s*([0-9./-]{8,10})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            parsed = _parse_date_token(match.group(1))
+            if parsed:
+                return parsed
+    return None
+
+
+def extract_invoice_description(text: str) -> str | None:
+    quoted = extract_quoted_items(text)
+    company_suffixes = r"(?:AS|SL|Lda|SARL|GmbH|SA|SAS|Ltd|LLC|Inc)"
+    for value in quoted:
+        if not re.search(company_suffixes, value, re.IGNORECASE):
+            return value.strip()
+    return None
+
+
+def extract_invoice_total(text: str) -> float | None:
+    values = extract_all_amounts(text)
+    if not values:
+        return None
+
+    keywords = (
+        "total",
+        "belop",
+        "sum",
+        "to pay",
+        "amount due",
+        "inkl",
+        "incl",
+        "iva",
+        "mva",
+        "mwst",
+    )
+    best_value: float | None = None
+    best_score = -1
+    for line in text.splitlines():
+        line_values = extract_all_amounts(line)
+        if not line_values:
+            continue
+        normalized = line.lower()
+        score = sum(1 for keyword in keywords if keyword in normalized)
+        if score > best_score:
+            best_score = score
+            best_value = max(line_values)
+
+    if best_value is not None:
+        return best_value
+    return max(values)
+
+
 def extract_all_entities(prompt: str, attachment_texts: list[str]) -> dict[str, Any]:
     merged = "\n".join([prompt, *attachment_texts])
     return {
@@ -136,5 +227,10 @@ def extract_all_entities(prompt: str, attachment_texts: list[str]) -> dict[str, 
         "activityName": extract_activity_name(merged),
         "hours": extract_hours(merged),
         "hourlyRate": extract_hourly_rate(merged),
+        "invoiceNumber": extract_invoice_number(merged),
+        "invoiceDate": extract_invoice_date(merged),
+        "dueDate": extract_due_date(merged),
+        "invoiceDescription": extract_invoice_description(merged),
+        "invoiceAmount": extract_invoice_total(merged),
         "amounts": extract_all_amounts(merged),
     }

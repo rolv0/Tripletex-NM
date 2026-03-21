@@ -31,6 +31,7 @@ PROJECT_WORDS = {"project", "prosjekt", "proyecto", "projet", "projekt", "projec
 PRODUCT_WORDS = {"product", "produkt", "producto", "produit", "product number", "produktnummer"}
 CUSTOMER_WORDS = {"customer", "kunde", "cliente", "client", "kunden"}
 SUPPLIER_WORDS = {"supplier", "leverandor", "fornecedor", "fournisseur", "proveedor", "lieferant", "vendor"}
+ATTACHMENT_WORDS = {"pdf", "attachment", "anexo", "vedlegg", "annexe", "anhang"}
 EMPLOYEE_WORDS = {"employee", "ansatt", "empleado", "mitarbeiter", "salarie", "new employee"}
 DEPARTMENT_WORDS = {"department", "avdeling", "departamento", "departement", "abteilung"}
 HOURS_WORDS = {"log hours", "hours", "hour", "timar", "timer", "stunden", "heures", "horas", "timesheet", "hourly rate"}
@@ -150,7 +151,7 @@ FAMILY_RULES: dict[str, FamilyRule] = {
     "create_invoice": FamilyRule(
         primary=INVOICE_WORDS | CREATE_WORDS,
         secondary=CUSTOMER_WORDS | {"send invoice", "send", "hors tva", "ekskl mva"},
-        negative=PAYMENT_WORDS | CREDIT_WORDS | ORDER_WORDS,
+        negative=PAYMENT_WORDS | CREDIT_WORDS | ORDER_WORDS | SUPPLIER_WORDS,
         base_confidence=0.86,
         actions=["ensure_customer", "create_invoice"],
     ),
@@ -196,6 +197,13 @@ FAMILY_RULES: dict[str, FamilyRule] = {
         base_confidence=0.86,
         actions=["create_supplier"],
     ),
+    "register_incoming_invoice": FamilyRule(
+        primary=SUPPLIER_WORDS | INVOICE_WORDS | {"incoming invoice", "supplier invoice", "fatura de fornecedor", "leverandorfaktura"},
+        secondary=ATTACHMENT_WORDS | {"input vat", "iva de entrada", "inngaende mva", "expense account", "vendor invoice"},
+        negative=PAYMENT_WORDS | ORDER_WORDS | CREDIT_WORDS | CUSTOMER_WORDS,
+        base_confidence=0.9,
+        actions=["ensure_supplier", "resolve_incoming_invoice_fields", "create_incoming_invoice"],
+    ),
     "ledger_correction": FamilyRule(
         primary=DIMENSION_WORDS | LEDGER_WORDS,
         secondary={"7100", "7300", "10150", "43400", "custom accounting dimension", "linked to"},
@@ -215,7 +223,7 @@ FAMILY_RULES: dict[str, FamilyRule] = {
 DOMAIN_RULES: dict[str, DomainRule] = {
     "invoicing": DomainRule(
         primary=INVOICE_WORDS | ORDER_WORDS | PAYMENT_WORDS | CREDIT_WORDS | CONVERT_WORDS,
-        families=("order_to_invoice", "register_payment", "create_credit_note", "create_invoice"),
+        families=("order_to_invoice", "register_payment", "create_credit_note", "create_invoice", "register_incoming_invoice"),
     ),
     "payroll": DomainRule(
         primary=PAYROLL_WORDS,
@@ -328,6 +336,7 @@ def _score_domain(prompt_n: str, domain: str) -> float:
 def _pick_task_family(
     prompt_n: str,
     entities_map: dict[str, object],
+    attachment_count: int,
 ) -> tuple[str, list[str], float, list[str], dict[str, object]]:
     has_invoice = contains_any(prompt_n, INVOICE_WORDS)
     has_order = contains_any(prompt_n, ORDER_WORDS)
@@ -341,6 +350,8 @@ def _pick_task_family(
         return "register_payment", FAMILY_RULES["register_payment"].actions, 0.9, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, CREDIT_WORDS) and has_invoice:
         return "create_credit_note", FAMILY_RULES["create_credit_note"].actions, 0.9, [], {"route_mode": "hard_rule"}
+    if contains_any(prompt_n, SUPPLIER_WORDS) and has_invoice and attachment_count > 0:
+        return "register_incoming_invoice", FAMILY_RULES["register_incoming_invoice"].actions, 0.93, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, HOURS_WORDS) and contains_any(prompt_n, ACTIVITY_WORDS | PROJECT_WORDS):
         return "log_hours", FAMILY_RULES["log_hours"].actions, 0.92, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, DIMENSION_WORDS) and (
@@ -394,7 +405,7 @@ def classify_task(prompt: str, attachments: list[ParsedAttachment]) -> TaskSpec:
         Entity(type="project", data={"name": entities_map.get("projectName")}),
     ]
 
-    task_family, actions, confidence, risk_flags, routing_debug = _pick_task_family(prompt_n, entities_map)
+    task_family, actions, confidence, risk_flags, routing_debug = _pick_task_family(prompt_n, entities_map, len(attachments))
 
     if task_family == "register_payment" and contains_any(prompt_n, ORDER_WORDS) and contains_any(prompt_n, CREATE_WORDS):
         task_family = "order_to_invoice"
@@ -413,5 +424,6 @@ def classify_task(prompt: str, attachments: list[ParsedAttachment]) -> TaskSpec:
         confidence=confidence,
         risk_flags=risk_flags,
         routing_debug=routing_debug,
+        extracted=entities_map,
         prompt=prompt,
     )

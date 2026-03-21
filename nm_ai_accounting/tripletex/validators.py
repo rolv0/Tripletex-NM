@@ -20,14 +20,28 @@ def canonical_endpoint(path: str) -> str:
         return "/employee/employment"
     if clean.startswith("/invoice/paymentType"):
         return "/invoice/paymentType"
+    if clean.startswith("/incomingInvoice/search"):
+        return "/incomingInvoice/search"
+    if clean.startswith("/incomingInvoice"):
+        return "/incomingInvoice"
     if clean.startswith("/salary/type"):
         return "/salary/type"
     if clean.startswith("/travelExpense"):
         return "/travelExpense"
+    if clean.startswith("/ledger/voucher"):
+        return "/ledger/voucher"
     if clean.startswith("/customer"):
         return "/customer"
+    if clean.startswith("/supplier"):
+        return "/supplier"
     if clean.startswith("/employee"):
         return "/employee"
+    if clean.startswith("/ledger/account"):
+        return "/ledger/account"
+    if clean.startswith("/ledger/vatType"):
+        return "/ledger/vatType"
+    if clean.startswith("/ledger/voucherType"):
+        return "/ledger/voucherType"
     if clean.startswith("/project"):
         return "/project"
     if clean.startswith("/activity"):

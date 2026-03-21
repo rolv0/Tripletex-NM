@@ -21,6 +21,7 @@ async def solve_task(req: SolveRequest) -> dict[str, Any]:
 
     attachments = parse_attachments(req.files)
     task_spec = classify_task(req.prompt, attachments)
+    task_spec.attachments = [f.model_dump() for f in req.files]
     workflow = get_workflow(task_spec.task_family)
 
     if workflow is None:

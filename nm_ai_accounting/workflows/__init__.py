@@ -10,6 +10,7 @@ from .create_supplier import CreateSupplierWorkflow
 from .create_travel_expense import CreateTravelExpenseWorkflow
 from .log_hours import LogHoursWorkflow
 from .order_to_invoice import OrderToInvoiceWorkflow
+from .register_incoming_invoice import RegisterIncomingInvoiceWorkflow
 from .register_payment import RegisterPaymentWorkflow
 from .salary_transaction import SalaryTransactionWorkflow
 from .ledger_correction import LedgerCorrectionWorkflow
@@ -27,6 +28,7 @@ __all__ = [
     "CreateTravelExpenseWorkflow",
     "LogHoursWorkflow",
     "OrderToInvoiceWorkflow",
+    "RegisterIncomingInvoiceWorkflow",
     "RegisterPaymentWorkflow",
     "SalaryTransactionWorkflow",
     "LedgerCorrectionWorkflow",

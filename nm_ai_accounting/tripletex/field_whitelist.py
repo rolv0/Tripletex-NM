@@ -8,6 +8,8 @@ ALLOWED_QUERY_PARAMS: dict[str, set[str]] = {
     "/employee/employment/details": {"employmentId", "count", "from", "sorting", "fields"},
     "/employee/employment/workingHoursScheme": {"count", "from", "sorting", "fields"},
     "/ledger/account": {"id", "number", "isBankAccount", "isInactive", "ledgerType", "isBalanceAccount", "from", "count", "sorting", "fields"},
+    "/ledger/vatType": {"count", "from", "sorting", "fields"},
+    "/ledger/voucherType": {"count", "from", "sorting", "fields"},
     "/project": {"name", "customerId", "count", "from", "sorting", "fields"},
     "/activity": {"name", "number", "description", "isProjectActivity", "isGeneral", "isChargeable", "isTask", "isInactive", "count", "from", "sorting", "fields"},
     "/timesheet/entry": {"id", "employeeId", "projectId", "activityId", "dateFrom", "dateTo", "comment", "count", "from", "sorting", "fields"},
@@ -23,6 +25,7 @@ ALLOWED_QUERY_PARAMS: dict[str, set[str]] = {
     },
     "/order": {"customerId", "orderDateFrom", "orderDateTo", "count", "from", "sorting", "fields"},
     "/invoice/paymentType": {"count", "fields"},
+    "/incomingInvoice/search": {"voucherId", "invoiceDateFrom", "invoiceDateTo", "invoiceNumber", "vendorId", "status", "from", "count", "sorting", "fields"},
     "/salary/type": {"name", "count", "fields"},
     "/travelExpense": {"employeeId", "count", "fields", "sorting"},
 }
@@ -58,6 +61,8 @@ ALLOWED_FIELDS: dict[str, set[str]] = {
         "vatLocked",
         "legalVatTypes",
     },
+    "/ledger/vatType": {"id", "name", "number", "displayName", "percentage", "deductionPercentage"},
+    "/ledger/voucherType": {"id", "name", "displayName"},
     "/project": {"id", "name", "customer", "projectManager", "isFixedPrice", "fixedPrice"},
     "/activity": {"id", "name", "displayName", "rate", "activityType", "isChargeable"},
     "/timesheet/entry": {"id", "project", "activity", "date", "hours", "employee", "comment", "hourlyRate"},
@@ -76,6 +81,7 @@ ALLOWED_FIELDS: dict[str, set[str]] = {
     },
     "/order": {"id", "customer", "orderDate", "deliveryDate", "orderLines"},
     "/invoice/paymentType": {"id", "description", "name"},
+    "/incomingInvoice/search": {"voucherId", "invoiceHeader", "metadata", "permissions"},
     "/salary/type": {"id", "name", "number"},
     "/travelExpense": {"id", "title", "date", "employee"},
 }

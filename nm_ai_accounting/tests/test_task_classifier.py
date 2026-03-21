@@ -6,6 +6,10 @@ def _attachments() -> list[ParsedAttachment]:
     return []
 
 
+def _pdf_attachment() -> list[ParsedAttachment]:
+    return [ParsedAttachment(filename="invoice.pdf", mime_type="application/pdf", size=100, extracted_text="Supplier Silveroak Ltd Invoice 123 Total 12500")]
+
+
 def test_order_to_invoice_is_not_payment():
     prompt = (
         "Crea un pedido para el cliente Río Verde SL (org. nº 937237243) "
@@ -42,6 +46,16 @@ def test_supplier_prompt_routes_to_create_supplier():
     spec = classify_task(prompt, _attachments())
     assert spec.task_family == "create_supplier"
     assert spec.language == "en"
+
+
+def test_supplier_invoice_with_attachment_routes_to_register_incoming_invoice():
+    prompt = (
+        "Voce recebeu uma fatura de fornecedor (ver PDF anexo). "
+        "Registe a fatura no Tripletex. Crie o fornecedor se nao existir."
+    )
+    spec = classify_task(prompt, _pdf_attachment())
+    assert spec.task_family == "register_incoming_invoice"
+    assert spec.language == "pt"
 
 
 def test_portuguese_travel_prompt_routes_to_create_travel_expense():

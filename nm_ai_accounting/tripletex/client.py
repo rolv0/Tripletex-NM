@@ -53,6 +53,22 @@ class TripletexClient:
     async def post(self, path: str, payload: dict[str, Any]) -> dict[str, Any]:
         return await self._request("POST", path, json_payload=payload)
 
+    async def post_file(
+        self,
+        path: str,
+        *,
+        filename: str,
+        content: bytes,
+        mime_type: str,
+        params: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        return await self._request(
+            "POST",
+            path,
+            params=params,
+            files={"file": (filename, content, mime_type)},
+        )
+
     async def put(
         self,
         path: str,
@@ -70,6 +86,7 @@ class TripletexClient:
         path: str,
         params: dict[str, Any] | None = None,
         json_payload: dict[str, Any] | None = None,
+        files: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         if not self.base_url:
             raise ValueError("Missing Tripletex base_url")
@@ -92,6 +109,7 @@ class TripletexClient:
                 "path": clean_path,
                 "params": validated.params,
                 "has_payload": validated.payload is not None,
+                "has_files": files is not None,
             }
         )
         async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
@@ -100,6 +118,7 @@ class TripletexClient:
                 url=url,
                 params=validated.params,
                 json=validated.payload,
+                files=files,
                 headers=self._auth_header(),
                 follow_redirects=False,
             )
@@ -136,4 +155,11 @@ class TripletexClient:
                 pass
             raise RuntimeError(f"Tripletex {method} {clean_path} failed: {resp.status_code} body={body}")
 
-        return resp.json() if resp.content else {}
+        if not resp.content:
+            return {}
+        if "application/json" in content_type:
+            return resp.json()
+        try:
+            return resp.json()
+        except Exception:
+            return {}

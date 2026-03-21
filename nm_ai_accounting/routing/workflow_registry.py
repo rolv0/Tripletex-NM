@@ -12,6 +12,7 @@ from workflows.create_supplier import CreateSupplierWorkflow
 from workflows.create_travel_expense import CreateTravelExpenseWorkflow
 from workflows.log_hours import LogHoursWorkflow
 from workflows.order_to_invoice import OrderToInvoiceWorkflow
+from workflows.register_incoming_invoice import RegisterIncomingInvoiceWorkflow
 from workflows.register_payment import RegisterPaymentWorkflow
 from workflows.salary_transaction import SalaryTransactionWorkflow
 from workflows.ledger_correction import LedgerCorrectionWorkflow
@@ -19,6 +20,7 @@ from workflows.ledger_correction import LedgerCorrectionWorkflow
 WORKFLOW_REGISTRY: dict[str, Workflow] = {
     "create_customer": CreateCustomerWorkflow(),
     "create_supplier": CreateSupplierWorkflow(),
+    "register_incoming_invoice": RegisterIncomingInvoiceWorkflow(),
     "create_employee": CreateEmployeeWorkflow(),
     "create_department": CreateDepartmentWorkflow(),
     "create_credit_note": CreateCreditNoteWorkflow(),

@@ -9,6 +9,7 @@ TaskFamily = Literal[
     "update_employee",
     "create_customer",
     "create_supplier",
+    "register_incoming_invoice",
     "update_customer",
     "create_product",
     "create_project",
@@ -47,4 +48,6 @@ class TaskSpec(BaseModel):
     confidence: float = 0.0
     risk_flags: list[str] = Field(default_factory=list)
     routing_debug: dict[str, Any] = Field(default_factory=dict)
+    extracted: dict[str, Any] = Field(default_factory=dict)
+    attachments: list[dict[str, str]] = Field(default_factory=list)
     prompt: str = ""
