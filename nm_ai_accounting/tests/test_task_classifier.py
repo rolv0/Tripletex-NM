@@ -73,3 +73,14 @@ def test_logged_french_dimension_prompt_routes_to_ledger_correction():
     )
     spec = classify_task(prompt, _attachments())
     assert spec.task_family == "ledger_correction"
+
+def test_log_hours_prompt_routes_to_log_hours():
+    prompt = (
+        'Log 27 hours for Emily Smith (emily.smith@example.org) on the activity "Radgivning" '
+        'in the project "System Upgrade" for Greenfield Ltd (org no. 811374563). '
+        "Hourly rate: 1050 NOK/h."
+    )
+    spec = classify_task(prompt, _attachments())
+    assert spec.task_family == "log_hours"
+    assert spec.language == "en"
+

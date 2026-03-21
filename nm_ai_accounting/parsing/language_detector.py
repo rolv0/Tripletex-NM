@@ -14,8 +14,8 @@ LANG_KEYWORDS: dict[LanguageCode, dict[str, set[str]]] = {
         "weak": {"med", "for", "og", "dagar", "avdelingar"},
     },
     "en": {
-        "strong": {"create", "invoice", "customer", "employee", "payment", "project", "supplier", "register", "travel expense"},
-        "weak": {"with", "for", "email", "organization number", "base salary"},
+        "strong": {"create", "invoice", "customer", "employee", "payment", "project", "supplier", "register", "travel expense", "hours", "activity"},
+        "weak": {"with", "for", "email", "organization number", "base salary", "hourly rate"},
     },
     "es": {
         "strong": {"crea", "factura", "cliente", "pedido", "proyecto", "pago", "asiento", "dimension", "proveedor", "cuenta"},
@@ -26,7 +26,7 @@ LANG_KEYWORDS: dict[LanguageCode, dict[str, set[str]]] = {
         "weak": {"com", "para", "referente", "conta", "despesa de viagem"},
     },
     "de": {
-        "strong": {"erstellen", "rechnung", "kunde", "projekt", "zahlung", "stunden", "lieferant", "konto"},
+        "strong": {"erstellen", "rechnung", "kunde", "projekt", "zahlung", "stunden", "lieferant", "konto", "aktivitat"},
         "weak": {"mit", "fur", "und", "mwst", "reise"},
     },
     "fr": {

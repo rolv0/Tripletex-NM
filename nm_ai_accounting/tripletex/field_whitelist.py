@@ -5,6 +5,8 @@ ALLOWED_QUERY_PARAMS: dict[str, set[str]] = {
     "/supplier": {"name", "organizationNumber", "count", "from", "sorting", "fields"},
     "/employee": {"email", "firstName", "lastName", "count", "from", "sorting", "fields"},
     "/project": {"name", "customerId", "count", "from", "sorting", "fields"},
+    "/activity": {"name", "number", "description", "isProjectActivity", "isGeneral", "isChargeable", "isTask", "isInactive", "count", "from", "sorting", "fields"},
+    "/timesheet/entry": {"id", "employeeId", "projectId", "activityId", "dateFrom", "dateTo", "comment", "count", "from", "sorting", "fields"},
     "/product": {"name", "number", "count", "from", "sorting", "fields"},
     "/invoice": {
         "customerId",
@@ -26,6 +28,8 @@ ALLOWED_FIELDS: dict[str, set[str]] = {
     "/supplier": {"id", "name", "email", "organizationNumber", "isSupplier", "invoiceEmail"},
     "/employee": {"id", "firstName", "lastName", "email", "displayName"},
     "/project": {"id", "name", "customer", "projectManager", "isFixedPrice", "fixedPrice"},
+    "/activity": {"id", "name", "displayName", "rate", "activityType", "isChargeable"},
+    "/timesheet/entry": {"id", "project", "activity", "date", "hours", "employee", "comment", "hourlyRate"},
     "/product": {"id", "name", "number", "priceExcludingVatCurrency", "vatType"},
     "/invoice": {
         "id",

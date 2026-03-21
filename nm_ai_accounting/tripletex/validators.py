@@ -24,6 +24,10 @@ def canonical_endpoint(path: str) -> str:
         return "/employee"
     if clean.startswith("/project"):
         return "/project"
+    if clean.startswith("/activity"):
+        return "/activity"
+    if clean.startswith("/timesheet/entry"):
+        return "/timesheet/entry"
     if clean.startswith("/product"):
         return "/product"
     if clean.startswith("/invoice"):

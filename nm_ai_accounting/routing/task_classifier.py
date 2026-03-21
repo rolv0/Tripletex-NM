@@ -33,6 +33,8 @@ CUSTOMER_WORDS = {"customer", "kunde", "cliente", "client", "kunden"}
 SUPPLIER_WORDS = {"supplier", "leverandor", "fornecedor", "fournisseur", "proveedor", "lieferant", "vendor"}
 EMPLOYEE_WORDS = {"employee", "ansatt", "empleado", "mitarbeiter", "salarie", "new employee"}
 DEPARTMENT_WORDS = {"department", "avdeling", "departamento", "departement", "abteilung"}
+HOURS_WORDS = {"log hours", "hours", "hour", "timar", "timer", "stunden", "heures", "horas", "timesheet", "hourly rate"}
+ACTIVITY_WORDS = {"activity", "aktivitet", "actividad", "activite", "atividade"}
 PAYROLL_WORDS = {"salary", "payroll", "lonn", "loenn", "salaire", "salario", "paie", "bonus", "base salary"}
 TRAVEL_WORDS = {
     "travel",
@@ -159,6 +161,13 @@ FAMILY_RULES: dict[str, FamilyRule] = {
         base_confidence=0.84,
         actions=["ensure_customer", "create_or_update_project"],
     ),
+    "log_hours": FamilyRule(
+        primary=HOURS_WORDS | ACTIVITY_WORDS | PROJECT_WORDS,
+        secondary=EMPLOYEE_WORDS | CUSTOMER_WORDS | {"nok/h", "hourly rate", "activity", "project"},
+        negative=INVOICE_WORDS | PAYMENT_WORDS | CREDIT_WORDS | TRAVEL_WORDS,
+        base_confidence=0.9,
+        actions=["find_employee", "ensure_customer", "find_or_create_project", "find_or_create_activity", "create_timesheet_entry"],
+    ),
     "create_product": FamilyRule(
         primary=PRODUCT_WORDS,
         secondary={"price", "preis", "25 %", "mva", "iva", "vat", "mwst"},
@@ -215,6 +224,10 @@ DOMAIN_RULES: dict[str, DomainRule] = {
     "travel": DomainRule(
         primary=TRAVEL_WORDS | {"conference", "kundebesok", "conferencia"},
         families=("delete_travel_expense", "create_travel_expense"),
+    ),
+    "timesheet": DomainRule(
+        primary=HOURS_WORDS | ACTIVITY_WORDS | PROJECT_WORDS,
+        families=("log_hours",),
     ),
     "ledger": DomainRule(
         primary=LEDGER_WORDS | DIMENSION_WORDS | {"7100", "7300"},
@@ -328,6 +341,8 @@ def _pick_task_family(
         return "register_payment", FAMILY_RULES["register_payment"].actions, 0.9, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, CREDIT_WORDS) and has_invoice:
         return "create_credit_note", FAMILY_RULES["create_credit_note"].actions, 0.9, [], {"route_mode": "hard_rule"}
+    if contains_any(prompt_n, HOURS_WORDS) and contains_any(prompt_n, ACTIVITY_WORDS | PROJECT_WORDS):
+        return "log_hours", FAMILY_RULES["log_hours"].actions, 0.92, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, DIMENSION_WORDS) and (
         contains_any(prompt_n, LEDGER_WORDS) or any(number in prompt_n for number in ("7100", "7300"))
     ):

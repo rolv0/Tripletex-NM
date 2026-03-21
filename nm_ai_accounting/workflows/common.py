@@ -4,9 +4,12 @@ from datetime import date, timedelta
 from typing import Any
 
 from parsing.entity_extractor import (
+    extract_activity_name,
     extract_all_amounts,
     extract_customer_name,
     extract_email,
+    extract_hours,
+    extract_hourly_rate,
     extract_org_number,
     extract_person_name,
     extract_project_name,
@@ -96,6 +99,31 @@ async def find_or_create_project(client: TripletexClient, prompt: str, customer_
         payload["customer"] = {"id": customer_id}
     created = await client.post("/project", payload)
     return pick_first_value_id(created)
+
+
+async def find_or_create_activity(client: TripletexClient, prompt: str) -> int | None:
+    activity_name = extract_activity_name(prompt) or "Activity"
+    response = await client.get("/activity", params={"name": activity_name, "count": 10, "fields": "id,name,displayName,rate"})
+    values = response.get("values", [])
+    for value in values:
+        candidate = str(value.get("displayName") or value.get("name") or "").strip().lower()
+        if candidate == activity_name.strip().lower():
+            return int(value["id"])
+
+    payload: dict[str, Any] = {
+        "name": activity_name,
+        "activityType": "PROJECT_GENERAL_ACTIVITY",
+        "isChargeable": True,
+    }
+    hourly_rate = extract_hourly_rate(prompt)
+    if hourly_rate is not None:
+        payload["rate"] = hourly_rate
+    created = await client.post("/activity", payload)
+    return pick_first_value_id(created)
+
+
+def parse_hours(prompt: str) -> float | None:
+    return extract_hours(prompt)
 
 
 def parse_order_lines(prompt: str) -> list[dict[str, Any]]:

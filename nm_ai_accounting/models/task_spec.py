@@ -12,6 +12,7 @@ TaskFamily = Literal[
     "update_customer",
     "create_product",
     "create_project",
+    "log_hours",
     "create_order",
     "order_to_invoice",
     "create_invoice",

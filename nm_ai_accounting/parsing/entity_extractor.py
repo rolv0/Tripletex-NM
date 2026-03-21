@@ -82,6 +82,33 @@ def extract_project_name(text: str) -> str | None:
     return None
 
 
+def extract_activity_name(text: str) -> str | None:
+    match = re.search(r"(?:activity|aktivitet|actividad|activite|atividade)\s+[\"']?([^\"'\n,]+)", text, re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+
+    quoted = extract_quoted_items(text)
+    if quoted:
+        return quoted[0].strip()
+    return None
+
+
+def extract_hours(text: str) -> float | None:
+    match = re.search(r"\b(\d+(?:[.,]\d+)?)\s*(?:hours|hour|timer|time|timar|stunden|heures|horas)\b", text, re.IGNORECASE)
+    if not match:
+        return None
+    return float(match.group(1).replace(",", "."))
+
+
+def extract_hourly_rate(text: str) -> float | None:
+    match = re.search(r"\b(\d+(?:[.,]\d+)?)\s*NOK\s*/?\s*h\b", text, re.IGNORECASE)
+    if not match:
+        match = re.search(r"(?:hourly rate|timesats|stundensatz|taux horaire)\s*[:=]?\s*(\d+(?:[.,]\d+)?)", text, re.IGNORECASE)
+    if not match:
+        return None
+    return float(match.group(1).replace(",", "."))
+
+
 def extract_amount(text: str) -> float | None:
     values = extract_all_amounts(text)
     return values[0] if values else None
@@ -96,5 +123,8 @@ def extract_all_entities(prompt: str, attachment_texts: list[str]) -> dict[str, 
         "customerName": extract_customer_name(merged),
         "personName": extract_person_name(merged),
         "projectName": extract_project_name(merged),
+        "activityName": extract_activity_name(merged),
+        "hours": extract_hours(merged),
+        "hourlyRate": extract_hourly_rate(merged),
         "amounts": extract_all_amounts(merged),
     }
