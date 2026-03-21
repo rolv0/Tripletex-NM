@@ -6,6 +6,7 @@ from datetime import date
 from typing import Any
 
 from models import ExecutionPlan, PlanStep, TaskSpec
+from parsing.prompt_normalizer import normalize_prompt
 from parsing.entity_extractor import extract_all_amounts, extract_quoted_items
 from tripletex import TripletexClient
 from workflows.base import Workflow
@@ -15,6 +16,7 @@ from workflows.common import today_iso
 DIMENSION_HINTS = (
     "dimension",
     "dimensjon",
+    "dimensao",
     "dimension contable",
     "dimension comptable",
     "accounting dimension",
@@ -81,7 +83,7 @@ MONTH_MAP = {
 
 
 def _wants_dimension(prompt: str) -> bool:
-    prompt_l = prompt.lower()
+    prompt_l = normalize_prompt(prompt)
     return any(token in prompt_l for token in DIMENSION_HINTS)
 
 
@@ -107,7 +109,7 @@ def _parse_dimension_values(prompt: str) -> list[str]:
 
 
 def _parse_voucher_date(prompt: str) -> str:
-    prompt_l = prompt.lower()
+    prompt_l = normalize_prompt(prompt)
     year_match = re.search(r"\b(20\d{2})\b", prompt_l)
     month = None
     for token, month_value in MONTH_MAP.items():
@@ -124,7 +126,7 @@ def _parse_voucher_date(prompt: str) -> str:
 async def _find_account(client: TripletexClient, number: str) -> dict[str, Any] | None:
     response = await client.get(
         "/ledger/account",
-        params={"number": number, "count": 10, "fields": "id,number,name,type,ledgerType,isInactive"},
+        params={"number": number, "count": 10, "fields": "id,number,name,type,ledgerType,isInactive,isBankAccount,vatType,vatLocked,legalVatTypes"},
     )
     values = response.get("values", [])
     for value in values:
@@ -144,7 +146,7 @@ async def _find_offset_account(
         params={
             "isBalanceAccount": prefer_balance,
             "count": 50,
-            "fields": "id,number,name,type,ledgerType,isInactive",
+            "fields": "id,number,name,type,ledgerType,isInactive,isBankAccount,vatType,vatLocked,legalVatTypes",
         },
     )
     values = response.get("values", [])
@@ -152,6 +154,8 @@ async def _find_offset_account(
         if str(value.get("ledgerType") or "GENERAL") != "GENERAL":
             continue
         if value.get("isInactive"):
+            continue
+        if value.get("isBankAccount"):
             continue
         number = str(value.get("number") or "")
         if number in exclude_numbers:
@@ -162,6 +166,19 @@ async def _find_offset_account(
 
 def _is_balance_type(account: dict[str, Any]) -> bool:
     return str(account.get("type") or "") in {"ASSETS", "EQUITY", "LIABILITIES"}
+
+
+def _pick_vat_type_id(account: dict[str, Any]) -> int | None:
+    vat_type = account.get("vatType")
+    if isinstance(vat_type, dict) and vat_type.get("id") is not None:
+        return int(vat_type["id"])
+
+    legal_vat_types = account.get("legalVatTypes")
+    if isinstance(legal_vat_types, list):
+        for vat in legal_vat_types:
+            if isinstance(vat, dict) and vat.get("id") == 0:
+                return 0
+    return None
 
 
 def _build_postings(
@@ -179,20 +196,25 @@ def _build_postings(
         source_amount = abs(amount)
         offset_amount = -abs(amount)
 
+    source_vat_type_id = _pick_vat_type_id(source_account)
     source_posting: dict[str, Any] = {
+        "row": 1,
         "date": voucher_date,
         "account": {"id": int(source_account["id"])},
-        "amount": source_amount,
-        "amountCurrency": source_amount,
+        "amountGross": source_amount,
+        "amountGrossCurrency": source_amount,
     }
     if dimension_value_id is not None:
         source_posting["freeAccountingDimension1"] = {"id": dimension_value_id}
+    if source_vat_type_id is not None:
+        source_posting["vatType"] = {"id": source_vat_type_id}
 
     offset_posting: dict[str, Any] = {
+        "row": 2,
         "date": voucher_date,
         "account": {"id": int(offset_account["id"])},
-        "amount": offset_amount,
-        "amountCurrency": offset_amount,
+        "amountGross": offset_amount,
+        "amountGrossCurrency": offset_amount,
     }
     return [source_posting, offset_posting]
 

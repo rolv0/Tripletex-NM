@@ -24,6 +24,9 @@ class RetryPolicy:
                 "payslips.specifications.count",
                 "payslips.specifications.rate",
                 "registrert med et arbeidsforhold",
+                "postings.row",
+                "uten posteringer",
+                "systemgenererte",
             )
         ):
             return False
