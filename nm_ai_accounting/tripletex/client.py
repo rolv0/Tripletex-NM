@@ -42,7 +42,10 @@ class TripletexClient:
 
     def _auth_header(self) -> dict[str, str]:
         token = base64.b64encode(f"0:{self.session_token}".encode("utf-8")).decode("ascii")
-        return {"Authorization": f"Basic {token}"}
+        return {
+            "Authorization": f"Basic {token}",
+            "Accept": "application/json",
+        }
 
     async def get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         return await self._request("GET", path, params=params)
@@ -98,6 +101,7 @@ class TripletexClient:
                 params=validated.params,
                 json=validated.payload,
                 headers=self._auth_header(),
+                follow_redirects=False,
             )
         if method == "GET":
             self.summary.get += 1
@@ -113,8 +117,19 @@ class TripletexClient:
         elif resp.status_code >= 400:
             self.summary.client_4xx += 1
 
+        content_type = (resp.headers.get("content-type") or "").lower()
+        body_text = resp.text if resp.content else ""
+        body_text_l = body_text.lower()
+        if "text/html" in content_type or "<html" in body_text_l or "<!doctype html" in body_text_l:
+            self.summary.client_5xx += 1
+            snippet = " ".join(body_text.split())[:220]
+            raise RuntimeError(
+                f"Tripletex {method} {clean_path} returned non-json response: "
+                f"status={resp.status_code} content_type={content_type} snippet={snippet}"
+            )
+
         if resp.status_code >= 400:
-            body = resp.text
+            body = body_text
             try:
                 body = json.dumps(resp.json(), ensure_ascii=False)
             except Exception:
@@ -122,4 +137,3 @@ class TripletexClient:
             raise RuntimeError(f"Tripletex {method} {clean_path} failed: {resp.status_code} body={body}")
 
         return resp.json() if resp.content else {}
-

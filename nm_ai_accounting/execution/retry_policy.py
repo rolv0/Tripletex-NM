@@ -31,6 +31,20 @@ class RetryPolicy:
         ):
             return False
 
+        if any(
+            token in normalized
+            for token in (
+                "returned non-json response",
+                "<!doctype html",
+                "<html",
+                "csrftoken",
+                "uforutsett feil har oppstatt",
+                "uforutsett feil har oppstått",
+                "driftstatusside",
+            )
+        ):
+            return True
+
         return any(
             token in normalized
             for token in (
