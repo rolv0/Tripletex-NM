@@ -54,6 +54,27 @@ async def find_supplier(client: TripletexClient, name: str, org_no: str | None =
     return values[0] if values else None
 
 
+async def find_department(client: TripletexClient, name: str) -> dict[str, Any] | None:
+    response = await client.get("/department", params={"name": name, "count": 10, "fields": "id,name,displayName"})
+    values = response.get("values", [])
+    target = name.strip().lower()
+    for value in values:
+        candidate = str(value.get("displayName") or value.get("name") or "").strip().lower()
+        if candidate == target:
+            return value
+    return values[0] if values else None
+
+
+async def ensure_department(client: TripletexClient, name: str | None) -> int | None:
+    if not name:
+        return None
+    found = await find_department(client, name)
+    if found:
+        return int(found["id"])
+    created = await client.post("/department", {"name": name})
+    return pick_first_value_id(created)
+
+
 async def ensure_customer(client: TripletexClient, prompt: str) -> int | None:
     customer_name = extract_customer_name(prompt) or "Customer"
     org_no = extract_org_number(prompt)
@@ -187,6 +208,8 @@ async def ensure_employee_employment(
     employee_id: int,
     effective_date: date,
     base_salary_amount: float | None = None,
+    monthly_salary_amount: float | None = None,
+    percentage_of_full_time_equivalent: float | None = None,
 ) -> int | None:
     employment_response = await client.get(
         "/employee/employment",
@@ -235,9 +258,11 @@ async def ensure_employee_employment(
             "employmentForm": "PERMANENT",
             "remunerationType": "MONTHLY_WAGE",
             "workingHoursScheme": "NOT_SHIFT",
-            "percentageOfFullTimeEquivalent": 100,
+            "percentageOfFullTimeEquivalent": percentage_of_full_time_equivalent or 100,
         }
-        if base_salary_amount and base_salary_amount > 0:
+        if monthly_salary_amount and monthly_salary_amount > 0:
+            details_payload["monthlySalary"] = float(monthly_salary_amount)
+        elif base_salary_amount and base_salary_amount > 0:
             details_payload["annualSalary"] = float(base_salary_amount) * 12
         await client.post("/employee/employment/details", details_payload)
 

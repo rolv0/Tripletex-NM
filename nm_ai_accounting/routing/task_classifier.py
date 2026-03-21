@@ -34,6 +34,21 @@ SUPPLIER_WORDS = {"supplier", "leverandor", "fornecedor", "fournisseur", "provee
 ATTACHMENT_WORDS = {"pdf", "attachment", "anexo", "vedlegg", "annexe", "anhang"}
 EMPLOYEE_WORDS = {"employee", "ansatt", "empleado", "mitarbeiter", "salarie", "new employee"}
 DEPARTMENT_WORDS = {"department", "avdeling", "departamento", "departement", "abteilung"}
+ONBOARDING_WORDS = {
+    "offer letter",
+    "letter of offer",
+    "lettre d offre",
+    "lettre d'offre",
+    "employment offer",
+    "onboarding",
+    "integration complete",
+    "integration",
+    "integrasjon",
+    "nouvel employe",
+    "new employee",
+    "employment details",
+    "arbeidsforhold",
+}
 HOURS_WORDS = {"log hours", "hours", "hour", "timar", "timer", "stunden", "heures", "horas", "timesheet", "hourly rate"}
 ACTIVITY_WORDS = {"activity", "aktivitet", "actividad", "activite", "atividade"}
 PAYROLL_WORDS = {"salary", "payroll", "lonn", "loenn", "salaire", "salario", "paie", "bonus", "base salary"}
@@ -164,8 +179,8 @@ FAMILY_RULES: dict[str, FamilyRule] = {
         actions=["find_employee", "create_travel_expense"],
     ),
     "create_invoice": FamilyRule(
-        primary=INVOICE_WORDS | CREATE_WORDS,
-        secondary=CUSTOMER_WORDS | {"send invoice", "send", "hors tva", "ekskl mva"},
+        primary=INVOICE_WORDS,
+        secondary=CUSTOMER_WORDS | CREATE_WORDS | {"send invoice", "send", "hors tva", "ekskl mva"},
         negative=PAYMENT_WORDS | CREDIT_WORDS | ORDER_WORDS | SUPPLIER_WORDS,
         base_confidence=0.86,
         actions=["ensure_customer", "create_invoice"],
@@ -193,7 +208,7 @@ FAMILY_RULES: dict[str, FamilyRule] = {
     ),
     "create_employee": FamilyRule(
         primary=EMPLOYEE_WORDS,
-        secondary={"email", "start date", "administrator", "born", "fodselsdato", "birth"},
+        secondary={"email", "start date", "administrator", "born", "fodselsdato", "birth"} | DEPARTMENT_WORDS | ONBOARDING_WORDS,
         negative=PAYROLL_WORDS | TRAVEL_WORDS,
         base_confidence=0.9,
         actions=["create_employee"],
@@ -339,6 +354,13 @@ def _score_family(prompt_n: str, family: str, entities_map: dict[str, object]) -
             score += 0.5
     if family == "salary_transaction" and has_email:
         score += 0.6
+    if family == "create_employee":
+        if has_email:
+            score += 0.7
+        if entities_map.get("personName"):
+            score += 0.6
+        if entities_map.get("departmentName"):
+            score += 0.5
 
     return score
 
@@ -367,6 +389,10 @@ def _pick_task_family(
         return "create_credit_note", FAMILY_RULES["create_credit_note"].actions, 0.9, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, SUPPLIER_WORDS) and has_invoice and attachment_count > 0:
         return "register_incoming_invoice", FAMILY_RULES["register_incoming_invoice"].actions, 0.93, [], {"route_mode": "hard_rule"}
+    if contains_any(prompt_n, EMPLOYEE_WORDS) and (
+        attachment_count > 0 or contains_any(prompt_n, DEPARTMENT_WORDS | ONBOARDING_WORDS | {"employment", "details", "department"})
+    ):
+        return "create_employee", FAMILY_RULES["create_employee"].actions, 0.93, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, HOURS_WORDS) and contains_any(prompt_n, ACTIVITY_WORDS | PROJECT_WORDS):
         return "log_hours", FAMILY_RULES["log_hours"].actions, 0.92, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, DIMENSION_WORDS) and (

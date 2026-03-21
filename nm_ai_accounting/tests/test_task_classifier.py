@@ -98,3 +98,21 @@ def test_log_hours_prompt_routes_to_log_hours():
     assert spec.task_family == "log_hours"
     assert spec.language == "en"
 
+
+def test_employee_offer_letter_prompt_routes_to_create_employee():
+    prompt = (
+        "Vous avez recu une lettre d'offre (voir PDF ci-joint) pour un nouvel employe. "
+        "Effectuez l'integration complete : creez l'employe, attribuez le bon departement, "
+        "configurez les details d'emploi."
+    )
+    attachments = [
+        ParsedAttachment(
+            filename="offer.pdf",
+            mime_type="application/pdf",
+            size=100,
+            extracted_text="Name: Marie Dubois\nEmail: marie.dubois@example.org\nDepartment: Consulting\nStart date: 2026-04-01",
+        )
+    ]
+    spec = classify_task(prompt, attachments)
+    assert spec.task_family == "create_employee"
+

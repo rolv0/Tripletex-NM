@@ -34,6 +34,8 @@ def canonical_endpoint(path: str) -> str:
         return "/customer"
     if clean.startswith("/supplier"):
         return "/supplier"
+    if clean.startswith("/department"):
+        return "/department"
     if clean.startswith("/employee"):
         return "/employee"
     if clean.startswith("/ledger/account"):

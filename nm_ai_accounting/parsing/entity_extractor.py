@@ -93,6 +93,30 @@ def extract_project_name(text: str) -> str | None:
     return None
 
 
+def extract_department_name(text: str) -> str | None:
+    quoted = extract_quoted_items(text)
+    dept_patterns = ("department", "departement", "departamento", "abteilung", "avdeling")
+    for value in quoted:
+        lowered = value.lower()
+        if not any(token in lowered for token in dept_patterns):
+            continue
+        cleaned = re.sub(r"^(?:department|departement|departamento|abteilung|avdeling)\s+", "", value, flags=re.IGNORECASE).strip()
+        if cleaned:
+            return cleaned
+
+    match = re.search(
+        r"(?:department|departement|departamento|abteilung|avdeling)\s*[:\-]?\s*([A-ZÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ0-9 &/\-]{2,80})",
+        text,
+        re.IGNORECASE,
+    )
+    if match:
+        value = match.group(1).strip().strip(",.")
+        value = re.split(r"\b(?:start|salary|email|phone|birth|adresse|address)\b", value, maxsplit=1, flags=re.IGNORECASE)[0].strip()
+        if value:
+            return value
+    return None
+
+
 def extract_activity_name(text: str) -> str | None:
     match = re.search(r"(?:activity|aktivitet|actividad|activite|atividade)\s+[\"']?([^\"'\n,]+)", text, re.IGNORECASE)
     if match:
@@ -115,6 +139,51 @@ def extract_hourly_rate(text: str) -> float | None:
     match = re.search(r"\b(\d+(?:[.,]\d+)?)\s*NOK\s*/?\s*h\b", text, re.IGNORECASE)
     if not match:
         match = re.search(r"(?:hourly rate|timesats|stundensatz|taux horaire)\s*[:=]?\s*(\d+(?:[.,]\d+)?)", text, re.IGNORECASE)
+    if not match:
+        return None
+    return float(match.group(1).replace(",", "."))
+
+
+def extract_start_date(text: str) -> str | None:
+    patterns = [
+        r"(?:start date|startdatum|date de debut|startdato|data de inicio)\s*[:#]?\s*([0-9./-]{8,10})",
+        r"(?:starting|debut|fra og med|from)\s*([0-9./-]{8,10})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            parsed = _parse_date_token(match.group(1))
+            if parsed:
+                return parsed
+    return None
+
+
+def extract_annual_salary(text: str) -> float | None:
+    patterns = [
+        r"(?:annual salary|arslonn|yearly salary|salaire annuel|jahresgehalt)\s*[:=]?\s*(\d+(?:[.,]\d+)?)",
+        r"(?:salary|salaire|gehalt)\s*[:=]?\s*(\d+(?:[.,]\d+)?)\s*NOK\s*(?:per year|annuel|annual)?",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            return float(match.group(1).replace(",", "."))
+    return None
+
+
+def extract_monthly_salary(text: str) -> float | None:
+    patterns = [
+        r"(?:monthly salary|manedslonn|maanedslonn|salaire mensuel|monatsgehalt)\s*[:=]?\s*(\d+(?:[.,]\d+)?)",
+        r"(?:base salary|grunnlonn)\s*[:=]?\s*(\d+(?:[.,]\d+)?)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, re.IGNORECASE)
+        if match:
+            return float(match.group(1).replace(",", "."))
+    return None
+
+
+def extract_full_time_percentage(text: str) -> float | None:
+    match = re.search(r"(\d+(?:[.,]\d+)?)\s*%", text)
     if not match:
         return None
     return float(match.group(1).replace(",", "."))
@@ -223,10 +292,15 @@ def extract_all_entities(prompt: str, attachment_texts: list[str]) -> dict[str, 
         "quotedItems": extract_quoted_items(merged),
         "customerName": extract_customer_name(merged),
         "personName": extract_person_name(merged),
+        "departmentName": extract_department_name(merged),
         "projectName": extract_project_name(merged),
         "activityName": extract_activity_name(merged),
         "hours": extract_hours(merged),
         "hourlyRate": extract_hourly_rate(merged),
+        "startDate": extract_start_date(merged),
+        "annualSalary": extract_annual_salary(merged),
+        "monthlySalary": extract_monthly_salary(merged),
+        "fullTimePercentage": extract_full_time_percentage(merged),
         "invoiceNumber": extract_invoice_number(merged),
         "invoiceDate": extract_invoice_date(merged),
         "dueDate": extract_due_date(merged),

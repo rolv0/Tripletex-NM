@@ -7,6 +7,7 @@ ALLOWED_QUERY_PARAMS: dict[str, set[str]] = {
     "/employee/employment": {"employeeId", "count", "from", "sorting", "fields"},
     "/employee/employment/details": {"employmentId", "count", "from", "sorting", "fields"},
     "/employee/employment/workingHoursScheme": {"count", "from", "sorting", "fields"},
+    "/department": {"name", "departmentNumber", "departmentManagerId", "isInactive", "count", "from", "sorting", "fields"},
     "/ledger/account": {"id", "number", "isBankAccount", "isInactive", "ledgerType", "isBalanceAccount", "from", "count", "sorting", "fields"},
     "/ledger/vatType": {"count", "from", "sorting", "fields"},
     "/ledger/voucherType": {"count", "from", "sorting", "fields"},
@@ -48,6 +49,7 @@ ALLOWED_FIELDS: dict[str, set[str]] = {
         "hourlyWage",
     },
     "/employee/employment/workingHoursScheme": {"id", "name", "description"},
+    "/department": {"id", "name", "displayName", "departmentNumber", "departmentManager", "isInactive"},
     "/ledger/account": {
         "id",
         "number",
