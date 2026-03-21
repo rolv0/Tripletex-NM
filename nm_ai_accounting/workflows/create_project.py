@@ -6,7 +6,7 @@ from models import ExecutionPlan, PlanStep, TaskSpec
 from parsing.entity_extractor import extract_project_name
 from tripletex import TripletexClient
 from workflows.base import Workflow
-from workflows.common import ensure_customer, find_or_create_project
+from workflows.common import ensure_customer, find_employee_id, find_or_create_project
 
 
 class CreateProjectWorkflow(Workflow):
@@ -25,17 +25,24 @@ class CreateProjectWorkflow(Workflow):
             forbidden_domains=["/salary", "/travelExpense", "/ledger", "/voucher", "/invoice"],
             steps=[
                 PlanStep(op="ensure_customer", method="GET", endpoint="/customer"),
+                PlanStep(op="find_project_manager", method="GET", endpoint="/employee"),
                 PlanStep(op="create_or_find_project", method="POST", endpoint="/project"),
             ],
         )
 
     async def execute(self, *, task_spec: TaskSpec, plan: ExecutionPlan, client: TripletexClient) -> dict[str, Any]:
         customer_id = await ensure_customer(client, task_spec.prompt)
-        project_id = await find_or_create_project(client, task_spec.prompt, customer_id)
+        project_manager_id = await find_employee_id(client, task_spec.prompt)
+        project_id = await find_or_create_project(
+            client,
+            task_spec.prompt,
+            customer_id,
+            project_manager_id=project_manager_id,
+        )
         return {
             "action": "create_project",
             "projectId": project_id,
             "customerId": customer_id,
+            "projectManagerId": project_manager_id,
             "projectName": extract_project_name(task_spec.prompt),
         }
-

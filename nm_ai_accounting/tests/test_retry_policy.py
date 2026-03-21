@@ -29,3 +29,12 @@ def test_retry_policy_does_not_retry_missing_employment_error():
         "\"validationMessages\":[{\"field\":\"employee\",\"message\":\"Ansatt nr. er ikke registrert med et arbeidsforhold i perioden.\"}]}"
     )
     assert policy.should_retry(0, error_text) is False
+
+
+def test_retry_policy_does_not_retry_missing_project_manager_error():
+    policy = RetryPolicy(max_retries=1)
+    error_text = (
+        'Tripletex POST /project failed: 422 body={"validationMessages":['
+        '{"message":"Feltet \\"Prosjektleder\\" må fylles ut."}]}'
+    )
+    assert policy.should_retry(0, error_text) is False

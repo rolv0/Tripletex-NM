@@ -27,6 +27,9 @@ class RetryPolicy:
                 "postings.row",
                 "uten posteringer",
                 "systemgenererte",
+                "prosjektleder",
+                "project manager",
+                "projektleiter",
             )
         ):
             return False

@@ -88,7 +88,12 @@ async def find_employee_id(client: TripletexClient, prompt: str) -> int | None:
     return None
 
 
-async def find_or_create_project(client: TripletexClient, prompt: str, customer_id: int | None) -> int | None:
+async def find_or_create_project(
+    client: TripletexClient,
+    prompt: str,
+    customer_id: int | None,
+    project_manager_id: int | None = None,
+) -> int | None:
     project_name = extract_project_name(prompt) or "Project"
     existing = await client.get("/project", params={"name": project_name, "count": 10, "fields": "id,name"})
     values = existing.get("values", [])
@@ -97,6 +102,8 @@ async def find_or_create_project(client: TripletexClient, prompt: str, customer_
     payload: dict[str, Any] = {"name": project_name}
     if customer_id is not None:
         payload["customer"] = {"id": customer_id}
+    if project_manager_id is not None:
+        payload["projectManager"] = {"id": project_manager_id}
     created = await client.post("/project", payload)
     return pick_first_value_id(created)
 

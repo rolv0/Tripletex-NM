@@ -37,7 +37,7 @@ class LogHoursWorkflow(Workflow):
             return {"action": "log_hours", "status": "employee_missing"}
 
         customer_id = await ensure_customer(client, task_spec.prompt)
-        project_id = await find_or_create_project(client, task_spec.prompt, customer_id)
+        project_id = await find_or_create_project(client, task_spec.prompt, customer_id, project_manager_id=employee_id)
         if project_id is None:
             return {"action": "log_hours", "status": "project_missing", "employeeId": employee_id, "customerId": customer_id}
 

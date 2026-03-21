@@ -76,9 +76,19 @@ def extract_person_name(text: str) -> str | None:
 
 
 def extract_project_name(text: str) -> str | None:
-    match = re.search(r"(?:prosjekt|project|proyecto|projet|projekt)\s+[\"']?([^\"'\n,]+)", text, re.IGNORECASE)
+    quoted = extract_quoted_items(text)
+    if quoted:
+        company_suffixes = r"(?:AS|SL|Lda|SARL|GmbH|SA|SAS|Ltd|LLC|Inc)"
+        for value in quoted:
+            if not re.search(company_suffixes, value, re.IGNORECASE):
+                return value.strip()
+
+    match = re.search(r"(?:prosjekt|project|proyecto|projet|projekt)\s+[\"']?([^\"'\n,:()]+)", text, re.IGNORECASE)
     if match:
-        return match.group(1).strip()
+        candidate = match.group(1).strip()
+        candidate = re.sub(r"^(?:hat|has|har|tiene|tem)\b", "", candidate, flags=re.IGNORECASE).strip()
+        if candidate:
+            return candidate
     return None
 
 
@@ -88,8 +98,8 @@ def extract_activity_name(text: str) -> str | None:
         return match.group(1).strip()
 
     quoted = extract_quoted_items(text)
-    if quoted:
-        return quoted[0].strip()
+    if len(quoted) >= 2:
+        return quoted[1].strip()
     return None
 
 
