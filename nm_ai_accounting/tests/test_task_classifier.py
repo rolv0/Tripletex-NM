@@ -116,3 +116,20 @@ def test_employee_offer_letter_prompt_routes_to_create_employee():
     spec = classify_task(prompt, attachments)
     assert spec.task_family == "create_employee"
 
+
+def test_bank_reconciliation_prompt_routes_to_bank_reconciliation():
+    prompt = (
+        "Reconcilie o extrato bancario (CSV anexo) com as faturas em aberto no Tripletex. "
+        "Relacione os pagamentos recebidos com as faturas de clientes."
+    )
+    attachments = [
+        ParsedAttachment(
+            filename="statement.csv",
+            mime_type="text/csv",
+            size=100,
+            extracted_text="date;description;amount\n2026-03-01;Invoice 1001 ACME;12500",
+        )
+    ]
+    spec = classify_task(prompt, attachments)
+    assert spec.task_family == "bank_reconciliation"
+

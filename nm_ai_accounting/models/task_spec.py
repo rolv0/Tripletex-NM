@@ -18,6 +18,7 @@ TaskFamily = Literal[
     "order_to_invoice",
     "create_invoice",
     "register_payment",
+    "bank_reconciliation",
     "create_credit_note",
     "create_travel_expense",
     "delete_travel_expense",

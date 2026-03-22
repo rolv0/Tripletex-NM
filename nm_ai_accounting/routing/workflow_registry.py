@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from workflows.base import Workflow
+from workflows.bank_reconciliation import BankReconciliationWorkflow
 from workflows.create_credit_note import CreateCreditNoteWorkflow
 from workflows.create_department import CreateDepartmentWorkflow
 from workflows.create_customer import CreateCustomerWorkflow
@@ -18,6 +19,7 @@ from workflows.salary_transaction import SalaryTransactionWorkflow
 from workflows.ledger_correction import LedgerCorrectionWorkflow
 
 WORKFLOW_REGISTRY: dict[str, Workflow] = {
+    "bank_reconciliation": BankReconciliationWorkflow(),
     "create_customer": CreateCustomerWorkflow(),
     "create_supplier": CreateSupplierWorkflow(),
     "register_incoming_invoice": RegisterIncomingInvoiceWorkflow(),

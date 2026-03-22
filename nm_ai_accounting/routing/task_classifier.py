@@ -24,6 +24,26 @@ CREATE_WORDS = {
 UPDATE_WORDS = {"update", "oppdater", "endre", "actualizar", "aktualisieren", "modifier"}
 DELETE_WORDS = {"delete", "remove", "slett", "fjern", "eliminar", "supprimer", "loschen"}
 PAYMENT_WORDS = {"payment", "betaling", "pago", "pagamento", "zahlung", "paiement", "delbetaling"}
+BANK_WORDS = {
+    "bank",
+    "bank statement",
+    "bank reconciliation",
+    "reconcile",
+    "reconciliation",
+    "extrato bancario",
+    "extrato bancário",
+    "kontoutskrift",
+    "bankavstemming",
+    "avstemming",
+    "csv",
+    "statement",
+    "payments received",
+    "payments made",
+    "pagamentos recebidos",
+    "pagamentos efetuados",
+    "faturas em aberto",
+    "open invoices",
+}
 INVOICE_WORDS = {"invoice", "faktura", "factura", "fatura", "rechnung", "facture"}
 ORDER_WORDS = {"order", "ordre", "pedido", "encomenda", "bestellung", "commande"}
 CONVERT_WORDS = {"convert", "konverter", "convierte", "converter", "umwandeln", "convertir"}
@@ -143,6 +163,13 @@ FAMILY_RULES: dict[str, FamilyRule] = {
         base_confidence=0.9,
         actions=["find_invoice", "register_payment"],
     ),
+    "bank_reconciliation": FamilyRule(
+        primary=BANK_WORDS,
+        secondary=INVOICE_WORDS | PAYMENT_WORDS | SUPPLIER_WORDS | ATTACHMENT_WORDS,
+        negative=PAYROLL_WORDS | TRAVEL_WORDS,
+        base_confidence=0.9,
+        actions=["parse_bank_statement", "match_customer_invoices", "match_supplier_invoices", "register_payments"],
+    ),
     "order_to_invoice": FamilyRule(
         primary=ORDER_WORDS | INVOICE_WORDS | CONVERT_WORDS,
         secondary=CUSTOMER_WORDS | CREATE_WORDS,
@@ -252,8 +279,8 @@ FAMILY_RULES: dict[str, FamilyRule] = {
 
 DOMAIN_RULES: dict[str, DomainRule] = {
     "invoicing": DomainRule(
-        primary=INVOICE_WORDS | ORDER_WORDS | PAYMENT_WORDS | CREDIT_WORDS | CONVERT_WORDS,
-        families=("order_to_invoice", "register_payment", "create_credit_note", "create_invoice", "register_incoming_invoice"),
+        primary=INVOICE_WORDS | ORDER_WORDS | PAYMENT_WORDS | CREDIT_WORDS | CONVERT_WORDS | BANK_WORDS,
+        families=("bank_reconciliation", "order_to_invoice", "register_payment", "create_credit_note", "create_invoice", "register_incoming_invoice"),
     ),
     "payroll": DomainRule(
         primary=PAYROLL_WORDS,
@@ -337,6 +364,14 @@ def _score_family(prompt_n: str, family: str, entities_map: dict[str, object]) -
             score += 0.7
         if amounts:
             score += 0.5
+    if family == "bank_reconciliation":
+        if attachment_count := entities_map.get("attachmentCount"):
+            try:
+                score += min(float(attachment_count), 2.0) * 0.4
+            except Exception:
+                pass
+        if amounts:
+            score += 0.3
     if family == "ledger_correction":
         if amounts:
             score += 0.5
@@ -387,6 +422,8 @@ def _pick_task_family(
         return "register_payment", FAMILY_RULES["register_payment"].actions, 0.9, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, CREDIT_WORDS) and has_invoice:
         return "create_credit_note", FAMILY_RULES["create_credit_note"].actions, 0.9, [], {"route_mode": "hard_rule"}
+    if attachment_count > 0 and contains_any(prompt_n, BANK_WORDS):
+        return "bank_reconciliation", FAMILY_RULES["bank_reconciliation"].actions, 0.94, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, SUPPLIER_WORDS) and has_invoice and attachment_count > 0:
         return "register_incoming_invoice", FAMILY_RULES["register_incoming_invoice"].actions, 0.93, [], {"route_mode": "hard_rule"}
     if contains_any(prompt_n, EMPLOYEE_WORDS) and (
@@ -440,6 +477,8 @@ def classify_task(prompt: str, attachments: list[ParsedAttachment]) -> TaskSpec:
     attachment_texts = [a.extracted_text for a in attachments if a.extracted_text]
     language = detect_language(prompt_n)
     entities_map = extract_all_entities(prompt, attachment_texts)
+    entities_map["attachmentTexts"] = attachment_texts
+    entities_map["attachmentCount"] = len(attachments)
     entities = [
         Entity(type="customer", data={"name": entities_map.get("customerName"), "organizationNumber": entities_map.get("organizationNumber")}),
         Entity(type="person", data={"name": entities_map.get("personName"), "email": entities_map.get("email")}),
